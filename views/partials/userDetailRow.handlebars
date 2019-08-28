@@ -1,0 +1,40 @@
+<script id="user-row" type="text/x-handlebars-template">
+  <tr>
+    <td scope="col">
+      \{{name}}
+      <br/>
+      <small>@\{{userName}}</small>
+    </td>
+
+    <td scope="col">
+      \{{#if socialLink}}
+        <a href=\{{socialLink}} target="_blank">Social</a>
+      \{{/if}}
+    </td>
+
+    <td scope="col">\{{status}}</td>
+    
+    <td scope="col">
+      \{{#if videoLink}}
+        <a href=\{{videoLink}} id="video-link">Latest Video</a>
+      \{{/if}}
+    </td> 
+
+    <td scope="col">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1">
+        <label class="form-check-label" for="exampleRadios1">
+          Approve
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+        <label class="form-check-label" for="exampleRadios2">
+          Decline
+        </label>
+      </div>
+    </td>
+    <td scope="col">Admin details here</td>
+    <td scope="col"><button class="btn btn-outline-danger">Save</button></td>
+  </tr>
+</script>

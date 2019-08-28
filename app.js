@@ -1,0 +1,252 @@
+const rootPrefix = '.';
+
+const express = require('express'),
+  path = require('path'),
+  createNamespace = require('continuation-local-storage').createNamespace,
+  morgan = require('morgan'),
+  bodyParser = require('body-parser'),
+  helmet = require('helmet'),
+  cookieParser = require('cookie-parser'),
+  customUrlParser = require('url'),
+  exphbs = require('express-handlebars')
+  ;
+
+const responseHelper = require(rootPrefix + '/lib/formatter/response'),
+  ValidateAuthCookie = require(rootPrefix + '/lib/authentication/cookie'),
+  logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
+  customMiddleware = require(rootPrefix + '/helpers/customMiddleware'),
+  adminRoutes = require(rootPrefix + '/routes/admin'),
+  basicHelper = require(rootPrefix + '/helpers/basic'),
+  errorConfig = require(rootPrefix +'/config/apiErrorConfig'),
+  coreConstants = require(rootPrefix + '/config/coreConstants'),
+  handlebarHelper = require(rootPrefix + '/helpers/handlebar'),
+  sanitizer = require(rootPrefix + '/helpers/sanitizer');
+
+const requestSharedNameSpace = createNamespace('pepoWebNameSpace');
+
+morgan.token('id', function getId(req) {
+  return req.id;
+});
+
+morgan.token('endTime', function getendTime(req) {
+  const hrTime = process.hrtime();
+
+  return hrTime[0] * 1000 + hrTime[1] / 1000000;
+});
+
+morgan.token('endDateTime', function getEndDateTime(req) {
+  return basicHelper.logDateFormat();
+});
+
+const startRequestLogLine = function(req, res, next) {
+  const message =
+    "Started '" +
+    customUrlParser.parse(req.originalUrl).pathname +
+    "'  '" +
+    req.method +
+    "' at " +
+    basicHelper.logDateFormat();
+
+  logger.info(message);
+
+  next();
+};
+
+/**
+ * Assign params
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
+const assignParams = function(req, res, next) {
+  // IMPORTANT NOTE: Don't assign parameters before sanitization
+  // Also override any request params, related to signatures
+  // And finally assign it to req.decodedParams
+  req.decodedParams = Object.assign(getRequestParams(req), req.decodedParams);
+
+  next();
+};
+
+/**
+ * Get request params
+ *
+ * @param req
+ * @return {*}
+ */
+const getRequestParams = function(req) {
+  // IMPORTANT NOTE: Don't assign parameters before sanitization
+  if (req.method === 'POST') {
+    return req.body;
+  } else if (req.method === 'GET') {
+    return req.query;
+  }
+
+  return {};
+};
+
+/**
+ * Validate API signature
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @return {Promise|*|{$ref}|PromiseLike<T>|Promise<T>}
+ */
+const validateAuthCookie = function(req, res, next) {
+  const inputParams = getRequestParams(req);
+
+  const handleParamValidationResult = function(result) {
+    if (result.isSuccess()) {
+      if (!req.decodedParams) {
+        req.decodedParams = {};
+      }
+      // NOTE: MAKE SURE ALL SANITIZED VALUES ARE ASSIGNED HERE
+      req.decodedParams.client_id = result.data.clientId;
+      req.decodedParams.app_validated_api_name = result.data.appValidatedApiName;
+      req.decodedParams.api_signature_kind = result.data.apiSignatureKind;
+      next();
+    } else {
+      return result.renderResponse(res, errorConfig);
+    }
+  };
+
+  // Following line always gives resolution. In case this assumption changes, please add catch here.
+  return new ValidateAuthCookie({
+    inputParams: inputParams,
+    requestPath: customUrlParser.parse(req.originalUrl).pathname,
+    requestMethod: req.method
+  })
+    .perform()
+    .then(handleParamValidationResult);
+};
+
+// Set request debugging/logging details to shared namespace
+const appendRequestDebugInfo = function(req, res, next) {
+  requestSharedNameSpace.run(function() {
+    requestSharedNameSpace.set('reqId', req.id);
+    requestSharedNameSpace.set('startTime', req.startTime);
+    next();
+  });
+};
+
+// If the process is not a master
+
+// Set worker process title
+process.title = 'pepo web node worker';
+
+// Create express application instance
+const app = express();
+
+// Add id and startTime to request
+app.use(customMiddleware());
+
+// Load Morgan
+app.use(
+  morgan(
+    '[:id][:endTime] Completed with ":status" in :response-time ms at :endDateTime -  ":res[content-length] bytes" - ":remote-addr" ":remote-user" - "HTTP/:http-version :method :url" - ":referrer" - ":user-agent"'
+  )
+);
+
+// Helmet helps secure Express apps by setting various HTTP headers.
+app.use(helmet());
+
+// Node.js body parsing middleware.
+app.use(bodyParser.json());
+
+// Parsing the URL-encoded data with the qs library (extended: true)
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Node.js cookie parsing middleware.
+app.use(cookieParser());
+
+//Setting view engine template handlebars
+app.set('views', path.join(__dirname, 'views'));
+
+//Helper is used to ease stringifying JSON
+app.engine(
+  'handlebars',
+  exphbs({
+    defaultLayout: 'main',
+    helpers: handlebarHelper,
+    partialsDir: path.join(__dirname, 'views/partials'),
+    layoutsDir: path.join(__dirname, 'views/layouts')
+  })
+);
+app.set('view engine', 'handlebars');
+
+
+// connect-assets relies on to use defaults in config
+const connectAssetConfig = {
+  paths: [path.join(__dirname, 'assets/css'), path.join(__dirname, 'assets/js')],
+  buildDir: path.join(__dirname, 'builtAssets'),
+  fingerprinting: true,
+  servePath: 'assets'
+};
+
+if (coreConstants.IS_VIEW_ENVIRONMENT_PRODUCTION || coreConstants.IS_VIEW_ENVIRONMENT_STAGING) {
+  connectAssetConfig.servePath = coreConstants.CLOUD_FRONT_BASE_DOMAIN + '/ost-view/js-css';
+  connectAssetConfig.bundle = true;
+  connectAssetConfig.compress = true;
+}
+
+const connectAssets = require('connect-assets')(connectAssetConfig);
+app.use(connectAssets);
+
+const hbs = require('handlebars');
+hbs.registerHelper('css', function() {
+  const css = connectAssets.options.helperContext.css.apply(this, arguments);
+
+  return new hbs.SafeString(css);
+});
+
+hbs.registerHelper('js', function() {
+  const js = connectAssets.options.helperContext.js.apply(this, arguments);
+  return new hbs.SafeString(js);
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(
+  '/admin',
+  startRequestLogLine,
+  appendRequestDebugInfo,
+  sanitizer.sanitizeBodyAndQuery,
+  assignParams,
+  adminRoutes
+);
+
+// Catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  const message =
+    "Started '" +
+    customUrlParser.parse(req.originalUrl).pathname +
+    "'  '" +
+    req.method +
+    "' at " +
+    basicHelper.logDateFormat();
+  logger.info(message);
+
+  return responseHelper
+    .error({
+      internal_error_identifier: 'a_5',
+      api_error_identifier: 'resource_not_found',
+      debug_options: {}
+    })
+    .renderResponse(res, errorConfig);
+});
+
+// Error handler
+app.use(function(err, req, res, next) {
+  logger.error('a_6', 'Something went wrong', err);
+
+  return responseHelper
+    .error({
+      internal_error_identifier: 'a_6',
+      api_error_identifier: 'something_went_wrong',
+      debug_options: {}
+    })
+    .renderResponse(res, errorConfig);
+});
+
+module.exports = app;
