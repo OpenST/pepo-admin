@@ -3,43 +3,33 @@
 <head>
     <meta charset="utf-8" />
 
-    <title>{{#if page_meta}}{{page_meta.title}}{{else}}{{title}}{{/if}}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pepo</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+    <meta name="description" content="Collect more than Likes">
+    <meta name="keywords" content="pepo, pepo app, an ost project, more than likes">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pepo.com" />
 
-    {{#if page_meta}}
-    <meta name="description" content="{{page_meta.description}}">
-    <meta name="keywords" content="{{page_meta.keywords}}">
-    <meta name="robots" content="{{page_meta.robots}}">
-    <meta property="og:title" content="{{page_meta.title}}"/>
-    <meta property="og:description" content="{{page_meta.description}}"/>
+    <meta property="og:title" content="Pepo"/>
+    <meta property="og:description" content="Collect more than Likes"/>
     <meta property="og:type" content="website"/>
-    <meta property="og:url" content="https://view.ost.com"/>
-    <meta property="og:site_name" content="view.ost.com"/>
-    <meta property="og:image" content="{{page_meta.image}}"/>
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="{{page_meta.title}}"/>
-    <meta name="twitter:description" content="{{page_meta.description}}"/>
-    <meta name="twitter:image" content="{{page_meta.image}}"/>
-    <meta name="google-site-verification" content="HXVSECDp1rMChIwEQ2pT9ti4NUHd7yAvXz8sQvvhyFw" />
-    {{/if}}
+    <meta property="og:url" content="https://pepo.com"/>
+    <meta property="og:site_name" content="pepo.com"/>
+    <meta property="og:image" content="https://d3attjoi5jlede.cloudfront.net/images/web/fav/pepo-meta-img.png"/>
 
-    <link rel="icon" type="image/png" sizes="64x64" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/64x64.png">
-    <link rel="apple-touch-icon" sizes="57x57" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{constants.cloud_front_base_domain}}/ost-kit/images/fav-icons/16x16.png">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pepo" />
+    <meta name="twitter:description" content="Collect more than Likes" />
+    <meta name="twitter:image" content="https://d3attjoi5jlede.cloudfront.net/images/web/fav/pepo-meta-img.png" />
 
-    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="icon" type="image/png" sizes="192x192" href="https://d3attjoi5jlede.cloudfront.net/images/web/fav/192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://d3attjoi5jlede.cloudfront.net/images/web/fav/32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://d3attjoi5jlede.cloudfront.net/images/web/fav/96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://d3attjoi5jlede.cloudfront.net/images/web/fav/16x16.png">
 
     {{{css 'mCommon.css'}}}
     {{#each mCss}}

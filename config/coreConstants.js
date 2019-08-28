@@ -48,6 +48,26 @@ class CoreConstants {
 	get environmentShort() {
 		return process.env.SA_ENVIRONMENT.substring(0, 2);
 	}
+
+	get PW_USE_BASIC_AUTH() {
+		return process.env.PW_USE_BASIC_AUTH;
+	}
+
+	get PW_BASIC_AUTH_USERNAME() {
+		return process.env.PW_BASIC_AUTH_USERNAME;
+	}
+
+	get PW_BASIC_AUTH_PASSWORD() {
+		return process.env.PW_BASIC_AUTH_PASSWORD;
+	}
+
+	get isProduction() {
+		return process.env.PW_ENVIRONMENT == "production";
+	}
+
+	get isStaging() {
+		return process.env.PW_ENVIRONMENT == "staging";
+	}
 }
 
 module.exports = new CoreConstants();

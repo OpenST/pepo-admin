@@ -16,6 +16,7 @@
     bindEvents: function() {
     	const oThis = this;
 
+      // Trigger search
       $('#search-btn').click(function(event) {
 
       	event.preventDefault();
@@ -29,7 +30,7 @@
         oThis.loadUsers(data);
       });
 
-
+      // Show previous page
       $('#users-previous-page').click(function(event) {
         event.preventDefault();
 
@@ -51,6 +52,7 @@
         oThis.loadUsers(query);
       });
 
+      // Show next page
       $('#users-next-page').click(function(event) {
         event.preventDefault();
 
@@ -133,35 +135,43 @@
           // Get video link
           let videoLink = '';
           if (!response.data['videos'][video_id]) {
-            console.log("====No video for", userId);
+            // Nothing to do
           } else {
             videoLink = response.data['videos'][video_id].resolutions['720w'] ? 
               response.data['videos'][video_id].resolutions['720w'].url : 
               response.data['videos'][video_id].resolutions['original'].url;
           }
 
+          let status = userData.is_creator ? 'Approved' : 'Pending';
+
+          if (userData.status == "BLOCKED") {
+            status = 'Blocked';
+          }
+
           // Get social link
           let socialLink = '';
           if (!response.data['links'][link_id]) {
-            console.log("====No link for", userId);
+            // Nothing to do
           } else {
             socialLink = response.data['links'][link_id].url;
           }      
 
           let context = {
+            userId: userId,
             name:  userData.name,
             userName: userData.user_name,
-            status: userData.status,
+            status: status,
             videoLink: videoLink,
-            socialLink: socialLink
+            socialLink: socialLink,
           };
 
           let html = userRowTemplate(context);
 
           $('#user-search-results').append(html);
-
-          oThis.bindVideoModalEvents();
         }
+
+        oThis.bindVideoModalEvents();
+        oThis.bindUserStateChangeEvents();
            
       } else {         
         console.error("=======Unknown response====", response);
@@ -199,8 +209,85 @@
 
     },
 
+    bindUserStateChangeEvents: function() {
+      const oThis = this;
+
+      $('button#user-save-btn').click(function(event) {
+        const button = this;
+
+        event.preventDefault();
+
+        let radioValue = $("input[name='userCreatorState']:checked").val();
+        let user_id = +($(this).attr('data-user-id'));
+
+        let updateButtonStatus = function() {
+          $(button).text = 'Saved';
+          $(button).addClass('disabled');
+          $(button).css("pointer-events","none");
+        }
+
+        if (radioValue == "1") {
+          oThis.approveUserAsCreator(user_id, updateButtonStatus);
+        } else if (radioValue == "2") {
+          oThis.blockUser(user_id, updateButtonStatus);
+        }
+      });
+    },
+
+    approveUserAsCreator: function(user_id, successCallback) {
+      const oThis = this;
+
+      $.ajax({
+        url: oThis.approveUserAsCreatorUrl(user_id),
+        type: 'POST',
+        data: {},
+        contentType: "application/json",
+        success: function (response) {
+
+          if(response.data) {
+            successCallback();            
+          } else {         
+            console.error("=======Unknown response====");
+          }
+        },
+        error: function(error) {
+          console.error("===error", error);
+        }
+      });
+    },
+
+    blockUser: function(user_id, successCallback) {
+      const oThis = this;
+
+      $.ajax({
+        url: oThis.blockUserUrl(user_id),
+        type: 'POST',
+        data: {},
+        contentType: "application/json",
+        success: function (response) {
+
+          if(response.data) {
+            successCallback();
+          } else {         
+            console.error("=======Unknown response====");
+          }
+        },
+        error: function(error) {
+          console.error("===error", error);
+        }
+      });
+    },
+
     adminUserSearchUrl: function() {
     	return '/api/v1/admin/users';
+    },
+
+    approveUserAsCreatorUrl: function(user_id) {
+      return `/api/v1/admin/users/${user_id}/approve`;
+    },
+
+    blockUserUrl: function(user_id) {
+      return `/api/v1/admin/users/${user_id}/block`;
     }
 
 	};

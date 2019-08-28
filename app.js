@@ -5,6 +5,7 @@ const express = require('express'),
   createNamespace = require('continuation-local-storage').createNamespace,
   morgan = require('morgan'),
   bodyParser = require('body-parser'),
+  basicAuth = require('basic-auth'),
   helmet = require('helmet'),
   cookieParser = require('cookie-parser'),
   customUrlParser = require('url'),
@@ -130,6 +131,42 @@ const appendRequestDebugInfo = function(req, res, next) {
   });
 };
 
+
+const basicAuthentication = function(req, res, next) {
+
+  if (coreConstants.PW_USE_BASIC_AUTH == 'false') {
+    return next();
+  }
+
+  function unauthorized(res) {
+    res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+
+    return responseHelper.error({
+        internal_error_identifier: 'a_1',
+        api_error_identifier: 'unauthorized_api_request',
+        debug_options: {}
+      })
+      .renderResponse(res, {
+        api_error_config: errorConfig
+      });
+  }
+
+  let user = basicAuth(req);
+
+  if (!user || !user.name || !user.pass) {
+    return unauthorized(res);
+  }
+
+  if (
+    user.name === coreConstants.PW_BASIC_AUTH_USERNAME &&
+    user.pass === coreConstants.PW_BASIC_AUTH_PASSWORD
+  ) {
+    return next();
+  } else {
+    return unauthorized(res);
+  }
+};
+
 // If the process is not a master
 
 // Set worker process title
@@ -184,8 +221,8 @@ const connectAssetConfig = {
   servePath: 'assets'
 };
 
-if (coreConstants.IS_VIEW_ENVIRONMENT_PRODUCTION || coreConstants.IS_VIEW_ENVIRONMENT_STAGING) {
-  connectAssetConfig.servePath = coreConstants.CLOUD_FRONT_BASE_DOMAIN + '/ost-view/js-css';
+if (coreConstants.isProduction || coreConstants.isStaging) {
+  connectAssetConfig.servePath = coreConstants.CLOUD_FRONT_BASE_DOMAIN + '/pepo-web/js-css';
   connectAssetConfig.bundle = true;
   connectAssetConfig.compress = true;
 }
@@ -207,8 +244,13 @@ hbs.registerHelper('js', function() {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname+'/public/pepo.html'));
+});
+
 app.use(
   '/admin',
+  basicAuthentication,
   startRequestLogLine,
   appendRequestDebugInfo,
   sanitizer.sanitizeBodyAndQuery,
@@ -229,11 +271,11 @@ app.use(function(req, res, next) {
 
   return responseHelper
     .error({
-      internal_error_identifier: 'a_5',
+      internal_error_identifier: 'a_2',
       api_error_identifier: 'resource_not_found',
       debug_options: {}
     })
-    .renderResponse(res, errorConfig);
+    .renderResponse(res, { api_error_config: errorConfig });
 });
 
 // Error handler
@@ -242,11 +284,11 @@ app.use(function(err, req, res, next) {
 
   return responseHelper
     .error({
-      internal_error_identifier: 'a_6',
+      internal_error_identifier: 'a_3',
       api_error_identifier: 'something_went_wrong',
       debug_options: {}
     })
-    .renderResponse(res, errorConfig);
+    .renderResponse(res, { api_error_config: errorConfig });
 });
 
 module.exports = app;
