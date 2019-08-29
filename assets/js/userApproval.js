@@ -225,6 +225,10 @@
           $(button).html('Saved');
           $(button).addClass('disabled');
           $(button).css('pointer-events', 'none');
+
+          var userRow = oThis.parent();
+
+          userRow.append('<i class="fa fa-check" aria-hidden="true"></i>');
         };
 
         if (radioValue == '1') {

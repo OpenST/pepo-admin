@@ -8,7 +8,7 @@
 
     <td scope="col">
       \{{#if socialLink}}
-        <a href=\{{socialLink}} target="_blank">Social</a>
+        <a href=\{{socialLink}} target="_blank"><i class="fa fa-link"></i></a>
       \{{/if}}
     </td>
 
@@ -16,7 +16,7 @@
     
     <td scope="col">
       \{{#if videoLink}}
-        <a href=\{{videoLink}} id="video-link">Latest Video</a>
+        <a href=\{{videoLink}} id="video-link">Latest Video <i class="fa fa-video-camera" aria-hidden="true"></i></a>
       \{{/if}}
     </td> 
 
@@ -50,6 +50,10 @@
     <td scope="col">
       \{{#ifCond status '!=' "Blocked"}}
         <button class="btn btn-outline-danger" id="user-save-btn" data-user-id=\{{userId}}>Save</button>
+      \{{/ifCond}}
+
+      \{{#ifCond status '==' "Blocked"}}
+        <button class="btn btn-danger" id="user-save-btn" data-user-id=\{{userId}} disabled>Saved</button>
       \{{/ifCond}}
     </td>
   </tr>
