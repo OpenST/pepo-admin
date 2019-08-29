@@ -7,10 +7,8 @@ const express = require('express'),
   bodyParser = require('body-parser'),
   basicAuth = require('basic-auth'),
   helmet = require('helmet'),
-  cookieParser = require('cookie-parser'),
   customUrlParser = require('url'),
-  exphbs = require('express-handlebars')
-  ;
+  exphbs = require('express-handlebars');
 
 const responseHelper = require(rootPrefix + '/lib/formatter/response'),
   ValidateAuthCookie = require(rootPrefix + '/lib/authentication/cookie'),
@@ -18,7 +16,7 @@ const responseHelper = require(rootPrefix + '/lib/formatter/response'),
   customMiddleware = require(rootPrefix + '/helpers/customMiddleware'),
   adminRoutes = require(rootPrefix + '/routes/admin'),
   basicHelper = require(rootPrefix + '/helpers/basic'),
-  errorConfig = require(rootPrefix +'/config/apiErrorConfig'),
+  errorConfig = require(rootPrefix + '/config/apiErrorConfig'),
   coreConstants = require(rootPrefix + '/config/coreConstants'),
   handlebarHelper = require(rootPrefix + '/helpers/handlebar'),
   sanitizer = require(rootPrefix + '/helpers/sanitizer');
@@ -131,9 +129,7 @@ const appendRequestDebugInfo = function(req, res, next) {
   });
 };
 
-
 const basicAuthentication = function(req, res, next) {
-
   if (coreConstants.PW_USE_BASIC_AUTH == 'false') {
     return next();
   }
@@ -141,7 +137,8 @@ const basicAuthentication = function(req, res, next) {
   function unauthorized(res) {
     res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
 
-    return responseHelper.error({
+    return responseHelper
+      .error({
         internal_error_identifier: 'a_1',
         api_error_identifier: 'unauthorized_api_request',
         debug_options: {}
@@ -157,10 +154,7 @@ const basicAuthentication = function(req, res, next) {
     return unauthorized(res);
   }
 
-  if (
-    user.name === coreConstants.PW_BASIC_AUTH_USERNAME &&
-    user.pass === coreConstants.PW_BASIC_AUTH_PASSWORD
-  ) {
+  if (user.name === coreConstants.PW_BASIC_AUTH_USERNAME && user.pass === coreConstants.PW_BASIC_AUTH_PASSWORD) {
     return next();
   } else {
     return unauthorized(res);
@@ -194,9 +188,6 @@ app.use(bodyParser.json());
 // Parsing the URL-encoded data with the qs library (extended: true)
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Node.js cookie parsing middleware.
-app.use(cookieParser());
-
 //Setting view engine template handlebars
 app.set('views', path.join(__dirname, 'views'));
 
@@ -211,7 +202,6 @@ app.engine(
   })
 );
 app.set('view engine', 'handlebars');
-
 
 // connect-assets relies on to use defaults in config
 const connectAssetConfig = {
@@ -245,7 +235,7 @@ hbs.registerHelper('js', function() {
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname+'/public/pepo.html'));
+  res.sendFile(path.join(__dirname + '/public/pepo.html'));
 });
 
 app.use(

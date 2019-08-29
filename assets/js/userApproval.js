@@ -141,7 +141,7 @@
 
           var status = userData.approved_creator ? 'Approved' : 'Pending';
 
-          if (userData.status == 'BLOCKED') {
+          if (userData.status == 'INACTIVE') {
             status = 'Blocked';
           }
 
@@ -153,13 +153,20 @@
             socialLink = response.data['links'][link_id].url;
           }
 
+          var adminAction = response.data['adminActions'][userId];
+
+          if (adminAction) {
+            adminAction.createdAt = new Date(adminAction.createdAt).toDateString();
+          }
+
           var context = {
             userId: userId,
             name: userData.name,
             userName: userData.user_name,
             status: status,
             videoLink: videoLink,
-            socialLink: socialLink
+            socialLink: socialLink,
+            adminAction: adminAction
           };
 
           var html = userRowTemplate(context);
@@ -215,7 +222,7 @@
         var user_id = +$(this).attr('data-user-id');
 
         var updateButtonStatus = function() {
-          $(button).text = 'Saved';
+          $(button).html('Saved');
           $(button).addClass('disabled');
           $(button).css('pointer-events', 'none');
         };

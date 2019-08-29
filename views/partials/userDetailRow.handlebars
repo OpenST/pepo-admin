@@ -39,10 +39,18 @@
         </div>
       \{{/ifCond}}
     </td>
-    <td scope="col">Admin details here</td>
+    <td scope="col">
+      \{{#if adminAction}}
+      \{{adminAction.adminName}}
+      <br/>
+      \{{adminAction.createdAt}}
+      \{{/if}}
+    </td>
 
-    \{{#ifCond status '!=' "Blocked"}}
-      <td scope="col"><button class="btn btn-outline-danger" id="user-save-btn" data-user-id=\{{userId}}>Save</button></td>
-    \{{/ifCond}}
+    <td scope="col">
+      \{{#ifCond status '!=' "Blocked"}}
+        <button class="btn btn-outline-danger" id="user-save-btn" data-user-id=\{{userId}}>Save</button>
+      \{{/ifCond}}
+    </td>
   </tr>
 </script>

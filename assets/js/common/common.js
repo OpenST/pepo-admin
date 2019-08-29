@@ -1,100 +1,93 @@
+(function(window, $) {
+  const Common = function(config) {};
 
-(function(window, $){
-	const Common = function(config) {
-
-	};
-
-	Common.prototype = {
-		init: function() {
-			const oThis = this;
+  Common.prototype = {
+    init: function() {
+      const oThis = this;
 
       $.ajax({
-          url: oThis.currentAdminUrl(),
-          type: 'GET',
-          data: {},
-          contentType: "application/json",
-          success: function(response) {
-            $('#logout a').removeAttr('hidden');
-          },
-          error: function(error) {
-            $('#login a').removeAttr('hidden');
-          }
-      }); 
+        url: oThis.currentAdminUrl(),
+        type: 'GET',
+        data: {},
+        contentType: 'application/json',
+        success: function(response) {
+          $('#logout a').removeAttr('hidden');
+        },
+        error: function(error) {
+          $('#login a').removeAttr('hidden');
+        }
+      });
 
       oThis.registerHandlebarHelpers();
 
       oThis.bindEvents();
-		},
+    },
 
-		registerHandlebarHelpers: function() {
-			const oThis = this;
+    registerHandlebarHelpers: function() {
+      const oThis = this;
 
-			Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+      Handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
+        switch (operator) {
+          case '==':
+            return v1 == v2 ? options.fn(this) : options.inverse(this);
+          case '===':
+            return v1 === v2 ? options.fn(this) : options.inverse(this);
+          case '!=':
+            return v1 != v2 ? options.fn(this) : options.inverse(this);
+          case '!==':
+            return v1 !== v2 ? options.fn(this) : options.inverse(this);
+          case '<':
+            return v1 < v2 ? options.fn(this) : options.inverse(this);
+          case '<=':
+            return v1 <= v2 ? options.fn(this) : options.inverse(this);
+          case '>':
+            return v1 > v2 ? options.fn(this) : options.inverse(this);
+          case '>=':
+            return v1 >= v2 ? options.fn(this) : options.inverse(this);
+          case '&&':
+            return v1 && v2 ? options.fn(this) : options.inverse(this);
+          case '||':
+            return v1 || v2 ? options.fn(this) : options.inverse(this);
+          default:
+            return options.inverse(this);
+        }
+      });
+    },
 
-			    switch (operator) {
-			        case '==':
-			            return (v1 == v2) ? options.fn(this) : options.inverse(this);
-			        case '===':
-			            return (v1 === v2) ? options.fn(this) : options.inverse(this);
-			        case '!=':
-			            return (v1 != v2) ? options.fn(this) : options.inverse(this);
-			        case '!==':
-			            return (v1 !== v2) ? options.fn(this) : options.inverse(this);
-			        case '<':
-			            return (v1 < v2) ? options.fn(this) : options.inverse(this);
-			        case '<=':
-			            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-			        case '>':
-			            return (v1 > v2) ? options.fn(this) : options.inverse(this);
-			        case '>=':
-			            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-			        case '&&':
-			            return (v1 && v2) ? options.fn(this) : options.inverse(this);
-			        case '||':
-			            return (v1 || v2) ? options.fn(this) : options.inverse(this);
-			        default:
-			            return options.inverse(this);
-			    }
-			});
-		},
+    bindEvents: function() {
+      const oThis = this;
 
-		bindEvents: function() {
-			const oThis = this;
+      $('#logout a').click(function(event) {
+        event.preventDefault();
 
-			$('#logout a').click(function(event) {
-				event.preventDefault();
+        $.ajax({
+          url: oThis.logoutUrl(),
+          type: 'POST',
+          data: {},
+          contentType: 'application/json',
+          success: function(response) {
+            $('#login a').removeAttr('hidden');
+            window.location = '/admin/login';
+          },
+          error: function(error) {
+            console.log('===Loggout request failed');
+          }
+        });
+      });
+    },
 
-				$.ajax({
-	          url: oThis.logoutUrl(),
-	          type: 'POST',
-	          data: {},
-	          contentType: "application/json",
-	          success: function(response) {
+    logoutUrl: function() {
+      const oThis = this;
 
-	          	console.log("===response", response);
+      return '/api/v1/admin/logout';
+    },
 
-	            //window.location = '/admin/login';
-	            $('#login a').removeAttr('hidden');
-	          },
-	          error: function(error) {
-	            console.log("===Loggout request failed");
-	          }
-	      }); 
-			});
-		},
+    currentAdminUrl: function() {
+      const oThis = this;
 
-		logoutUrl: function() {
-			const oThis = this;
+      return '/api/v1/admin/current';
+    }
+  };
 
-			return '/api/v1/admin/logout';
-		},
-
-		currentAdminUrl: function() {
-			const oThis = this;
-
-			return '/api/v1/admin/current';
-		}
-	};
-
-	window.Common = Common;
+  window.Common = Common;
 })(window, jQuery);
