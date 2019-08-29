@@ -139,7 +139,7 @@
               : response.data['videos'][video_id].resolutions['original'].url;
           }
 
-          var status = userData.is_creator ? 'Approved' : 'Pending';
+          var status = userData.approved_creator ? 'Approved' : 'Pending';
 
           if (userData.status == 'BLOCKED') {
             status = 'Blocked';
