@@ -5,16 +5,6 @@
     init: function() {
       const oThis = this;
 
-      // Fetch CSRF token for sending the same in admin post requests
-      $.ajax({
-        url: '/api/v1/',
-        type: 'GET',
-        data: {},
-        contentType: 'application/json',
-        success: function(response) {},
-        error: function(error) {}
-      });
-
       $.ajax({
         url: oThis.currentAdminUrl(),
         type: 'GET',

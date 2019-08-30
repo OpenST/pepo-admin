@@ -249,9 +249,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'CSRF-Token': token
-        },
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -275,9 +272,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'CSRF-Token': token
-        },
         success: function(response) {
           if (response.data) {
             successCallback();
