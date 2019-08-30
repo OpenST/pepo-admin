@@ -57,6 +57,8 @@
     bindEvents: function() {
       const oThis = this;
 
+      var token = $('meta[name="csrf-token"]').attr('content');
+
       $('#logout a').click(function(event) {
         event.preventDefault();
 
@@ -64,6 +66,9 @@
           url: oThis.logoutUrl(),
           type: 'POST',
           data: {},
+          headers: {
+            'csrf-token': token
+          },
           contentType: 'application/json',
           success: function(response) {
             $('#login a').removeAttr('hidden');
