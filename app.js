@@ -11,7 +11,6 @@ const express = require('express'),
   exphbs = require('express-handlebars');
 
 const responseHelper = require(rootPrefix + '/lib/formatter/response'),
-  ValidateAuthCookie = require(rootPrefix + '/lib/authentication/cookie'),
   logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
   customMiddleware = require(rootPrefix + '/helpers/customMiddleware'),
   adminRoutes = require(rootPrefix + '/routes/admin'),
@@ -82,42 +81,6 @@ const getRequestParams = function(req) {
   }
 
   return {};
-};
-
-/**
- * Validate API signature
- *
- * @param req
- * @param res
- * @param next
- * @return {Promise|*|{$ref}|PromiseLike<T>|Promise<T>}
- */
-const validateAuthCookie = function(req, res, next) {
-  const inputParams = getRequestParams(req);
-
-  const handleParamValidationResult = function(result) {
-    if (result.isSuccess()) {
-      if (!req.decodedParams) {
-        req.decodedParams = {};
-      }
-      // NOTE: MAKE SURE ALL SANITIZED VALUES ARE ASSIGNED HERE
-      req.decodedParams.client_id = result.data.clientId;
-      req.decodedParams.app_validated_api_name = result.data.appValidatedApiName;
-      req.decodedParams.api_signature_kind = result.data.apiSignatureKind;
-      next();
-    } else {
-      return result.renderResponse(res, errorConfig);
-    }
-  };
-
-  // Following line always gives resolution. In case this assumption changes, please add catch here.
-  return new ValidateAuthCookie({
-    inputParams: inputParams,
-    requestPath: customUrlParser.parse(req.originalUrl).pathname,
-    requestMethod: req.method
-  })
-    .perform()
-    .then(handleParamValidationResult);
 };
 
 // Set request debugging/logging details to shared namespace

@@ -242,11 +242,16 @@
     approveUserAsCreator: function(user_id, successCallback) {
       const oThis = this;
 
+      var token = Cookies.get('XSRF-TOKEN');
+
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
+        headers: {
+          'CSRF-Token': token
+        },
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -263,11 +268,16 @@
     blockUser: function(user_id, successCallback) {
       const oThis = this;
 
+      var token = Cookies.get('XSRF-TOKEN');
+
       $.ajax({
         url: oThis.blockUserUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
+        headers: {
+          'CSRF-Token': token
+        },
         success: function(response) {
           if (response.data) {
             successCallback();
