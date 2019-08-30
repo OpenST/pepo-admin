@@ -21,7 +21,7 @@
           postData[data[i].name] = data[i].value;
         }
 
-        var token = Cookies.get('XSRF-TOKEN');
+        var token = Cookies.get('_csrf');
 
         $.ajax({
           url: oThis.loginPostUrl(),

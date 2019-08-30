@@ -242,7 +242,7 @@
     approveUserAsCreator: function(user_id, successCallback) {
       const oThis = this;
 
-      var token = Cookies.get('XSRF-TOKEN');
+      var token = Cookies.get('_csrf');
 
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
@@ -268,7 +268,7 @@
     blockUser: function(user_id, successCallback) {
       const oThis = this;
 
-      var token = Cookies.get('XSRF-TOKEN');
+      var token = Cookies.get('_csrf');
 
       $.ajax({
         url: oThis.blockUserUrl(user_id),
