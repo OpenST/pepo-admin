@@ -21,14 +21,15 @@
           postData[data[i].name] = data[i].value;
         }
 
-        var token = Cookies.get('_csrf');
-
-        postData['csrf-token'] = token;
+        var token = $('meta[name="csrf-token"]').attr('content');
 
         $.ajax({
           url: oThis.loginPostUrl(),
           type: 'POST',
           data: JSON.stringify(postData),
+          headers: {
+            'csrf-token': token
+          },
           contentType: 'application/json',
           success: function(response) {
             if (response.data) {

@@ -242,13 +242,16 @@
     approveUserAsCreator: function(user_id, successCallback) {
       const oThis = this;
 
-      var token = Cookies.get('_csrf');
+      var token = $('meta[name="csrf-token"]').attr('content');
 
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
+        headers: {
+          'csrf-token': token
+        },
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -265,13 +268,16 @@
     blockUser: function(user_id, successCallback) {
       const oThis = this;
 
-      var token = Cookies.get('_csrf');
+      var token = $('meta[name="csrf-token"]').attr('content');
 
       $.ajax({
         url: oThis.blockUserUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
+        headers: {
+          'csrf-token': token
+        },
         success: function(response) {
           if (response.data) {
             successCallback();
