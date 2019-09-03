@@ -76,7 +76,7 @@
         oThis.lastPaginationId = nextPageId;
 
         if (!nextPageId) {
-          $('#load-btn').css('pointer-events', none);
+          $('#load-btn').css('pointer-events', 'none');
           $('#load-btn').html("That's all!");
           $('#load-btn').addClass('disabled');
         }
@@ -180,8 +180,9 @@
         var radioBtn = $("input[name='userCreatorState']:checked");
         var radioValue = radioBtn.val();
         var user_id = +$(this).attr('data-user-id');
+        var userFromRadioBtn = radioBtn.atrr('data-user-id');
 
-        if (radioBtn.parent() != button.parent()) {
+        if (userFromRadioBtn != user_id) {
           radioValue = null;
         }
 

@@ -23,7 +23,7 @@
     <td scope="col">
       \{{#ifCond status '==' "Pending"}}
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="userCreatorState" id="radio1" value="1">
+          <input class="form-check-input" type="radio" name="userCreatorState" id="radio1" value="1" data-user-id=\{{userId}}>
           <label class="form-check-label" for="radio1">
             Approve
           </label>
@@ -32,7 +32,7 @@
 
       \{{#ifCond status '!=' "Blocked"}}
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="userCreatorState" id="radio2" value="2">
+          <input class="form-check-input" type="radio" name="userCreatorState" id="radio2" value="2" data-user-id=\{{userId}}>
           <label class="form-check-label" for="radio2">
             Block
           </label>
