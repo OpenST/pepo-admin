@@ -39,7 +39,8 @@
             }
           },
           error: function(error) {
-            console.error('===error', error);
+            var errMsg = error.responseJSON.err.error_data[0].msg;
+            $('#login-error').html(errMsg);
           }
         });
       });
