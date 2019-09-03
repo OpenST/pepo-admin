@@ -180,7 +180,7 @@
         var radioBtn = $("input[name='userCreatorState']:checked");
         var radioValue = radioBtn.val();
         var user_id = +$(this).attr('data-user-id');
-        var userFromRadioBtn = radioBtn.atrr('data-user-id');
+        var userFromRadioBtn = radioBtn.attr('data-user-id');
 
         if (userFromRadioBtn != user_id) {
           radioValue = null;
@@ -190,10 +190,6 @@
           $(button).html('Saved');
           $(button).addClass('disabled');
           $(button).css('pointer-events', 'none');
-
-          var userRow = oThis.parent();
-
-          userRow.append('<i class="fa fa-check" aria-hidden="true"></i>');
         };
 
         if (radioValue == '1') {
