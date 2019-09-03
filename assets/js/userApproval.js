@@ -75,6 +75,12 @@
 
         oThis.lastPaginationId = nextPageId;
 
+        if (!nextPageId) {
+          $('#load-btn').css('pointer-events', none);
+          $('#load-btn').html("That's all!");
+          $('#load-btn').addClass('disabled');
+        }
+
         for (var ind = 0; ind < searchResults.length; ind++) {
           var userId = searchResults[ind]['payload'].user_id;
           var video_id = searchResults[ind]['payload'].video_id;
@@ -171,8 +177,13 @@
 
         event.preventDefault();
 
-        var radioValue = $("input[name='userCreatorState']:checked").val();
+        var radioBtn = $("input[name='userCreatorState']:checked");
+        var radioValue = radioBtn.val();
         var user_id = +$(this).attr('data-user-id');
+
+        if (radioBtn.parent() != button.parent()) {
+          radioValue = null;
+        }
 
         var updateButtonStatus = function() {
           $(button).html('Saved');
