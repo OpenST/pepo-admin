@@ -11,7 +11,7 @@ const rootPrefix = '..',
   csrf = require('csurf');
 
 // Node.js cookie parsing middleware.
-router.use(cookieParser(coreConstant.PW_PA_COOKIE_SECRET));
+router.use(cookieParser(coreConstant.PAD_PA_COOKIE_SECRET));
 
 const csrfProtection = csrf({
   cookie: {
@@ -21,7 +21,7 @@ const csrfProtection = csrf({
     secure: true, // Marks the cookie to be used with HTTPS only
     path: '/',
     sameSite: 'strict', // sets the same site policy for the cookie
-    domain: coreConstant.PW_PA_COOKIE_DOMAIN
+    domain: coreConstant.PAD_PA_COOKIE_DOMAIN
   }
 });
 

@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('pepo-api:server');
+var debug = require('debug')('pepo-admin:server');
 var http = require('http');
 
 /**
@@ -65,24 +65,12 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES': {
-      const errorObject = responseHelper.error({
-        internal_error_identifier: `elevated_privilege_required:a_7`,
-        api_error_identifier: 'elevated_privilege_required',
-        debug_options: { port: bind }
-      });
-      createErrorLogsEntry.perform(errorObject, ErrorLogsConstants.highSeverity);
-      logger.error('a_7', bind + ' requires elevated privileges');
+      console.error('a_7', bind + ' requires elevated privileges');
       process.exit(1);
       break;
     }
     case 'EADDRINUSE': {
-      const errorObject = responseHelper.error({
-        internal_error_identifier: `port_in_use:a_8`,
-        api_error_identifier: 'port_in_use',
-        debug_options: { port: bind }
-      });
-      createErrorLogsEntry.perform(errorObject, ErrorLogsConstants.highSeverity);
-      logger.error('a_8', bind + ' is already in use');
+      console.error('a_8', bind + ' is already in use');
       process.exit(1);
       break;
     }

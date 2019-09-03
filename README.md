@@ -1,1 +1,1 @@
-Web layer for pepo written in Node js.
+Web layer for pepo admin written in Node js.

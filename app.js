@@ -20,7 +20,7 @@ const responseHelper = require(rootPrefix + '/lib/formatter/response'),
   handlebarHelper = require(rootPrefix + '/helpers/handlebar'),
   sanitizer = require(rootPrefix + '/helpers/sanitizer');
 
-const requestSharedNameSpace = createNamespace('pepoWebNameSpace');
+const requestSharedNameSpace = createNamespace('pepoAdminNameSpace');
 
 morgan.token('id', function getId(req) {
   return req.id;
@@ -93,7 +93,7 @@ const appendRequestDebugInfo = function(req, res, next) {
 };
 
 const basicAuthentication = function(req, res, next) {
-  if (coreConstants.PW_USE_BASIC_AUTH == 'false') {
+  if (coreConstants.PAD_USE_BASIC_AUTH == 'false') {
     return next();
   }
 
@@ -117,7 +117,7 @@ const basicAuthentication = function(req, res, next) {
     return unauthorized(res);
   }
 
-  if (user.name === coreConstants.PW_BASIC_AUTH_USERNAME && user.pass === coreConstants.PW_BASIC_AUTH_PASSWORD) {
+  if (user.name === coreConstants.PAD_BASIC_AUTH_USERNAME && user.pass === coreConstants.PAD_BASIC_AUTH_PASSWORD) {
     return next();
   } else {
     return unauthorized(res);
@@ -175,7 +175,7 @@ const connectAssetConfig = {
 };
 
 if (coreConstants.isProduction || coreConstants.isStaging) {
-  connectAssetConfig.servePath = coreConstants.CLOUD_FRONT_BASE_DOMAIN + '/pepo-web/js-css';
+  connectAssetConfig.servePath = coreConstants.PAD_CLOUD_FRONT_BASE_DOMAIN + '/pepo-web/js-css';
   connectAssetConfig.bundle = true;
   connectAssetConfig.compress = true;
 }
