@@ -5,7 +5,6 @@
     $.extend(oThis.config, config);
     oThis.bindEvents();
 
-    oThis.paginationStack = [];
     oThis.lastPaginationId = null;
     oThis.query = null;
   };
@@ -22,57 +21,24 @@
 
         oThis.query = data;
 
-        oThis.paginationStack = [];
+        // Reset search results table
+        $('#user-search-results').html('');
 
         oThis.loadUsers(data);
       });
 
-      // Show previous page
-      $('#users-previous-page').click(function(event) {
+      // Load next page
+      $('#load-btn').click(function(event) {
         event.preventDefault();
-
-        // Pop next page's, current page's(if present) pagination id and then get prev page pagination id
-        oThis.paginationStack.pop();
-
-        if (oThis.lastPaginationId) {
-          oThis.paginationStack.pop();
-        }
-
-        var pagination_id = oThis.paginationStack.pop();
 
         var query = oThis.query;
-        if (pagination_id) {
-          query = query + '&pagination_identifier=' + pagination_id;
-        }
-
-        oThis.loadUsers(query);
-      });
-
-      // Show next page
-      $('#users-next-page').click(function(event) {
-        event.preventDefault();
-
-        var query = oThis.query + '&pagination_identifier=' + oThis.lastPaginationId;
-
+        query = query + '&pagination_identifier=' + oThis.lastPaginationId;
         oThis.loadUsers(query);
       });
     },
 
     loadUsers: function(data) {
       const oThis = this;
-
-      // Reset search results table
-      $('#user-search-results').html('');
-
-      // Disable or enable previous page button
-      if (oThis.paginationStack.length == 0) {
-        $('#users-previous-page').attr('aria-disabled', 'true');
-        $('#users-previous-page').css('pointer-events', 'none');
-      } else {
-        $('#users-previous-page').attr('aria-disabled', 'false');
-        $('#users-previous-page').removeClass('disabled');
-        $('#users-previous-page').css('pointer-events', 'auto');
-      }
 
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
@@ -107,20 +73,7 @@
           $('#user-search-results').append('<br/><p class="text-danger">No result found.</p>');
         }
 
-        if (nextPageId) {
-          $('#users-next-page').attr('aria-disabled', 'false');
-          $('#users-next-page').removeClass('disabled');
-          $('#users-next-page').css('pointer-events', 'auto');
-
-          oThis.paginationStack.push(nextPageId);
-          oThis.lastPaginationId = nextPageId;
-        } else {
-          $('#users-next-page').attr('aria-disabled', 'true');
-          $('#users-next-page').addClass('disabled');
-          $('#users-next-page').css('pointer-events', 'none');
-
-          oThis.lastPaginationId = null;
-        }
+        oThis.lastPaginationId = nextPageId;
 
         for (var ind = 0; ind < searchResults.length; ind++) {
           var userId = searchResults[ind]['payload'].user_id;
