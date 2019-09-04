@@ -33,8 +33,8 @@ class CoreConstants {
     return process.env.PAD_ENVIRONMENT == 'staging';
   }
 
-  get PAD_PA_COOKIE_SECRET() {
-    return process.env.PAD_PA_COOKIE_SECRET;
+  get COOKIE_SECRET() {
+    return process.env.PAD_COOKIE_SECRET;
   }
 }
 

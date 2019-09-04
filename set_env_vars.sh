@@ -14,4 +14,4 @@ export PAD_BASIC_AUTH_PASSWORD='A$F^&n!@$ghf%7'
 export PAD_CLOUD_FRONT_BASE_DOMAIN='http://cloudfront.com'
 
 # Cookie secret
-export PAD_PA_COOKIE_SECRET='aa5298d3a3fe181a3a52d085ee1525df5asa498337f8f3b76ca7df0a5de3211b'
+export PAD_COOKIE_SECRET='aa5298d3a3fe181a3a52d085ee1525df5asa498337f8f3b76ca7df0a5de3211b'

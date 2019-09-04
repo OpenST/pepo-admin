@@ -11,7 +11,7 @@ const rootPrefix = '..',
   csrf = require('csurf');
 
 // Node.js cookie parsing middleware.
-router.use(cookieParser(coreConstant.PAD_PA_COOKIE_SECRET));
+router.use(cookieParser(coreConstant.COOKIE_SECRET));
 
 const csrfProtection = csrf({
   cookie: {
