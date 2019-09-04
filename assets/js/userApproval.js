@@ -253,15 +253,15 @@
     },
 
     adminUserSearchUrl: function() {
-      return '/api/v1/admin/users';
+      return '/api/admin/users';
     },
 
     approveUserAsCreatorUrl: function(user_id) {
-      return '/api/v1/admin/users/' + user_id + '/approve';
+      return '/api/admin/users/' + user_id + '/approve';
     },
 
     blockUserUrl: function(user_id) {
-      return '/api/v1/admin/users/' + user_id + '/block';
+      return '/api/admin/users/' + user_id + '/block';
     }
   };
 

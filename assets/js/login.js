@@ -47,7 +47,7 @@
     },
 
     loginPostUrl: function() {
-      return '/api/v1/admin/login';
+      return '/api/admin/login';
     }
   };
 

@@ -84,13 +84,13 @@
     logoutUrl: function() {
       const oThis = this;
 
-      return '/api/v1/admin/logout';
+      return '/api/admin/logout';
     },
 
     currentAdminUrl: function() {
       const oThis = this;
 
-      return '/api/v1/admin/current';
+      return '/api/admin/current';
     }
   };
 
