@@ -44,6 +44,14 @@ class CoreConstants {
   get PAD_CSRF_COOKIE_KEY() {
     return '_ad_csrf';
   }
+
+  get PAD_CLOUD_FRONT_BASE_DOMAIN() {
+    return process.env.PAD_CLOUD_FRONT_BASE_DOMAIN;
+  }
+
+  get appName() {
+    return 'pepo-web';
+  }
 }
 
 module.exports = new CoreConstants();

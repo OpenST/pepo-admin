@@ -175,7 +175,7 @@ const connectAssetConfig = {
 };
 
 if (coreConstants.isProduction || coreConstants.isStaging) {
-  connectAssetConfig.servePath = coreConstants.PAD_CLOUD_FRONT_BASE_DOMAIN + '/pepo-web/js-css';
+  connectAssetConfig.servePath = coreConstants.PAD_CLOUD_FRONT_BASE_DOMAIN + '/' + coreConstants.appName + '/js-css';
   connectAssetConfig.bundle = true;
   connectAssetConfig.compress = true;
 }
