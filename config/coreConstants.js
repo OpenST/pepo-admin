@@ -50,7 +50,19 @@ class CoreConstants {
   }
 
   get appName() {
-    return 'pepo-web';
+    return process.env.DEVOPS_APP_NAME;
+  }
+
+  get DEVOPS_ENV_ID() {
+    return process.env.DEVOPS_ENV_ID;
+  }
+
+  get DEVOPS_IP_ADDRESS() {
+    return process.env.DEVOPS_IP_ADDRESS;
+  }
+
+  get DEVOPS_SERVER_IDENTIFIER() {
+    return process.env.DEVOPS_SERVER_IDENTIFIER;
   }
 }
 

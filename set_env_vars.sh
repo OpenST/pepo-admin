@@ -18,3 +18,9 @@ export PAD_COOKIE_SECRET='aa5298d3a3fe181a3a52d085ee1525df5asa498337f8f3b76ca7df
 
 # Debug flag
 export PAD_DEBUG_ENABLED=0
+
+#Devops variables
+export DEVOPS_APP_NAME='pepo-admin'
+export DEVOPS_ENV_ID='localhost'
+export DEVOPS_IP_ADDRESS='127.0.0.1'
+export DEVOPS_SERVER_IDENTIFIER='localhost'
