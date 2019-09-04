@@ -36,6 +36,14 @@ class CoreConstants {
   get COOKIE_SECRET() {
     return process.env.PAD_COOKIE_SECRET;
   }
+
+  get PAD_DEBUG_ENABLED() {
+    return process.env.PAD_DEBUG_ENABLED;
+  }
+
+  get PAD_CSRF_COOKIE_KEY() {
+    return '_ad_csrf';
+  }
 }
 
 module.exports = new CoreConstants();

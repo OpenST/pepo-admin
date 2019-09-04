@@ -1,11 +1,9 @@
-const rootPrefix = '..',
-  coreConstants = require(rootPrefix + '/config/coreConstants'),
-  responseHelper = require(rootPrefix + '/lib/formatter/response');
+const rootPrefix = '..';
 
 let helper = null;
 
 module.exports = helper = {
-	block: function(name) {
+  block: function(name) {
     var blocks = this._blocks,
       content = blocks && blocks[name];
 

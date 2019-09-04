@@ -15,3 +15,6 @@ export PAD_CLOUD_FRONT_BASE_DOMAIN='http://cloudfront.com'
 
 # Cookie secret
 export PAD_COOKIE_SECRET='aa5298d3a3fe181a3a52d085ee1525df5asa498337f8f3b76ca7df0a5de3211b'
+
+# Debug flag
+export PAD_DEBUG_ENABLED=0
