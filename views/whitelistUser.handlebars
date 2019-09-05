@@ -1,9 +1,20 @@
 <div class="container">
   <br/>
-  <form class="form-inline" id="whitelist-user-search-form">
-    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="whitelist-search-btn">Search</button>
-  </form>
+  <div class="inline-block">
+    <form class="form-inline" id="whitelist-user-search-form">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="whitelist-search-btn">Search</button>
+
+      <select class="form-control custom-select mr-sm-2 float-right" id="user-sort">
+        <option selected>Sort by...</option>
+        <option value="desc">New First</option>
+        <option value="asc">Old First</option>
+        <option value="sts_asc">Pending First</option>
+        <option value="sts_desc">Pending Last</option>
+      </select>
+
+    </form>
+  </div>
 
   <br/>
 

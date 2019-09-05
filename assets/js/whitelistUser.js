@@ -35,6 +35,23 @@
         query = query + '&pagination_identifier=' + oThis.lastPaginationId;
         oThis.loadUsers(query);
       });
+
+      // Load next page
+      $('#user-sort').change(function(event) {
+        event.preventDefault();
+
+        var sortBy = $(this)
+          .children('option:selected')
+          .val();
+
+        var query = oThis.query;
+
+        if (sortBy) {
+          query = query + '&sort_by=' + sortBy;
+        }
+        $('#whitelist-user-search-results').html('');
+        oThis.loadUsers(query);
+      });
     },
 
     loadUsers: function(data) {
@@ -83,53 +100,21 @@
 
         for (var ind = 0; ind < searchResults.length; ind++) {
           var inviteId = searchResults[ind]['payload'].invite_id;
-          var link_id = searchResults[ind]['payload'].link_id;
 
-          var userData = response.data['invites'][inviteId];
+          var inviteData = response.data['invites'][inviteId];
 
-          // Get video link
-          var videoLink = '';
-          if (!response.data['videos'][video_id]) {
-            // Nothing to do
-          } else {
-            videoLink = response.data['videos'][video_id].resolutions['720w']
-              ? response.data['videos'][video_id].resolutions['720w'].url
-              : response.data['videos'][video_id].resolutions['original'].url;
-          }
-
-          var status = userData.approved_creator ? 'Approved' : 'Pending';
-
-          if (userData.status == 'INACTIVE') {
-            status = 'Blocked';
-          }
-
-          // Get social link
-          var socialLink = '';
-          if (!response.data['links'][link_id]) {
-            // Nothing to do
-          } else {
-            socialLink = response.data['links'][link_id].url;
-          }
-
-          var adminAction = response.data['adminActions'][inviteId];
-
-          if (adminAction) {
-            adminAction.createdAt = new Date(adminAction.createdAt).toDateString();
-          }
+          var whitelistStatus = inviteData.admin_status == 'WHITELISTED' ? 'Whitelisted' : 'Pending';
 
           var context = {
             inviteId: inviteId,
-            name: userData.name,
-            userName: userData.user_name,
-            status: status,
-            videoLink: videoLink,
-            socialLink: socialLink,
-            adminAction: adminAction
+            name: inviteData.name,
+            userName: inviteData.handle,
+            status: whitelistStatus
           };
 
           var html = userRowTemplate(context);
 
-          $('#user-search-results').append(html);
+          $('#whitelist-user-search-results').append(html);
         }
 
         oThis.bindUserStateChangeEvents();
@@ -164,7 +149,7 @@
       var token = $('meta[name="csrf-token"]').attr('content');
 
       $.ajax({
-        url: oThis.whitelistUser(invite_id),
+        url: oThis.whitelistUserUrl(invite_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
@@ -188,7 +173,7 @@
       return '/api/admin/launch-invites/search';
     },
 
-    whitelistUser: function(invite_id) {
+    whitelistUserUrl: function(invite_id) {
       return '/api/admin/whitelist/' + invite_id;
     }
   };

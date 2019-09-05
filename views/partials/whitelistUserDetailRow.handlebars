@@ -14,11 +14,11 @@
 
     <td scope="col">
       \{{#ifCond status '!=' "Whitelisted"}}
-        <button class="btn btn-outline-danger" id="whitelist-user-save-btn" data-invite-id=\{{inviteId}}>Save</button>
+        <button class="btn btn-outline-danger" id="whitelist-user-save-btn" data-invite-id=\{{inviteId}}>Whitelist</button>
       \{{/ifCond}}
 
       \{{#ifCond status '==' "Whitelisted"}}
-        <button class="btn btn-danger" id="whitelist-user-save-btn" data-invite-id=\{{inviteId}} disabled>Saved</button>
+        <button class="btn btn-danger" id="whitelist-user-save-btn" data-invite-id=\{{inviteId}} disabled>Whitelisted</button>
       \{{/ifCond}}
     </td>
   </tr>
