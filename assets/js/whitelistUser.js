@@ -7,6 +7,8 @@
 
     oThis.lastPaginationId = null;
     oThis.query = null;
+
+    $('#whitelist-link').addClass('active');
   };
 
   WhitelistUser.prototype = {

@@ -7,6 +7,8 @@
 
     oThis.lastPaginationId = null;
     oThis.query = null;
+
+    $('#user-approval-link').addClass('active');
   };
 
   UserApproval.prototype = {
