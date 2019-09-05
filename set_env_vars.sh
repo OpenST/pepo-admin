@@ -1,5 +1,6 @@
 # Core ENV Details
 export PAD_ENVIRONMENT='development'
+export PAD_PORT=4000
 
 export PAD_ROOT_URL='http://pepodev.com:8080/'
 export PAD_PA_ROOT_URL='http://pepodev.com:8080/'
