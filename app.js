@@ -32,18 +32,23 @@ morgan.token('endTime', function getendTime(req) {
   return hrTime[0] * 1000 + hrTime[1] / 1000000;
 });
 
-morgan.token('endDateTime', function getEndDateTime(req) {
+morgan.token('currentDateTime', function getCurrentDateTime(req) {
   return basicHelper.logDateFormat();
 });
 
 const startRequestLogLine = function(req, res, next) {
   const message =
+    '[' +
+    req.id +
+    ']' +
     "Started '" +
     customUrlParser.parse(req.originalUrl).pathname +
     "'  '" +
     req.method +
     "' at " +
-    basicHelper.logDateFormat();
+    basicHelper.logDateFormat() +
+    ' from agent ' +
+    req.headers['user-agent'];
 
   logger.info(message);
 
@@ -137,9 +142,7 @@ app.use(customMiddleware());
 
 // Load Morgan
 app.use(
-  morgan(
-    '[:id][:endTime] Completed with ":status" in :response-time ms at :endDateTime -  ":res[content-length] bytes" - ":remote-addr" ":remote-user" - "HTTP/:http-version :method :url" - ":referrer" - ":user-agent"'
-  )
+  morgan('[:id][:currentDateTime] Completed with ":status" in :response-time ms -  ":res[content-length] bytes"')
 );
 
 // Helmet helps secure Express apps by setting various HTTP headers.
@@ -206,8 +209,8 @@ app.get('/', function(req, res) {
 app.use(
   '/admin',
   basicAuthentication,
-  startRequestLogLine,
   appendRequestDebugInfo,
+  startRequestLogLine,
   sanitizer.sanitizeBodyAndQuery,
   assignParams,
   adminRoutes
@@ -221,7 +224,9 @@ app.use(function(req, res, next) {
     "'  '" +
     req.method +
     "' at " +
-    basicHelper.logDateFormat();
+    basicHelper.logDateFormat() +
+    ' from agent ' +
+    req.headers['user-agent'];
   logger.info(message);
 
   return responseHelper
