@@ -2,3 +2,4 @@
 //= require common/common.js
 //= require login.js
 //= require userApproval.js
+//= require whitelistUser.js

@@ -1,0 +1,38 @@
+<div class="container">
+  <br/>
+  <form class="form-inline" id="whitelist-user-search-form">
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="whitelist-search-btn">Search</button>
+  </form>
+
+  <br/>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">NAME</th>
+      <th scope="col">STATUS</th>
+      <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody id="whitelist-user-search-results"></tbody>
+  </table>
+
+  <br/>
+  <div class="text-center"> 
+    <button class="btn btn-outline-danger my-2 my-sm-0 justify-content-center" type="submit" id="whitelist-load-btn">Load more</button>
+  </div>
+  <br/>
+</div>
+
+
+{{#contentFor "pageScripts"}}
+  <script type="text/javascript">
+      $(document).ready(function() {
+          let whitelistUser = new window.WhitelistUser({});
+
+          whitelistUser.loadUsers();
+      });
+  </script>
+  {{>whitelistUserDetailRow}}
+{{/contentFor}}

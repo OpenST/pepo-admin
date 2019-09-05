@@ -1,0 +1,25 @@
+<script id="whitelist-user-row" type="text/x-handlebars-template">
+  <tr>
+    <td scope="col">
+      \{{name}}
+      <br/>
+      <small>@\{{userName}}</small>
+      <br/>
+      \{{#if socialLink}}
+        <a href=\{{socialLink}} target="_blank"><i class="fa fa-link"></i></a>
+      \{{/if}}
+    </td>
+
+    <td scope="col">\{{status}}</td>
+
+    <td scope="col">
+      \{{#ifCond status '!=' "Whitelisted"}}
+        <button class="btn btn-outline-danger" id="whitelist-user-save-btn" data-invite-id=\{{inviteId}}>Save</button>
+      \{{/ifCond}}
+
+      \{{#ifCond status '==' "Whitelisted"}}
+        <button class="btn btn-danger" id="whitelist-user-save-btn" data-invite-id=\{{inviteId}} disabled>Saved</button>
+      \{{/ifCond}}
+    </td>
+  </tr>
+</script>

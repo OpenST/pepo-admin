@@ -127,7 +127,7 @@ const basicAuthentication = function(req, res, next) {
 // If the process is not a master
 
 // Set worker process title
-process.title = 'pepo web node worker';
+process.title = 'pepo admin node worker';
 
 // Create express application instance
 const app = express();
@@ -178,6 +178,8 @@ if (coreConstants.isProduction || coreConstants.isStaging) {
   connectAssetConfig.servePath = coreConstants.PAD_CLOUD_FRONT_BASE_DOMAIN + '/' + coreConstants.appName + '/js-css';
   connectAssetConfig.bundle = true;
   connectAssetConfig.compress = true;
+} else {
+  connectAssetConfig.servePath = 'builtAssets';
 }
 
 const connectAssets = require('connect-assets')(connectAssetConfig);

@@ -46,4 +46,15 @@ router.get('/user-approval', csrfProtection, sanitizer.sanitizeDynamicUrlParams,
   );
 });
 
+/* User whitelist */
+router.get('/whitelist', csrfProtection, sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
+  const onServiceSuccess = async function(serviceResponse) {};
+
+  const onServiceFailure = async function(serviceResponse) {};
+
+  Promise.resolve(
+    routeHelper.perform(req, res, next, 'whitelistUser', 'r_a_ad_3', null, onServiceSuccess, onServiceFailure)
+  );
+});
+
 module.exports = router;
