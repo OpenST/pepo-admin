@@ -35,7 +35,7 @@
           contentType: 'application/json',
           success: function(response) {
             if (response.data) {
-              window.location = '/admin/user-approval';
+              window.location = '/admin/whitelist';
             } else {
               console.error('=======Unknown response====');
             }
