@@ -98,7 +98,7 @@ const appendRequestDebugInfo = function(req, res, next) {
 };
 
 const basicAuthentication = function(req, res, next) {
-  if (coreConstants.PAD_USE_BASIC_AUTH == 'false') {
+  if (!coreConstants.USE_BASIC_AUTH) {
     return next();
   }
 

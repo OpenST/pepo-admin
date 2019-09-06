@@ -13,8 +13,8 @@ class CoreConstants {
    */
   constructor() {}
 
-  get PAD_USE_BASIC_AUTH() {
-    return process.env.PAD_USE_BASIC_AUTH;
+  get USE_BASIC_AUTH() {
+    return process.env.PAD_USE_BASIC_AUTH == '1';
   }
 
   get PAD_BASIC_AUTH_USERNAME() {
