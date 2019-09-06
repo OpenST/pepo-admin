@@ -48,9 +48,10 @@
 
         var query = oThis.query;
 
-        if (sortBy) {
+        if (sortBy != 0) {
           query = query + '&sort_by=' + sortBy;
         }
+
         $('#whitelist-user-search-results').html('');
         oThis.loadUsers(query);
       });
