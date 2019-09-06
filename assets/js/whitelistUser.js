@@ -117,7 +117,8 @@
             name: inviteData.name,
             userName: inviteData.handle,
             status: whitelistStatus,
-            isCreator: isCreator
+            isCreator: isCreator,
+            email: inviteData.email
           };
 
           var html = userRowTemplate(context);
