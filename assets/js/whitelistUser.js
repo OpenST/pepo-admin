@@ -110,11 +110,14 @@
 
           var whitelistStatus = inviteData.admin_status == 'WHITELISTED' ? 'Whitelisted' : 'Pending';
 
+          var isCreator = inviteData.is_creator == true ? 'Yes' : 'No';
+
           var context = {
             inviteId: inviteId,
             name: inviteData.name,
             userName: inviteData.handle,
-            status: whitelistStatus
+            status: whitelistStatus,
+            isCreator: isCreator
           };
 
           var html = userRowTemplate(context);
