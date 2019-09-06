@@ -119,7 +119,7 @@
           var adminAction = response.data['adminActions'][userId];
 
           if (adminAction) {
-            adminAction.createdAt = new Date(adminAction.createdAt).toDateString();
+            adminAction.createdAt = new Date(adminAction.createdAt * 1000).toDateString();
           }
 
           var context = {
