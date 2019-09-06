@@ -5,6 +5,8 @@
     init: function() {
       const oThis = this;
 
+      oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+
       $.ajax({
         url: oThis.currentAdminUrl(),
         type: 'GET',
@@ -21,8 +23,6 @@
       oThis.registerHandlebarHelpers();
 
       oThis.bindEvents();
-
-      oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     },
 
     registerHandlebarHelpers: function() {

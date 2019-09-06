@@ -7,7 +7,7 @@ export PAD_PA_ROOT_URL='http://pepodev.com:8080/api'
 export PAD_PA_COOKIE_DOMAIN='.pepodev.com'
 
 # Basic Auth credentials
-export PAD_USE_BASIC_AUTH='1'
+export PAD_USE_BASIC_AUTH='0'
 export PAD_BASIC_AUTH_USERNAME='ost'
 export PAD_BASIC_AUTH_PASSWORD='A$F^&n!@$ghf%7'
 
