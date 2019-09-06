@@ -216,6 +216,10 @@ app.use(
   adminRoutes
 );
 
+app.use('/admin', function(req, res, next) {
+  return res.redirect('/admin/login');
+});
+
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
   const message =
@@ -229,26 +233,14 @@ app.use(function(req, res, next) {
     req.headers['user-agent'];
   logger.info(message);
 
-  return responseHelper
-    .error({
-      internal_error_identifier: 'a_2',
-      api_error_identifier: 'resource_not_found',
-      debug_options: {}
-    })
-    .renderResponse(res, { api_error_config: errorConfig });
+  return res.sendFile(path.join(__dirname + '/public/404.html'));
 });
 
 // Error handler
 app.use(function(err, req, res, next) {
   logger.error('a_6', 'Something went wrong', err);
 
-  return responseHelper
-    .error({
-      internal_error_identifier: 'a_3',
-      api_error_identifier: 'something_went_wrong',
-      debug_options: {}
-    })
-    .renderResponse(res, { api_error_config: errorConfig });
+  return res.sendFile(path.join(__dirname + '/public/500.html'));
 });
 
 module.exports = app;
