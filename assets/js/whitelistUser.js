@@ -183,7 +183,7 @@
             .html('Approved');
         };
 
-        oThis.approveUserUrl(invite_id, updateButtonStatus);
+        oThis.approveUser(invite_id, updateButtonStatus);
       });
     },
 
