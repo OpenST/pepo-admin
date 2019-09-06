@@ -15,11 +15,11 @@
     <td scope="col">\{{status}}</td>
 
     <td scope="col">
-      \{{#ifCond creatorStatus '==' "REQUESTED"}}
+      \{{#ifCond creatorStatus '==' "APPLIED"}}
         <button class="btn btn-outline-danger" id="creator-approve-save-btn" data-invite-id=\{{inviteId}}>Approve</button>
       \{{/ifCond}}
 
-      \{{#ifCond creatorStatus '!=' "REQUESTED"}}
+      \{{#ifCond creatorStatus '!=' "APPLIED"}}
         \{{creatorStatus}}
       \{{/ifCond}}
     </td>

@@ -113,14 +113,14 @@
           var creatorStatus = '';
 
           switch (inviteData.creator_status) {
-            case 'NOT_REQUESTED':
+            case 'NOT_APPLIED':
               creatorStatus = 'Not Requested';
               break;
             case 'APPROVED':
               creatorStatus = 'Approved';
               break;
             default:
-              creatorStatus = 'REQUESTED';
+              creatorStatus = 'APPLIED';
           }
 
           var context = {
