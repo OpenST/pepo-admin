@@ -110,14 +110,25 @@
 
           var whitelistStatus = inviteData.admin_status == 'WHITELISTED' ? 'Whitelisted' : 'Pending';
 
-          var isCreator = inviteData.is_creator == true ? 'Yes' : 'No';
+          var creatorStatus = '';
+
+          switch (inviteData.creator_status) {
+            case 'NOT_REQUESTED':
+              creatorStatus = 'Not Requested';
+              break;
+            case 'APPROVED':
+              creatorStatus = 'Approved';
+              break;
+            default:
+              creatorStatus = 'REQUESTED';
+          }
 
           var context = {
             inviteId: inviteId,
             name: inviteData.name,
             userName: inviteData.handle,
             status: whitelistStatus,
-            isCreator: isCreator,
+            creatorStatus: creatorStatus,
             email: inviteData.email
           };
 
@@ -146,9 +157,59 @@
           $(button).html('Saved');
           $(button).addClass('disabled');
           $(button).css('pointer-events', 'none');
+          $(button)
+            .parent()
+            .prev()
+            .prev()
+            .html('Whitelisted');
         };
 
         oThis.whitelistUser(invite_id, updateButtonStatus);
+      });
+
+      $('button#creator-approve-save-btn').click(function(event) {
+        const button = this;
+
+        event.preventDefault();
+
+        var invite_id = +$(this).attr('data-invite-id');
+
+        var updateButtonStatus = function() {
+          $(button).html('Saved');
+          $(button).addClass('disabled');
+          $(button).css('pointer-events', 'none');
+          $(button)
+            .parent()
+            .html('Approved');
+        };
+
+        oThis.approveUserUrl(invite_id, updateButtonStatus);
+      });
+    },
+
+    approveUser: function(invite_id, successCallback) {
+      const oThis = this;
+
+      var token = $('meta[name="csrf-token"]').attr('content');
+
+      $.ajax({
+        url: oThis.approveUserUrl(invite_id),
+        type: 'POST',
+        data: {},
+        contentType: 'application/json',
+        headers: {
+          'csrf-token': token
+        },
+        success: function(response) {
+          if (response.data) {
+            successCallback();
+          } else {
+            console.error('=======Unknown response====');
+          }
+        },
+        error: function(error) {
+          console.error('===error', error);
+        }
       });
     },
 
@@ -181,13 +242,19 @@
     adminWhitelistUserSearchUrl: function() {
       const oThis = this;
 
-      return oThis.apiUrl + '/admin/launch-invites/search';
+      return oThis.apiUrl + '/admin/pre-launch/users/search';
     },
 
     whitelistUserUrl: function(invite_id) {
       const oThis = this;
 
-      return oThis.apiUrl + '/admin/whitelist/' + invite_id;
+      return oThis.apiUrl + '/admin/pre-launch/whitelist/' + invite_id;
+    },
+
+    approveUserUrl: function(invite_id) {
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/pre-launch/approve/' + invite_id;
     }
   };
 

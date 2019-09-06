@@ -14,7 +14,15 @@
 
     <td scope="col">\{{status}}</td>
 
-    <td scope="col">\{{isCreator}}</td>
+    <td scope="col">
+      \{{#ifCond creatorStatus '==' "REQUESTED"}}
+        <button class="btn btn-outline-danger" id="creator-approve-save-btn" data-invite-id=\{{inviteId}}>Approve</button>
+      \{{/ifCond}}
+
+      \{{#ifCond creatorStatus '!=' "REQUESTED"}}
+        \{{creatorStatus}}
+      \{{/ifCond}}
+    </td>
 
     <td scope="col">
       \{{#ifCond status '!=' "Whitelisted"}}
