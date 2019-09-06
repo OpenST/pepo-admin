@@ -64,6 +64,10 @@ class CoreConstants {
   get DEVOPS_SERVER_IDENTIFIER() {
     return process.env.DEVOPS_SERVER_IDENTIFIER;
   }
+
+  get PAD_PA_ROOT_URL() {
+    return process.env.PAD_PA_ROOT_URL;
+  }
 }
 
 module.exports = new CoreConstants();

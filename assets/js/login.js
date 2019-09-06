@@ -4,6 +4,8 @@
 
     $.extend(oThis.config, config);
     oThis.bindEvents();
+
+    oThis.apiUrl = $('meta[name="api-url"]').attr('content');
   };
 
   Login.prototype = {
@@ -47,7 +49,9 @@
     },
 
     loginPostUrl: function() {
-      return '/api/admin/login';
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/login';
     }
   };
 

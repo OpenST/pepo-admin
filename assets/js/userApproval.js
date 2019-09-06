@@ -8,6 +8,8 @@
     oThis.lastPaginationId = null;
     oThis.query = null;
 
+    oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+
     $('#user-approval-link').addClass('active');
   };
 
@@ -255,15 +257,21 @@
     },
 
     adminUserSearchUrl: function() {
-      return '/api/admin/users';
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/users';
     },
 
     approveUserAsCreatorUrl: function(user_id) {
-      return '/api/admin/users/' + user_id + '/approve';
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/users/' + user_id + '/approve';
     },
 
     blockUserUrl: function(user_id) {
-      return '/api/admin/users/' + user_id + '/block';
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/users/' + user_id + '/block';
     }
   };
 

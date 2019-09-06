@@ -16,7 +16,7 @@ router.use(cookieParser(coreConstant.COOKIE_SECRET));
 const csrfProtection = csrf({
   cookie: {
     key: coreConstant.PAD_CSRF_COOKIE_KEY,
-    maxAge: 1000 * 5 * 60, // Cookie would expire after 5 minutes
+    maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie would expire after 1 month
     httpOnly: true, // The cookie only accessible by the web server
     signed: true, // Indicates if the cookie should be signed
     secure: true, // Marks the cookie to be used with HTTPS only

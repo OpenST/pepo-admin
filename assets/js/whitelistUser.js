@@ -8,6 +8,8 @@
     oThis.lastPaginationId = null;
     oThis.query = null;
 
+    oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+
     $('#whitelist-link').addClass('active');
   };
 
@@ -173,11 +175,15 @@
     },
 
     adminWhitelistUserSearchUrl: function() {
-      return '/api/admin/launch-invites/search';
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/launch-invites/search';
     },
 
     whitelistUserUrl: function(invite_id) {
-      return '/api/admin/whitelist/' + invite_id;
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/whitelist/' + invite_id;
     }
   };
 

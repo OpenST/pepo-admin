@@ -21,6 +21,8 @@
       oThis.registerHandlebarHelpers();
 
       oThis.bindEvents();
+
+      oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     },
 
     registerHandlebarHelpers: function() {
@@ -84,13 +86,13 @@
     logoutUrl: function() {
       const oThis = this;
 
-      return '/api/admin/logout';
+      return oThis.apiUrl + '/admin/logout';
     },
 
     currentAdminUrl: function() {
       const oThis = this;
 
-      return '/api/admin/current';
+      return oThis.apiUrl + '/admin/current';
     }
   };
 
