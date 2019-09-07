@@ -1,5 +1,5 @@
 (function(window, $) {
-  const WhitelistUser = function(config) {
+  const UserProfile = function(config) {
     const oThis = this;
 
     $.extend(oThis.config, config);
@@ -9,11 +9,9 @@
     oThis.query = null;
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
-
-    $('#whitelist-link').addClass('active');
   };
 
-  WhitelistUser.prototype = {
+  UserProfile.prototype = {
     bindEvents: function() {
       const oThis = this;
 
@@ -28,7 +26,7 @@
         // Reset search results table
         $('#whitelist-user-search-results').html('');
 
-        oThis.loadUsers(data);
+        oThis.loadVideos(data);
       });
 
       // Load next page
@@ -37,34 +35,16 @@
 
         var query = oThis.query;
         query = query + '&pagination_identifier=' + oThis.lastPaginationId;
-        oThis.loadUsers(query);
-      });
-
-      // Apply sort filter
-      $('#user-sort').change(function(event) {
-        event.preventDefault();
-
-        var sortBy = $(this)
-          .children('option:selected')
-          .val();
-
-        var query = oThis.query;
-
-        if (sortBy != 0) {
-          query = query + '&sort_by=' + sortBy;
-        }
-
-        $('#whitelist-user-search-results').html('');
-        oThis.loadUsers(query);
+        oThis.loadVideos(query);
       });
     },
 
-    loadUsers: function(data) {
+    loadVideos: function(data) {
       const oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
-        url: oThis.adminWhitelistUserSearchUrl(),
+        url: oThis.videoHistoryUrl(),
         type: 'GET',
         data: data,
         contentType: 'application/json',
@@ -164,7 +144,7 @@
             .html('Whitelisted');
         };
 
-        oThis.whitelistUser(invite_id, updateButtonStatus);
+        oThis.UserProfile(invite_id, updateButtonStatus);
       });
 
       $('button#creator-approve-save-btn').click(function(event) {
@@ -183,17 +163,17 @@
             .html('Approved');
         };
 
-        oThis.approveUser(invite_id, updateButtonStatus);
+        oThis.deleteVideo(invite_id, updateButtonStatus);
       });
     },
 
-    approveUser: function(invite_id, successCallback) {
+    deleteVideo: function(invite_id, successCallback) {
       const oThis = this;
 
       var token = $('meta[name="csrf-token"]').attr('content');
 
       $.ajax({
-        url: oThis.approveUserUrl(invite_id),
+        url: oThis.deleteVideoUrl(invite_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
@@ -213,50 +193,18 @@
       });
     },
 
-    whitelistUser: function(invite_id, successCallback) {
-      const oThis = this;
-
-      var token = $('meta[name="csrf-token"]').attr('content');
-
-      $.ajax({
-        url: oThis.whitelistUserUrl(invite_id),
-        type: 'POST',
-        data: {},
-        contentType: 'application/json',
-        headers: {
-          'csrf-token': token
-        },
-        success: function(response) {
-          if (response.data) {
-            successCallback();
-          } else {
-            console.error('=======Unknown response====');
-          }
-        },
-        error: function(error) {
-          console.error('===error', error);
-        }
-      });
-    },
-
-    adminWhitelistUserSearchUrl: function() {
+    videoHistoryUrl: function() {
       const oThis = this;
 
       return oThis.apiUrl + '/admin/pre-launch/users/search';
     },
 
-    whitelistUserUrl: function(invite_id) {
-      const oThis = this;
-
-      return oThis.apiUrl + '/admin/pre-launch/whitelist/' + invite_id;
-    },
-
-    approveUserUrl: function(invite_id) {
+    deleteVideoUrl: function(invite_id) {
       const oThis = this;
 
       return oThis.apiUrl + '/admin/pre-launch/approve/' + invite_id;
     }
   };
 
-  window.WhitelistUser = WhitelistUser;
+  window.UserProfile = UserProfile;
 })(window, jQuery);

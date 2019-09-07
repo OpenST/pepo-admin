@@ -18,7 +18,11 @@ const rootPrefix = '..',
  */
 class RoutesHelper {
   static async perform(req, res, next, templateName, errorCode, dataFormatter, successCallback, failureCallback) {
-    return res.render(templateName, { csrfToken: req.csrfToken(), apiUrl: coreConstants.PAD_PA_ROOT_URL });
+    return res.render(templateName, {
+      csrfToken: req.csrfToken(),
+      apiUrl: coreConstants.PAD_PA_ROOT_URL,
+      params: req.decodedParams
+    });
   }
 }
 

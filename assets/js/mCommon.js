@@ -3,3 +3,4 @@
 //= require login.js
 //= require userApproval.js
 //= require whitelistUser.js
+//= require userProfile.js

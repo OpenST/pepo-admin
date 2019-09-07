@@ -16,10 +16,10 @@ router.use(cookieParser(coreConstant.COOKIE_SECRET));
 const csrfProtection = csrf({
   cookie: {
     key: coreConstant.PAD_CSRF_COOKIE_KEY,
-    maxAge: 30 * 24 * 60 * 60 * 1000, // Cookie would expire after 1 month
+    maxAge: 30 * 24 * 60 * 60, // Cookie would expire after 1 month
     httpOnly: true, // The cookie only accessible by the web server
     signed: true, // Indicates if the cookie should be signed
-    secure: true, // Marks the cookie to be used with HTTPS only
+    secure: coreConstant.isProduction, // Marks the cookie to be used with HTTPS only
     path: '/',
     sameSite: 'strict', // sets the same site policy for the cookie
     domain: coreConstant.PAD_PA_COOKIE_DOMAIN
@@ -54,6 +54,18 @@ router.get('/whitelist', csrfProtection, sanitizer.sanitizeDynamicUrlParams, fun
 
   Promise.resolve(
     routeHelper.perform(req, res, next, 'whitelistUser', 'r_a_ad_3', null, onServiceSuccess, onServiceFailure)
+  );
+});
+
+/* User profile */
+router.get('/user-profile/:user_id', csrfProtection, sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
+  req.decodedParams.user_id = req.params.user_id;
+  const onServiceSuccess = async function(serviceResponse) {};
+
+  const onServiceFailure = async function(serviceResponse) {};
+
+  Promise.resolve(
+    routeHelper.perform(req, res, next, 'userProfile', 'r_a_ad_4', null, onServiceSuccess, onServiceFailure)
   );
 });
 

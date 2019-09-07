@@ -102,6 +102,18 @@
               : response.data['videos'][video_id].resolutions['original'].url;
           }
 
+          // Get image link
+          var imageLink = '';
+          if (!userData.profile_image_id) {
+            // Nothing to do
+          } else {
+            var profile_image_id = userData.profile_image_id;
+
+            imageLink = response.data['images'][profile_image_id].resolutions['144w']
+              ? response.data['images'][profile_image_id].resolutions['144w'].url
+              : response.data['images'][profile_image_id].resolutions['original'].url;
+          }
+
           var status = userData.approved_creator ? 'Approved' : 'Pending';
 
           if (userData.status == 'INACTIVE') {
@@ -129,7 +141,8 @@
             status: status,
             videoLink: videoLink,
             socialLink: socialLink,
-            adminAction: adminAction
+            adminAction: adminAction,
+            imageLink: imageLink
           };
 
           var html = userRowTemplate(context);

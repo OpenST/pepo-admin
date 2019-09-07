@@ -1,0 +1,33 @@
+<div class="container">
+  <br/>
+  <div class="inline-block row">
+    <div class="col">
+      {{name}}
+      <br/>
+      <small>{{userName}}</small>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">VIDEO</th>
+      <th scope="col">FANS</th>
+      <th scope="col">PEPO RECEIVED</th>
+      <th scope="col">ACTION</th>
+    </tr>
+    </thead>
+    <tbody id="whitelist-user-search-results"></tbody>
+  </table>
+</div>
+
+{{#contentFor "pageScripts"}}
+  <script type="text/javascript">
+      $(document).ready(function() {
+          let userProfile = new window.UserProfile({});
+
+          userProfile.loadVideos();
+      });
+  </script>
+  {{>videoDetailRow}}
+{{/contentFor}}
