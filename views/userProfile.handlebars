@@ -17,16 +17,22 @@
       <th scope="col">ACTION</th>
     </tr>
     </thead>
-    <tbody id="whitelist-user-search-results"></tbody>
+    <tbody id="video-results"></tbody>
   </table>
+
+  <br/>
+
+  <div class="text-center"> 
+    <button class="btn btn-outline-danger my-2 my-sm-0 justify-content-center" type="submit" id="videos-load-btn">Load more</button>
+  </div>
+
+  <br/>
 </div>
 
 {{#contentFor "pageScripts"}}
   <script type="text/javascript">
       $(document).ready(function() {
           let userProfile = new window.UserProfile({});
-
-          userProfile.loadVideos();
       });
   </script>
   {{>videoDetailRow}}

@@ -1,10 +1,19 @@
 <script id="user-row" type="text/x-handlebars-template">
   <tr>
     <td scope="col">
-      <div class="inline-block">
-        \{{name}}
-        <br/>
-        <small>@\{{userName}}</small>
+      <div class="row">
+        <div class='col-2' id="user-profile-img" data-user-id=\{{userId}}>
+          \{{#if imageLink}}
+            <img src=\{{imageLink}} style="height: 45px; width: 45px; border-radius: 50%;">
+          \{{else}}
+            <i class="fa fa-user-circle" style="font-size: 2.7rem; color: #dc3545;"></i>
+          \{{/if}}
+        </div>
+        <div class='col-10'>
+          <a id="dashboard-user-name" data-user-id=\{{userId}}>\{{name}}</a>
+          <br/>
+          <small>@\{{userName}}</small>
+        </div>
       </div>
     </td>
 

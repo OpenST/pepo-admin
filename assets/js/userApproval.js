@@ -152,6 +152,7 @@
 
         oThis.bindVideoModalEvents();
         oThis.bindUserStateChangeEvents();
+        oThis.bindPostRenderEvents();
       } else {
         console.error('=======Unknown response====', response);
       }
@@ -214,6 +215,14 @@
         } else if (radioValue == '2') {
           oThis.blockUser(user_id, updateButtonStatus);
         }
+      });
+    },
+
+    bindPostRenderEvents: function() {
+      const oThis = this;
+
+      $('div#user-profile-img').click(function(event) {
+        window.location = '/admin/user-profile/' + $(this).attr('data-user-id');
       });
     },
 
