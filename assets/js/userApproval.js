@@ -83,6 +83,10 @@
           $('#load-btn').css('pointer-events', 'none');
           $('#load-btn').html("That's all!");
           $('#load-btn').addClass('disabled');
+        } else {
+          $('#load-btn').css('pointer-events', 'auto');
+          $('#load-btn').html('Load more');
+          $('#load-btn').removeClass('disabled');
         }
 
         for (var ind = 0; ind < searchResults.length; ind++) {
