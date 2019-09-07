@@ -101,6 +101,10 @@
           $('#whitelist-load-btn').css('pointer-events', 'none');
           $('#whitelist-load-btn').html("That's all!");
           $('#whitelist-load-btn').addClass('disabled');
+        } else {
+          $('#whitelist-load-btn').css('pointer-events', 'auto');
+          $('#whitelist-load-btn').html('Load more');
+          $('#whitelist-load-btn').removeClass('disabled');
         }
 
         for (var ind = 0; ind < searchResults.length; ind++) {
