@@ -32,6 +32,10 @@ class CoreConstants {
   get isStaging() {
     return process.env.PAD_ENVIRONMENT == 'staging';
   }
+  
+  get isDevelopment() {
+    return process.env.PAD_ENVIRONMENT == 'development';
+  }
 
   get COOKIE_SECRET() {
     return process.env.PAD_COOKIE_SECRET;
