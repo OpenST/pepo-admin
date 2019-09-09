@@ -177,7 +177,7 @@ const connectAssetConfig = {
   servePath: 'assets'
 };
 
-if (coreConstants.isProduction || coreConstants.isStaging) {
+if (!coreConstants.isDevelopment) {
   connectAssetConfig.servePath = coreConstants.PAD_CLOUD_FRONT_BASE_DOMAIN + '/' + coreConstants.appName + '/js-css';
   connectAssetConfig.bundle = true;
   connectAssetConfig.compress = true;
