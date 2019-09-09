@@ -39,10 +39,16 @@
         data: data,
         contentType: 'application/json',
         success: function(response) {
+          $('#videos-load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
         },
         error: function(error) {
           console.error('===error', error);
+
+          $('#videos-load-btn').addClass('hidden');
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },
@@ -103,7 +109,11 @@
 
         oThis.bindVideoStateChangeEvents();
       } else {
-        console.error('=======Unknown response====', response);
+        console.error('===error', error);
+
+        if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+          window.location = '/admin/unauthorized';
+        }
       }
     },
 
@@ -149,6 +159,10 @@
         },
         error: function(error) {
           console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },

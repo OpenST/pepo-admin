@@ -105,15 +105,9 @@ const basicAuthentication = function(req, res, next) {
   function unauthorized(res) {
     res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
 
-    return responseHelper
-      .error({
-        internal_error_identifier: 'a_1',
-        api_error_identifier: 'unauthorized_api_request',
-        debug_options: {}
-      })
-      .renderResponse(res, {
-        api_error_config: errorConfig
-      });
+    res.status(401);
+
+    return res.sendFile(path.join(__dirname + '/' + rootPrefix + '/public/401.html'));
   }
 
   let user = basicAuth(req);
@@ -215,10 +209,6 @@ app.use(
   assignParams,
   adminRoutes
 );
-
-app.use('/admin', function(req, res, next) {
-  return res.redirect('/admin/login');
-});
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {

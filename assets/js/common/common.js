@@ -7,19 +7,6 @@
 
       oThis.apiUrl = $('meta[name="api-url"]').attr('content');
 
-      $.ajax({
-        url: oThis.currentAdminUrl(),
-        type: 'GET',
-        data: {},
-        contentType: 'application/json',
-        success: function(response) {
-          $('#logout a').removeAttr('hidden');
-        },
-        error: function(error) {
-          $('#login a').removeAttr('hidden');
-        }
-      });
-
       oThis.registerHandlebarHelpers();
 
       oThis.bindEvents();

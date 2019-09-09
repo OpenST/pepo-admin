@@ -1,4 +1,5 @@
 const express = require('express'),
+  path = require('path'),
   router = express.Router(),
   cookieParser = require('cookie-parser');
 
@@ -8,6 +9,7 @@ const rootPrefix = '..',
   coreConstant = require(rootPrefix + '/config/coreConstants'),
   basicHelper = require(rootPrefix + '/helpers/basic'),
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
+  adminConst = require(rootPrefix + '/lib/globalConstant/admin'),
   csrf = require('csurf');
 
 // Node.js cookie parsing middleware.
@@ -26,11 +28,19 @@ const csrfProtection = csrf({
   }
 });
 
-/* Login admin*/
-router.get('/login', csrfProtection, sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
+/* Render unauthorized page */
+router.get('/unauthorized', function(req, res, next) {
+  return res.sendFile(path.join(__dirname + '/' + rootPrefix + '/public/401.html'));
+});
+
+/* Login admin */
+router.get(['/login', '/'], csrfProtection, sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
   const onServiceSuccess = async function(serviceResponse) {};
 
   const onServiceFailure = async function(serviceResponse) {};
+
+  // Delete admin login cookie
+  res.clearCookie(adminConst.loginCookieName, { domain: coreConstant.PAD_PA_COOKIE_DOMAIN });
 
   Promise.resolve(routeHelper.perform(req, res, next, 'login', 'r_a_ad_1', null, onServiceSuccess, onServiceFailure));
 });

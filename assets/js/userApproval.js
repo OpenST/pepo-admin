@@ -51,10 +51,17 @@
         data: data,
         contentType: 'application/json',
         success: function(response) {
+          $('#load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
         },
         error: function(error) {
           console.error('===error', error);
+
+          $('#load-btn').addClass('hidden');
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },
@@ -248,6 +255,10 @@
         },
         error: function(error) {
           console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },
@@ -274,6 +285,10 @@
         },
         error: function(error) {
           console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },
