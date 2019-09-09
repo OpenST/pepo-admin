@@ -79,15 +79,21 @@
 
         for (var ind = 0; ind < searchResults.length; ind++) {
           var videoId = searchResults[ind]['payload'].video_id;
+          var userId = searchResults[ind]['payload'].user_id;
+          var posterImageId = response.data['videos'][videoId].poster_image_id;
 
-          var videoData = response.data['videos'][videoId];
+          var videoData = response.data['video_details'][videoId];
+
+          var imageLink = response.data['images'][posterImageId].resolutions['144w']
+            ? response.data['images'][posterImageId].resolutions['144w'].url
+            : response.data['images'][posterImageId].resolutions['original'].url;
 
           // TODO - match keys
           var context = {
             videoId: videoId,
-            posterImageLink: videoData.name,
-            fanCount: videoData.supporters,
-            pepoReceived: videoData.contributed_to
+            posterImageLink: imageLink,
+            fanCount: videoData.total_contributed_by,
+            pepoReceived: videoData.total_amount_raised_in_wei
           };
 
           var html = videoRowTemplate(context);
@@ -150,7 +156,7 @@
     videoHistoryUrl: function(user_id) {
       const oThis = this;
 
-      return oThis.apiUrl + '/v1/users/' + user_id + '/video-history';
+      return oThis.apiUrl + '/admin/video-history/' + user_id;
     },
 
     deleteVideoUrl: function(video_id) {

@@ -128,7 +128,7 @@
             socialLink = response.data['links'][link_id].url;
           }
 
-          var adminAction = response.data['adminActions'][userId];
+          var adminAction = response.data['admin_actions'][userId];
 
           if (adminAction) {
             adminAction.createdAt = new Date(adminAction.createdAt * 1000).toDateString();
