@@ -8,6 +8,7 @@ const express = require('express'),
   basicAuth = require('basic-auth'),
   helmet = require('helmet'),
   customUrlParser = require('url'),
+  cookieParser = require('cookie-parser'),
   exphbs = require('express-handlebars');
 
 const responseHelper = require(rootPrefix + '/lib/formatter/response'),
@@ -16,6 +17,7 @@ const responseHelper = require(rootPrefix + '/lib/formatter/response'),
   adminRoutes = require(rootPrefix + '/routes/admin'),
   basicHelper = require(rootPrefix + '/helpers/basic'),
   errorConfig = require(rootPrefix + '/config/apiErrorConfig'),
+  cookieHelper = require(rootPrefix + '/helpers/cookie'),
   coreConstants = require(rootPrefix + '/config/coreConstants'),
   handlebarHelper = require(rootPrefix + '/helpers/handlebar'),
   sanitizer = require(rootPrefix + '/helpers/sanitizer');
@@ -142,14 +144,26 @@ app.use(
 // Helmet helps secure Express apps by setting various HTTP headers.
 app.use(helmet());
 
+//Setting view engine template handlebars
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'handlebars');
+
 // Node.js body parsing middleware.
 app.use(bodyParser.json());
 
 // Parsing the URL-encoded data with the qs library (extended: true)
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Setting view engine template handlebars
-app.set('views', path.join(__dirname, 'views'));
+// Sanitize request body and query params
+// NOTE: dynamic variables in URL will be sanitized in routes
+app.use(sanitizer.sanitizeBodyAndQuery, assignParams);
+
+app.use(basicAuthentication);
+
+// Node.js cookie parsing middleware.
+app.use(cookieParser(coreConstants.COOKIE_SECRET));
+
+app.use(cookieHelper.setAdminCsrf());
 
 //Helper is used to ease stringifying JSON
 app.engine(
@@ -161,7 +175,32 @@ app.engine(
     layoutsDir: path.join(__dirname, 'views/layouts')
   })
 );
-app.set('view engine', 'handlebars');
+
+const hbs = require('handlebars');
+hbs.registerHelper('css', function() {
+  const css = connectAssets.options.helperContext.css.apply(this, arguments);
+
+  return new hbs.SafeString(css);
+});
+
+hbs.registerHelper('js', function() {
+  const js = connectAssets.options.helperContext.js.apply(this, arguments);
+  return new hbs.SafeString(js);
+});
+
+hbs.registerHelper('json', function(context) {
+  return JSON.stringify(context);
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(appendRequestDebugInfo, startRequestLogLine);
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/pepo.html'));
+});
+
+app.use('/admin', adminRoutes);
 
 // connect-assets relies on to use defaults in config
 const connectAssetConfig = {
@@ -181,34 +220,6 @@ if (coreConstants.isProduction || coreConstants.isStaging) {
 
 const connectAssets = require('connect-assets')(connectAssetConfig);
 app.use(connectAssets);
-
-const hbs = require('handlebars');
-hbs.registerHelper('css', function() {
-  const css = connectAssets.options.helperContext.css.apply(this, arguments);
-
-  return new hbs.SafeString(css);
-});
-
-hbs.registerHelper('js', function() {
-  const js = connectAssets.options.helperContext.js.apply(this, arguments);
-  return new hbs.SafeString(js);
-});
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/pepo.html'));
-});
-
-app.use(
-  '/admin',
-  basicAuthentication,
-  appendRequestDebugInfo,
-  startRequestLogLine,
-  sanitizer.sanitizeBodyAndQuery,
-  assignParams,
-  adminRoutes
-);
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {

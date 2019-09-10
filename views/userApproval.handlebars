@@ -35,9 +35,9 @@
 {{#contentFor "pageScripts"}}
   <script type="text/javascript">
       $(document).ready(function() {
-          let userApproval = new window.UserApproval({});
-
-          userApproval.loadUsers();
+           var initParams  = {{{json decodedParams}}};
+           var userApproval = new window.UserApproval(initParams);
+            userApproval.loadUsers();
       });
   </script>
   {{>userDetailRow}}

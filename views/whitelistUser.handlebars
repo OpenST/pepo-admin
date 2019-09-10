@@ -42,9 +42,9 @@
 {{#contentFor "pageScripts"}}
   <script type="text/javascript">
       $(document).ready(function() {
-          let whitelistUser = new window.WhitelistUser({});
-
-          whitelistUser.loadUsers();
+              var initParams  = {{{json decodedParams}}};
+              var whitelistUser = new window.WhitelistUser(initParams);
+              whitelistUser.loadUsers();
       });
   </script>
   {{>whitelistUserDetailRow}}

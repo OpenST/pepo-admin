@@ -9,6 +9,7 @@
     oThis.query = null;
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
     $('#whitelist-link').addClass('active');
   };
@@ -196,15 +197,13 @@
     approveUser: function(invite_id, successCallback) {
       const oThis = this;
 
-      var token = $('meta[name="csrf-token"]').attr('content');
-
       $.ajax({
         url: oThis.approveUserUrl(invite_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
         headers: {
-          'csrf-token': token
+          'csrf-token': oThis.csrfToken
         },
         success: function(response) {
           if (response.data) {
@@ -226,15 +225,13 @@
     whitelistUser: function(invite_id, successCallback) {
       const oThis = this;
 
-      var token = $('meta[name="csrf-token"]').attr('content');
-
       $.ajax({
         url: oThis.whitelistUserUrl(invite_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
         headers: {
-          'csrf-token': token
+          'csrf-token': oThis.csrfToken
         },
         success: function(response) {
           if (response.data) {

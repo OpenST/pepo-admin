@@ -41,12 +41,12 @@ class CoreConstants {
     return process.env.PAD_DEBUG_ENABLED;
   }
 
-  get PAD_CSRF_COOKIE_KEY() {
-    return '_ad_csrf';
-  }
-
   get PAD_CLOUD_FRONT_BASE_DOMAIN() {
     return process.env.PAD_CLOUD_FRONT_BASE_DOMAIN;
+  }
+
+  get PAD_PA_COOKIE_DOMAIN() {
+    return process.env.PAD_PA_COOKIE_DOMAIN;
   }
 
   get appName() {

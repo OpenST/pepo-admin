@@ -9,6 +9,7 @@
     oThis.query = null;
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
     $('#user-approval-link').addClass('active');
   };
@@ -236,15 +237,13 @@
     approveUserAsCreator: function(user_id, successCallback) {
       const oThis = this;
 
-      var token = $('meta[name="csrf-token"]').attr('content');
-
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
         headers: {
-          'csrf-token': token
+          'csrf-token': oThis.csrfToken
         },
         success: function(response) {
           if (response.data) {
@@ -266,15 +265,13 @@
     blockUser: function(user_id, successCallback) {
       const oThis = this;
 
-      var token = $('meta[name="csrf-token"]').attr('content');
-
       $.ajax({
         url: oThis.blockUserUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
         headers: {
-          'csrf-token': token
+          'csrf-token': oThis.csrfToken
         },
         success: function(response) {
           if (response.data) {
