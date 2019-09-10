@@ -135,9 +135,12 @@
             name: inviteData.name,
             userName: inviteData.handle,
             status: whitelistStatus,
+            invitedUserCount: inviteData.invited_user_count,
             creatorStatus: creatorStatus,
             email: inviteData.email
           };
+
+          $('#total-count').html('Total Count: ' + response.data.meta.total_no);
 
           var html = userRowTemplate(context);
 
