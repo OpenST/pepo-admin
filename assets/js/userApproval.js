@@ -122,12 +122,6 @@
               : response.data['images'][profile_image_id].resolutions['original'].url;
           }
 
-          var status = userData.approved_creator ? 'Approved' : 'Pending';
-
-          if (userData.status == 'INACTIVE') {
-            status = 'Blocked';
-          }
-
           // Get social link
           var socialLink = '';
           if (!response.data['links'][link_id]) {
@@ -136,11 +130,10 @@
             socialLink = response.data['links'][link_id].url;
           }
 
-          var adminAction = response.data['admin_actions'][userId];
-
-          if (adminAction) {
-            adminAction.createdAt = new Date(adminAction.createdAt * 1000).toDateString();
-          }
+          var userStats = response.data['user_stats'][userId];
+          var userViewLink = response.data['user_view_link_map'][userId];
+          var pepoCoins = response.data['user_pepo_coins_map'][userId];
+          var twitterLink = 'https://twitter.com/dummy'; //TODO - twitter link
 
           var context = {
             userId: userId,
@@ -149,8 +142,13 @@
             status: status,
             videoLink: videoLink,
             socialLink: socialLink,
-            adminAction: adminAction,
-            imageLink: imageLink
+            imageLink: imageLink,
+            userStats: userStats,
+            pepoCoins: pepoCoins,
+            userViewLink: userViewLink,
+            twitterLink: twitterLink,
+            refferalCount: '0',
+            userEmail: 'santhosh@ost.com' // TODO: user email
           };
 
           var html = userRowTemplate(context);
@@ -198,30 +196,26 @@
     bindUserStateChangeEvents: function() {
       const oThis = this;
 
-      $('button#user-save-btn').click(function(event) {
-        const button = this;
-
+      // Invoke admin action
+      $('.admin-action').change(function(event) {
         event.preventDefault();
 
-        var radioBtn = $("input[name='userCreatorState']:checked");
-        var radioValue = radioBtn.val();
-        var user_id = +$(this).attr('data-user-id');
-        var userFromRadioBtn = radioBtn.attr('data-user-id');
+        const dropdown = $(this);
 
-        if (userFromRadioBtn != user_id) {
-          radioValue = null;
-        }
+        var user_id = $(this).attr('data-user-id');
 
-        var updateButtonStatus = function() {
-          $(button).html('Saved');
-          $(button).addClass('disabled');
-          $(button).css('pointer-events', 'none');
+        var action = $(this)
+          .children('option:selected')
+          .val();
+
+        var successCallback = function() {
+          dropdown.children('option:selected').text(action + 'ed');
         };
 
-        if (radioValue == '1') {
-          oThis.approveUserAsCreator(user_id, updateButtonStatus);
-        } else if (radioValue == '2') {
-          oThis.blockUser(user_id, updateButtonStatus);
+        if (action == 'approve') {
+          oThis.approveUserAsCreator(user_id, successCallback);
+        } else if (action == 'block') {
+          oThis.blockUser(user_id, successCallback);
         }
       });
     },
@@ -231,6 +225,14 @@
 
       $('div#user-profile-img').click(function(event) {
         window.location = '/admin/user-profile/' + $(this).attr('data-user-id');
+      });
+
+      $('.email-copy').click(function(event) {
+        event.preventDefault();
+        var userEmail = $(this).attr('data-user-email');
+
+        userEmail.select();
+        document.execCommand('copy');
       });
     },
 
@@ -288,6 +290,10 @@
           }
         }
       });
+    },
+
+    copyEmail: function() {
+      const oThis = this;
     },
 
     adminUserSearchUrl: function() {

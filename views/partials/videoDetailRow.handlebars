@@ -1,7 +1,10 @@
 <script id="video-detail-row" type="text/x-handlebars-template">
   <tr>
     <td scope="col">
-      <img src=\{{posterImageLink}} id="video-thumbnail" style="height: 50px; width: 50px;">
+      <div class="video-thumbnail" data-video-link=\{{videoLink}}>
+        <img src=\{{posterImageLink}} style="height: 50px; width: 50px;">
+        <i class="fa fa-play-circle text-danger"></i>
+      </div>
     </td>
 
     <td scope="col">\{{fanCount}}</td>
@@ -9,7 +12,7 @@
     <td scope="col">\{{pepoReceived}}</td>
 
     <td scope="col">
-      <button class="btn btn-danger" id="video-delete-btn" data-video-id=\{{videoId}}>Delete</button>
+      <button class="btn btn-outline-danger" id="video-delete-btn" data-video-id=\{{videoId}}>Delete</button>
     </td>
   </tr>
 </script>

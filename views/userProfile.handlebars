@@ -1,10 +1,14 @@
 <div class="container">
   <br/>
-  <div class="inline-block row">
-    <div class="col">
+  <div class="row">
+    <div class="col-2">
       {{name}}
       <br/>
       <small>{{userName}}</small>
+    </div>
+
+    <div class="col-10">
+      
     </div>
   </div>
 
@@ -19,6 +23,8 @@
     </thead>
     <tbody id="video-results"></tbody>
   </table>
+
+  <div id="modal-container"></div>
 
   <br/>
 
@@ -37,4 +43,5 @@
       });
   </script>
   {{>videoDetailRow}}
+  {{>videoModal}}
 {{/contentFor}}

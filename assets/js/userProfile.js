@@ -87,7 +87,10 @@
         for (var ind = 0; ind < searchResults.length; ind++) {
           var videoId = searchResults[ind]['payload'].video_id;
           var userId = searchResults[ind]['payload'].user_id;
-          var posterImageId = response.data['videos'][videoId].poster_image_id;
+          var video = response.data['videos'][videoId];
+          var posterImageId = video.poster_image_id;
+
+          var videoLink = video.resolutions['720w'] ? video.resolutions['720w'].url : video.resolutions['original'].url;
 
           var videoData = response.data['video_details'][videoId];
 
@@ -100,7 +103,8 @@
             videoId: videoId,
             posterImageLink: imageLink,
             fanCount: videoData.total_contributed_by,
-            pepoReceived: videoData.total_amount_raised_in_wei
+            pepoReceived: videoData.total_amount_raised_in_wei,
+            videoLink: videoLink
           };
 
           var html = videoRowTemplate(context);
@@ -108,6 +112,7 @@
           $('#video-results').append(html);
         }
 
+        oThis.bindVideoModalEvents();
         oThis.bindVideoStateChangeEvents();
       } else {
         console.error('===error', error);
@@ -135,6 +140,37 @@
         };
 
         oThis.deleteVideo(videoId, updateButtonStatus);
+      });
+    },
+
+    bindVideoModalEvents: function() {
+      const oThis = this;
+
+      var videoSource = document.getElementById('video-tray').innerHTML;
+      var videoTemplate = Handlebars.compile(videoSource);
+
+      // Add listner for video thumbnail click
+      $('tr td .video-thumbnail').click(function(event) {
+        event.preventDefault();
+
+        var videoLink = $(this).attr('data-video-link');
+
+        console.log('====videoLink', videoLink);
+
+        $('#modal-container').html(videoTemplate({ videoLink: videoLink }));
+
+        $('.modal').modal('show');
+
+        // Remove the backdrop explicitly - seems to be a bootstrap bug
+        $('button.close').click(function(event) {
+          $('.modal-backdrop').remove();
+        });
+
+        // Stop playing video
+        $('#modal-container').on('hidden.bs.modal', function(event) {
+          $('.modal-backdrop').remove();
+          $('#modal-container').html('');
+        });
       });
     },
 

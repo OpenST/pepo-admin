@@ -8,13 +8,44 @@ html, body {
 	top: 3%;
 }
 
-i.fa.fa-link {
+.icon-border {
 	color: white;
-	background: #dc3545;
-	border-radius: 100px;
-	padding: 3%;
+	background: black;
+	border-radius: 50%;
+  font-size: 0.7rem;
+	padding: 1.5%;
+}
+
+.email-copy:hover {
+  cursor: pointer;
 }
 
 #user-profile-img:hover {
   cursor: pointer;
+}
+
+.video-thumbnail {
+  position: relative;
+  display: inline-block; 
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.video-thumbnail i.fa.fa-play-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#user-search-results tr td:first-child, tr#dashboard-table-head th:first-child {
+  padding-left:5%;
+  padding-right:0;
+}
+
+#user-search-results tr td:last-child, tr#dashboard-table-head th:last-child {
+  padding-right:5%;
+  padding-left:0;
 }

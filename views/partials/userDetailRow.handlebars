@@ -2,70 +2,92 @@
   <tr>
     <td scope="col">
       <div class="row">
-        <div class='col-2' id="user-profile-img" data-user-id=\{{userId}}>
+        <div class='col-3' id="user-profile-img" data-user-id=\{{userId}}>
           \{{#if imageLink}}
             <img src=\{{imageLink}} style="height: 45px; width: 45px; border-radius: 50%;">
           \{{else}}
             <i class="fa fa-user-circle" style="font-size: 2.7rem; color: #dc3545;"></i>
           \{{/if}}
         </div>
-        <div class='col-10'>
+        <div class='col-9'>
           <a id="dashboard-user-name" data-user-id=\{{userId}}>\{{name}}</a>
           <br/>
           <small>@\{{userName}}</small>
         </div>
       </div>
+
+      <div class="row">
+        <div class='col-3'></div>
+        <div class='col-9'>
+          <a href=\{{twitterLink}} target="_blank"><i class="fa fa-twitter icon-border"></i></a>
+          \{{#if socialLink}}
+            <a href=\{{socialLink}} target="_blank"><i class="fa fa-link icon-border"></i></a>
+          \{{/if}}
+          <span class="email-copy" data-user-email=\{{userEmail}}><i class="fa fa-envelope icon-border"></i></span>
+          <a href=\{{userViewLink}} target="_blank"><i class="fa fa-book icon-border"></i></a>
+        </div>
+      </div>
     </td>
 
     <td scope="col">
-      \{{#if socialLink}}
-        <a href=\{{socialLink}} target="_blank"><i class="fa fa-link"></i></a>
-      \{{/if}}
+      \{{refferalCount}}
     </td>
 
-    <td scope="col">\{{status}}</td>
+    <td scope="col">
+        <div class="row">
+        <div class='col'>
+          \{{userStats.total_contributed_to}}
+          <br/>
+          <small>Supporting</small>
+        </div>
+        <div class='col'>
+          \{{userStats.total_contributed_by}}
+          <br/>
+          <small>Supporters</small>
+        </div>
+      </div>
+    </td>
+
+    <td scope="col">
+        <div class="row">
+        <div class='col'>
+          \{{userStats.total_amount_raised_in_wei}}
+          <br/>
+          <small>Received</small>
+        </div>
+
+        <div class='col'>
+          \{{userStats.total_amount_spent_in_wei}}
+          <br/>
+          <small>Spent</small>
+        </div>
+
+        <div class='col'>
+          \{{pepoCoins.purchased}}
+          <br/>
+          <small>Purchased</small>
+        </div>
+
+        <div class='col'>
+          \{{pepoCoins.redeemed}}
+          <br/>
+          <small>Redeemed</small>
+        </div>
+      </div>
+    </td>
     
     <td scope="col">
       \{{#if videoLink}}
-        <a href=\{{videoLink}} id="video-link">Latest Video <i class="fa fa-video-camera" aria-hidden="true"></i></a>
+        <a href=\{{videoLink}} id="video-link"><i class="fa fa-play-circle text-danger" aria-hidden="true" style="font-size: 2rem;"></i></a>
       \{{/if}}
     </td> 
 
     <td scope="col">
-      \{{#ifCond status '==' "Pending"}}
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="userCreatorState" id="radio1" value="1" data-user-id=\{{userId}}>
-          <label class="form-check-label" for="radio1">
-            Approve
-          </label>
-        </div>
-      \{{/ifCond}}
-
-      \{{#ifCond status '!=' "Blocked"}}
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="userCreatorState" id="radio2" value="2" data-user-id=\{{userId}}>
-          <label class="form-check-label" for="radio2">
-            Block
-          </label>
-        </div>
-      \{{/ifCond}}
-    </td>
-    <td scope="col">
-      \{{#if adminAction}}
-      \{{adminAction.adminName}}
-      <br/>
-      \{{adminAction.createdAt}}
-      \{{/if}}
-    </td>
-
-    <td scope="col">
-      \{{#ifCond status '!=' "Blocked"}}
-        <button class="btn btn-outline-danger" id="user-save-btn" data-user-id=\{{userId}}>Save</button>
-      \{{/ifCond}}
-
-      \{{#ifCond status '==' "Blocked"}}
-        <button class="btn btn-danger" id="user-save-btn" data-user-id=\{{userId}} disabled>Saved</button>
-      \{{/ifCond}}
-    </td>
+      <select class="form-control custom-select mr-sm-2 admin-action" data-user-id=\{{userId}}>
+        <option value="0" selected>Select</option>
+        <option value="approve">Approve</option>
+        <option value="block">Block</option>
+      </select>
+    </td> 
   </tr>
 </script>
