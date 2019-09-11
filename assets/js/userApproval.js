@@ -139,13 +139,17 @@
           var handle = response.data['twitter_users'][userId]['handle'];
           var email = response.data['twitter_users'][userId]['email'];
           var token = response.data['token'];
-          var viewLink =
-            'https://view.stagingost.com/testnet/token/th-' +
-            chainId +
-            '-' +
-            ubtAddress +
-            '-' +
-            userData.ost_token_holder_address;
+          var viewLink = null;
+
+          if (ubtAddress && chainId && userData.ost_token_holder_address) {
+            viewLink =
+              'https://view.stagingost.com/testnet/token/th-' +
+              chainId +
+              '-' +
+              ubtAddress +
+              '-' +
+              userData.ost_token_holder_address;
+          }
 
           var twitterLink = null;
 
@@ -153,8 +157,15 @@
             twitterLink = 'https://twitter.com/' + handle;
           }
 
-          userStats['total_amount_raised'] = oThis.convertWeiToNormal(userStats.total_amount_raised_in_wei);
-          userStats['total_amount_spent'] = oThis.convertWeiToNormal(userStats.total_amount_spent_in_wei);
+          var amountRaised = userStats.total_amount_raised_in_wei
+            ? oThis.convertWeiToNormal(userStats.total_amount_raised_in_wei)
+            : '0';
+          var amountSpent = userStats.total_amount_spent_in_wei
+            ? oThis.convertWeiToNormal(userStats.total_amount_spent_in_wei)
+            : '0';
+
+          userStats['total_amount_raised'] = amountRaised;
+          userStats['total_amount_spent'] = amountSpent;
 
           var context = {
             userId: userId,
@@ -170,6 +181,7 @@
             twitterLink: twitterLink,
             refferalCount: '0',
             userEmail: email,
+            tokenHolder: userData.ost_token_holder_address,
             isCreator: userData.approved_creator
           };
 
@@ -345,7 +357,12 @@
       var normalValueBn = new BigNumber(value).div(eth);
 
       if (normalValueBn.gt(thousand)) {
-        normalValueBn = normalValueBn.div(thousand).decimalPlaces(2) + ' K';
+        normalValueBn =
+          normalValueBn
+            .div(thousand)
+            .decimalPlaces(2)
+            .toString(10) + ' K';
+        return normalValueBn;
       }
 
       return normalValueBn.decimalPlaces(2).toString(10);

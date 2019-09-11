@@ -27,7 +27,9 @@
             <a href=\{{socialLink}} target="_blank"><i class="fa fa-link icon-border"></i></a>
           \{{/if}}
           <span class="email-copy" data-user-email=\{{userEmail}}><i class="fa fa-envelope icon-border"></i></span>
-          <a href=\{{userViewLink}} target="_blank"><i class="fa fa-book icon-border"></i></a>
+          \{{#if userViewLink}}
+            <a href=\{{userViewLink}} target="_blank"><i class="fa fa-book icon-border"></i></a>
+          \{{/if}}
         </div>
       </div>
     </td>
@@ -86,25 +88,31 @@
     </td> 
 
     <td scope="col">
-      <select class="form-control custom-select mr-sm-2 admin-action" data-user-id=\{{userId}}>
-        
-        \{{#ifCond status '===' "ACTIVE"}}
+      \{{#if tokenHolder}}
+          <select class="form-control custom-select mr-sm-2 admin-action" data-user-id=\{{userId}}>
+            
+            \{{#ifCond status '===' "ACTIVE"}}
 
-          \{{#if isCreator}}
-            <option value="approved" selected>Approved</option>
-          \{{else}}
-            <option value="0" selected>Pending</option>
-            <option value="approve">Approve</option>
-          \{{/if}}
+              \{{#if isCreator}}
+                <option value="approved" selected>Approved</option>
+              \{{else}}
+                <option value="0" selected>Pending</option>
+                <option value="approve">Approve</option>
+              \{{/if}}
 
-          <option value="block">Block</option>
-        \{{/ifCond}}
+              <option value="block">Block</option>
+            \{{/ifCond}}
 
-        \{{#ifCond status '===' "INACTIVE"}}
-          <option value="blocked" selected>Blocked</option>
-        \{{/ifCond}}
+            \{{#ifCond status '===' "INACTIVE"}}
+              <option value="blocked" selected>Blocked</option>
+            \{{/ifCond}}
+          
+          </select>      
+      \{{else}}
+        <span class="badge badge-pill badge-danger">TH Not Deployed</span>
+      \{{/if}}
+
       
-      </select>
     </td> 
   </tr>
 </script>
