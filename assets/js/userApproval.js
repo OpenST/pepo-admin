@@ -76,6 +76,9 @@
       if (response.data) {
         var searchResults = response.data[response.data.result_type];
 
+        var ubtAddress = response.data['token'].utility_branded_token;
+        var chainId = response.data['token'].aux_chain_id;
+
         // Handle pagination
         var nextPageId = response.data.meta.next_page_payload
           ? response.data.meta.next_page_payload['pagination_identifier']
@@ -131,24 +134,43 @@
           }
 
           var userStats = response.data['user_stats'][userId];
-          var userViewLink = response.data['user_view_link_map'][userId];
           var pepoCoins = response.data['user_pepo_coins_map'][userId];
-          var twitterLink = 'https://twitter.com/dummy'; //TODO - twitter link
+
+          var handle = response.data['twitter_users'][userId]['handle'];
+          var email = response.data['twitter_users'][userId]['email'];
+          var token = response.data['token'];
+          var viewLink =
+            'https://view.stagingost.com/testnet/token/th-' +
+            chainId +
+            '-' +
+            ubtAddress +
+            '-' +
+            userData.ost_token_holder_address;
+
+          var twitterLink = null;
+
+          if (handle) {
+            twitterLink = 'https://twitter.com/' + handle;
+          }
+
+          userStats['total_amount_raised'] = oThis.convertWeiToNormal(userStats.total_amount_raised_in_wei);
+          userStats['total_amount_spent'] = oThis.convertWeiToNormal(userStats.total_amount_spent_in_wei);
 
           var context = {
             userId: userId,
             name: userData.name,
             userName: userData.user_name,
-            status: status,
+            status: userData.status,
             videoLink: videoLink,
             socialLink: socialLink,
             imageLink: imageLink,
             userStats: userStats,
             pepoCoins: pepoCoins,
-            userViewLink: userViewLink,
+            userViewLink: viewLink,
             twitterLink: twitterLink,
             refferalCount: '0',
-            userEmail: 'santhosh@ost.com' // TODO: user email
+            userEmail: email,
+            isCreator: userData.approved_creator
           };
 
           var html = userRowTemplate(context);
@@ -209,7 +231,8 @@
           .val();
 
         var successCallback = function() {
-          dropdown.children('option:selected').text(action + 'ed');
+          var dropdownText = action == 'approve' ? 'Approved' : 'Blocked';
+          dropdown.children('option:selected').text(dropdownText);
         };
 
         if (action == 'approve') {
@@ -224,7 +247,26 @@
       const oThis = this;
 
       $('div#user-profile-img').click(function(event) {
-        window.location = '/admin/user-profile/' + $(this).attr('data-user-id');
+        var userId = $(this).attr('data-user-id');
+        var userName = $(this).attr('data-user-name');
+        var name = $(this).attr('data-name');
+        var imageLink = $(this).attr('data-image-link');
+        var creatorStatus = $(this).attr('data-creator-status');
+        var userStatus = $(this).attr('data-user-status');
+
+        localStorage.setItem('userName', userName);
+        localStorage.setItem('name', name);
+
+        if (imageLink) {
+          localStorage.setItem('imageLink', imageLink);
+        } else {
+          localStorage.setItem('imageLink', null);
+        }
+
+        localStorage.setItem('creatorStatus', creatorStatus);
+        localStorage.setItem('userStatus', userStatus);
+
+        window.location = '/admin/user-profile/' + userId;
       });
 
       $('.email-copy').click(function(event) {
@@ -294,6 +336,19 @@
 
     copyEmail: function() {
       const oThis = this;
+    },
+
+    convertWeiToNormal: function(value) {
+      var eth = new BigNumber(10).pow(18);
+      var thousand = new BigNumber(10).pow(3);
+
+      var normalValueBn = new BigNumber(value).div(eth);
+
+      if (normalValueBn.gt(thousand)) {
+        normalValueBn = normalValueBn.div(thousand).decimalPlaces(2) + ' K';
+      }
+
+      return normalValueBn.decimalPlaces(2).toString(10);
     },
 
     adminUserSearchUrl: function() {

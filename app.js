@@ -192,6 +192,10 @@ hbs.registerHelper('json', function(context) {
   return JSON.stringify(context);
 });
 
+hbs.registerHelper('with', function(context) {
+  return options.fn(context);
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(appendRequestDebugInfo, startRequestLogLine);

@@ -2,13 +2,14 @@
   <tr>
     <td scope="col">
       <div class="row">
-        <div class='col-3' id="user-profile-img" data-user-id=\{{userId}}>
+        <div class='col-3' id="user-profile-img" data-user-id=\{{userId}} data-name=\{{name}} data-user-name=\{{userName}} data-creator-status=\{{isCreator}} data-user-status=\{{status}} data-image-link=\{{imageLink}}>
           \{{#if imageLink}}
             <img src=\{{imageLink}} style="height: 45px; width: 45px; border-radius: 50%;">
           \{{else}}
             <i class="fa fa-user-circle" style="font-size: 2.7rem; color: #dc3545;"></i>
           \{{/if}}
         </div>
+        
         <div class='col-9'>
           <a id="dashboard-user-name" data-user-id=\{{userId}}>\{{name}}</a>
           <br/>
@@ -19,7 +20,9 @@
       <div class="row">
         <div class='col-3'></div>
         <div class='col-9'>
-          <a href=\{{twitterLink}} target="_blank"><i class="fa fa-twitter icon-border"></i></a>
+          \{{#if twitterLink}}
+            <a href=\{{twitterLink}} target="_blank"><i class="fa fa-twitter icon-border"></i></a>
+          \{{/if}}
           \{{#if socialLink}}
             <a href=\{{socialLink}} target="_blank"><i class="fa fa-link icon-border"></i></a>
           \{{/if}}
@@ -51,13 +54,13 @@
     <td scope="col">
         <div class="row">
         <div class='col'>
-          \{{userStats.total_amount_raised_in_wei}}
+          \{{userStats.total_amount_raised}}
           <br/>
           <small>Received</small>
         </div>
 
         <div class='col'>
-          \{{userStats.total_amount_spent_in_wei}}
+          \{{userStats.total_amount_spent}}
           <br/>
           <small>Spent</small>
         </div>
@@ -84,9 +87,23 @@
 
     <td scope="col">
       <select class="form-control custom-select mr-sm-2 admin-action" data-user-id=\{{userId}}>
-        <option value="0" selected>Select</option>
-        <option value="approve">Approve</option>
-        <option value="block">Block</option>
+        
+        \{{#ifCond status '===' "ACTIVE"}}
+
+          \{{#if isCreator}}
+            <option value="approved" selected>Approved</option>
+          \{{else}}
+            <option value="0" selected>Pending</option>
+            <option value="approve">Approve</option>
+          \{{/if}}
+
+          <option value="block">Block</option>
+        \{{/ifCond}}
+
+        \{{#ifCond status '===' "INACTIVE"}}
+          <option value="blocked" selected>Blocked</option>
+        \{{/ifCond}}
+      
       </select>
     </td> 
   </tr>
