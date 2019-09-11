@@ -34,6 +34,15 @@
     loadVideos: function(data) {
       const oThis = this;
 
+      var status = localStorage.getItem('userStatus');
+
+      if (status == 'INACTIVE') {
+        $('#videos-load-btn').css('pointer-events', 'none');
+        $('#videos-load-btn').html('Blocked user!');
+        $('#videos-load-btn').addClass('disabled');
+        return; // Don't load for blocked users
+      }
+
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
         url: oThis.videoHistoryUrl(oThis.userId),
@@ -238,6 +247,8 @@
       var imageLink = localStorage.getItem('imageLink');
       var isCreator = localStorage.getItem('creatorStatus');
       var status = localStorage.getItem('userStatus');
+
+      imageLink = imageLink == 'null' ? null : imageLink;
 
       var headerContext = {
         name: name,
