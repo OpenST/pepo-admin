@@ -2,6 +2,8 @@
   const UserProfile = function(config) {
     const oThis = this;
 
+    oThis.config = {};
+
     $.extend(oThis.config, config);
     oThis.bindEvents();
 

@@ -2,6 +2,8 @@
   const UserApproval = function(config) {
     const oThis = this;
 
+    oThis.config = {};
+
     $.extend(oThis.config, config);
     oThis.bindEvents();
 
@@ -144,7 +146,7 @@
           if (ubtAddress && chainId && userData.ost_token_holder_address) {
             viewLink =
               oThis.config.viewBaseUrl +
-              'testnet/token/th-' +
+              '/token/th-' +
               chainId +
               '-' +
               ubtAddress +
