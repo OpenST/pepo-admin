@@ -143,7 +143,8 @@
 
           if (ubtAddress && chainId && userData.ost_token_holder_address) {
             viewLink =
-              'https://view.stagingost.com/testnet/token/th-' +
+              oThis.config.viewBaseUrl +
+              'testnet/token/th-' +
               chainId +
               '-' +
               ubtAddress +

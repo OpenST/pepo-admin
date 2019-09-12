@@ -25,3 +25,6 @@ export DEVOPS_APP_NAME='pepo-admin'
 export DEVOPS_ENV_ID='localhost'
 export DEVOPS_IP_ADDRESS='127.0.0.1'
 export DEVOPS_SERVER_IDENTIFIER='localhost'
+
+#View Endpoint
+export VIEW_ROOT_URL='https://view.stagingost.com/testnet'

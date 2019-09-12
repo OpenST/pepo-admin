@@ -68,6 +68,10 @@ class CoreConstants {
   get PAD_PA_ROOT_URL() {
     return process.env.PAD_PA_ROOT_URL;
   }
+
+  get VIEW_ROOT_URL() {
+    return process.env.VIEW_ROOT_URL;
+  }
 }
 
 module.exports = new CoreConstants();

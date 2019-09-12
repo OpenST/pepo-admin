@@ -49,6 +49,7 @@ router.get('/login', sanitizer.sanitizeDynamicUrlParams, function(req, res, next
 
 /* Admin dashboard */
 router.get('/user-approval', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  req.decodedParams.viewBaseUrl = coreConstants.VIEW_ROOT_URL;
   Promise.resolve(routeHelper.perform(req, res, next, 'userApproval', 'r_a_ad_2'));
 });
 
