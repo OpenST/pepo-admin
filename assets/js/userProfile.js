@@ -38,13 +38,6 @@
 
       var status = localStorage.getItem('userStatus');
 
-      if (status == 'INACTIVE') {
-        $('#videos-load-btn').css('pointer-events', 'none');
-        $('#videos-load-btn').html('Blocked user!');
-        $('#videos-load-btn').addClass('disabled');
-        return; // Don't load for blocked users
-      }
-
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
         url: oThis.videoHistoryUrl(oThis.userId),
