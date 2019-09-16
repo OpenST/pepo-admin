@@ -288,8 +288,15 @@
         event.preventDefault();
         var userEmail = $(this).attr('data-user-email');
 
-        userEmail.select();
+        var textArea = document.createElement('textarea');
+
+        textArea.value = userEmail;
+
+        document.body.appendChild(textArea);
+        textArea.select();
+
         document.execCommand('copy');
+        document.body.removeChild(textArea);
       });
     },
 
@@ -347,10 +354,6 @@
           }
         }
       });
-    },
-
-    copyEmail: function() {
-      const oThis = this;
     },
 
     convertWeiToNormal: function(value) {
