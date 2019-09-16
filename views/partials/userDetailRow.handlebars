@@ -21,14 +21,16 @@
         <div class='col-3'></div>
         <div class='col-9'>
           \{{#if twitterLink}}
-            <a href=\{{twitterLink}} target="_blank"><i class="fa fa-twitter icon-border"></i></a>
+            <a href=\{{twitterLink}} target="_blank" data-toggle="tooltip" title="twitter link"><i class="fa fa-twitter icon-border"></i></a>
           \{{/if}}
           \{{#if socialLink}}
-            <a href=\{{socialLink}} target="_blank"><i class="fa fa-link icon-border"></i></a>
+            <a href=\{{socialLink}} target="_blank" data-toggle="tooltip" title="social link"><i class="fa fa-link icon-border"></i></a>
           \{{/if}}
-          <span class="email-copy" data-user-email=\{{userEmail}}><i class="fa fa-envelope icon-border"></i></span>
+          \{{#if userEmail}}
+            <span class="email-copy" data-user-email=\{{userEmail}} data-toggle="tooltip" title="copy email"><i class="fa fa-envelope icon-border"></i></span>
+          \{{/if}}
           \{{#if userViewLink}}
-            <a href=\{{userViewLink}} target="_blank"><i class="fa fa-book icon-border"></i></a>
+            <a href=\{{userViewLink}} target="_blank" data-toggle="tooltip" title="ost view"><i class="fa fa-book icon-border"></i></a>
           \{{/if}}
         </div>
       </div>

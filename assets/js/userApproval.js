@@ -298,6 +298,8 @@
         document.execCommand('copy');
         document.body.removeChild(textArea);
       });
+
+      $('[data-toggle="tooltip"]').tooltip();
     },
 
     approveUserAsCreator: function(user_id, successCallback) {
