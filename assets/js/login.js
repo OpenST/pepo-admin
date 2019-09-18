@@ -6,6 +6,7 @@
     oThis.bindEvents();
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
   };
 
   Login.prototype = {
@@ -23,14 +24,12 @@
           postData[data[i].name] = data[i].value;
         }
 
-        var token = $('meta[name="csrf-token"]').attr('content');
-
         $.ajax({
           url: oThis.loginPostUrl(),
           type: 'POST',
           data: JSON.stringify(postData),
           headers: {
-            'csrf-token': token
+            'csrf-token': oThis.csrfToken
           },
           contentType: 'application/json',
           success: function(response) {

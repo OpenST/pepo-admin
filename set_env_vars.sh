@@ -21,7 +21,10 @@ export PAD_COOKIE_SECRET='aa5298d3a3fe181a3a52d085ee1525df5asa498337f8f3b76ca7df
 export PAD_DEBUG_ENABLED=0
 
 #Devops variables
-export DEVOPS_APP_NAME='pepo-admin'
-export DEVOPS_ENV_ID='localhost'
-export DEVOPS_IP_ADDRESS='127.0.0.1'
-export DEVOPS_SERVER_IDENTIFIER='localhost'
+export PAD_DEVOPS_APP_NAME='pepo-admin'
+export PAD_DEVOPS_ENV_ID='localhost'
+export PAD_DEVOPS_IP_ADDRESS='127.0.0.1'
+export PAD_DEVOPS_SERVER_IDENTIFIER='localhost'
+
+#View Endpoint
+export VIEW_ROOT_URL='https://view.stagingost.com/testnet'

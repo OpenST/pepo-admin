@@ -9,6 +9,7 @@ const rootPrefix = '..',
   logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
   handlebarHelper = require(rootPrefix + '/helpers/handlebar'),
   coreConstants = require(rootPrefix + '/config/coreConstants'),
+  HttpRequest = require(rootPrefix + '/lib/http/Request'),
   responseHelper = require(rootPrefix + '/lib/formatter/response');
 
 /**
@@ -18,7 +19,11 @@ const rootPrefix = '..',
  */
 class RoutesHelper {
   static async perform(req, res, next, templateName, errorCode, dataFormatter, successCallback, failureCallback) {
-    return res.render(templateName, { csrfToken: req.csrfToken(), apiUrl: coreConstants.PAD_PA_ROOT_URL });
+    return res.render(templateName, {
+      csrfToken: req.csrfToken(),
+      apiUrl: coreConstants.PAD_PA_ROOT_URL,
+      decodedParams: req.decodedParams
+    });
   }
 }
 

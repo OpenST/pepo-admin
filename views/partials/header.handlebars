@@ -15,10 +15,12 @@
         <a class="nav-link" href="/admin/user-approval">DASHBOARD</a>
       </li>
     </ul>
+    <ul class="navbar-nav ml-auto">
+      {{#if decodedParams.loggedInAdmin}}
+        <li class="nav-item" id="logout"><a class="nav-link" href="/api/v1/admin/logout">LOGOUT</a></li>
+      {{else}}
+        <li class="nav-item" id="login"><a class="nav-link" href="/admin/login">LOGIN</a></li>
+      {{/if}}
+    </ul>
   </div>
-
-   <ul class="nav navbar-nav navbar-right">
-    <li class="nav-item" id="logout"><a class="nav-link" href="/api/v1/admin/logout" hidden>Logout</a></li>
-    <li class="nav-item" id="login"><a class="nav-link" href="/admin/login" hidden>Login</a></li>
-   </ul>
 </nav>

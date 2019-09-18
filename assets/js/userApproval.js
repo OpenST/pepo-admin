@@ -2,6 +2,8 @@
   const UserApproval = function(config) {
     const oThis = this;
 
+    oThis.config = {};
+
     $.extend(oThis.config, config);
     oThis.bindEvents();
 
@@ -9,6 +11,7 @@
     oThis.query = null;
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
     $('#user-approval-link').addClass('active');
   };
@@ -51,10 +54,17 @@
         data: data,
         contentType: 'application/json',
         success: function(response) {
+          $('#load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
         },
         error: function(error) {
           console.error('===error', error);
+
+          $('#load-btn').addClass('hidden');
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },
@@ -67,6 +77,9 @@
 
       if (response.data) {
         var searchResults = response.data[response.data.result_type];
+
+        var ubtAddress = response.data['token'].utility_branded_token;
+        var chainId = response.data['token'].aux_chain_id;
 
         // Handle pagination
         var nextPageId = response.data.meta.next_page_payload
@@ -106,10 +119,16 @@
               : response.data['videos'][video_id].resolutions['original'].url;
           }
 
-          var status = userData.approved_creator ? 'Approved' : 'Pending';
+          // Get image link
+          var imageLink = '';
+          if (!userData.profile_image_id) {
+            // Nothing to do
+          } else {
+            var profile_image_id = userData.profile_image_id;
 
-          if (userData.status == 'INACTIVE') {
-            status = 'Blocked';
+            imageLink = response.data['images'][profile_image_id].resolutions['144w']
+              ? response.data['images'][profile_image_id].resolutions['144w'].url
+              : response.data['images'][profile_image_id].resolutions['original'].url;
           }
 
           // Get social link
@@ -120,20 +139,60 @@
             socialLink = response.data['links'][link_id].url;
           }
 
-          var adminAction = response.data['adminActions'][userId];
+          var userStats = response.data['user_stats'][userId];
+          var pepoCoins = response.data['user_pepo_coins_map'][userId];
+          var inviteCodes = response.data['invite_codes'][userId];
 
-          if (adminAction) {
-            adminAction.createdAt = new Date(adminAction.createdAt * 1000).toDateString();
+          var handle = response.data['twitter_users'][userId]['handle'];
+          var email = response.data['twitter_users'][userId]['email'];
+          var token = response.data['token'];
+          var viewLink = null;
+
+          if (ubtAddress && chainId && userData.ost_token_holder_address) {
+            viewLink =
+              oThis.config.viewBaseUrl +
+              '/token/th-' +
+              chainId +
+              '-' +
+              ubtAddress +
+              '-' +
+              userData.ost_token_holder_address;
           }
+
+          var twitterLink = null;
+
+          if (handle) {
+            twitterLink = 'https://twitter.com/' + handle;
+          }
+
+          var amountRaised = userStats.total_amount_raised_in_wei
+            ? oThis.convertWeiToNormal(userStats.total_amount_raised_in_wei)
+            : '0';
+          var amountSpent = userStats.total_amount_spent_in_wei
+            ? oThis.convertWeiToNormal(userStats.total_amount_spent_in_wei)
+            : '0';
+
+          userStats['total_amount_raised'] = amountRaised;
+          userStats['total_amount_spent'] = amountSpent;
+
+          var referralCount = inviteCodes && inviteCodes.invited_user_count ? inviteCodes.invited_user_count : '0';
 
           var context = {
             userId: userId,
             name: userData.name,
             userName: userData.user_name,
-            status: status,
+            status: userData.status,
             videoLink: videoLink,
             socialLink: socialLink,
-            adminAction: adminAction
+            imageLink: imageLink,
+            userStats: userStats,
+            pepoCoins: pepoCoins,
+            userViewLink: viewLink,
+            twitterLink: twitterLink,
+            userEmail: email,
+            referralCount: referralCount,
+            tokenHolder: userData.ost_token_holder_address,
+            isCreator: userData.approved_creator
           };
 
           var html = userRowTemplate(context);
@@ -143,6 +202,7 @@
 
         oThis.bindVideoModalEvents();
         oThis.bindUserStateChangeEvents();
+        oThis.bindPostRenderEvents();
       } else {
         console.error('=======Unknown response====', response);
       }
@@ -180,38 +240,77 @@
     bindUserStateChangeEvents: function() {
       const oThis = this;
 
-      $('button#user-save-btn').click(function(event) {
-        const button = this;
-
+      // Invoke admin action
+      $('.admin-action').change(function(event) {
         event.preventDefault();
 
-        var radioBtn = $("input[name='userCreatorState']:checked");
-        var radioValue = radioBtn.val();
-        var user_id = +$(this).attr('data-user-id');
-        var userFromRadioBtn = radioBtn.attr('data-user-id');
+        const dropdown = $(this);
 
-        if (userFromRadioBtn != user_id) {
-          radioValue = null;
-        }
+        var user_id = $(this).attr('data-user-id');
 
-        var updateButtonStatus = function() {
-          $(button).html('Saved');
-          $(button).addClass('disabled');
-          $(button).css('pointer-events', 'none');
+        var action = $(this)
+          .children('option:selected')
+          .val();
+
+        var successCallback = function() {
+          var dropdownText = action == 'approve' ? 'Approved' : 'Blocked';
+          dropdown.children('option:selected').text(dropdownText);
         };
 
-        if (radioValue == '1') {
-          oThis.approveUserAsCreator(user_id, updateButtonStatus);
-        } else if (radioValue == '2') {
-          oThis.blockUser(user_id, updateButtonStatus);
+        if (action == 'approve') {
+          oThis.approveUserAsCreator(user_id, successCallback);
+        } else if (action == 'block') {
+          oThis.blockUser(user_id, successCallback);
         }
       });
     },
 
-    approveUserAsCreator: function(user_id, successCallback) {
+    bindPostRenderEvents: function() {
       const oThis = this;
 
-      var token = $('meta[name="csrf-token"]').attr('content');
+      $('div#user-profile-img').click(function(event) {
+        var userId = $(this).attr('data-user-id');
+        var userName = $(this).attr('data-user-name');
+        var name = $(this).attr('data-name');
+        var imageLink = $(this).attr('data-image-link');
+        var creatorStatus = $(this).attr('data-creator-status');
+        var userStatus = $(this).attr('data-user-status');
+
+        localStorage.setItem('userName', userName);
+        localStorage.setItem('name', name);
+
+        if (imageLink) {
+          localStorage.setItem('imageLink', imageLink);
+        } else {
+          localStorage.setItem('imageLink', null);
+        }
+
+        localStorage.setItem('creatorStatus', creatorStatus);
+        localStorage.setItem('userStatus', userStatus);
+
+        window.location = '/admin/user-profile/' + userId;
+      });
+
+      $('.email-copy').click(function(event) {
+        event.preventDefault();
+        var userEmail = $(this).attr('data-user-email');
+
+        var textArea = document.createElement('textarea');
+
+        textArea.value = userEmail;
+
+        document.body.appendChild(textArea);
+        textArea.select();
+
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      });
+
+      $('[data-toggle="tooltip"]').tooltip();
+    },
+
+    approveUserAsCreator: function(user_id, successCallback) {
+      const oThis = this;
 
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
@@ -219,7 +318,7 @@
         data: {},
         contentType: 'application/json',
         headers: {
-          'csrf-token': token
+          'csrf-token': oThis.csrfToken
         },
         success: function(response) {
           if (response.data) {
@@ -230,6 +329,10 @@
         },
         error: function(error) {
           console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },
@@ -237,15 +340,13 @@
     blockUser: function(user_id, successCallback) {
       const oThis = this;
 
-      var token = $('meta[name="csrf-token"]').attr('content');
-
       $.ajax({
         url: oThis.blockUserUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
         headers: {
-          'csrf-token': token
+          'csrf-token': oThis.csrfToken
         },
         success: function(response) {
           if (response.data) {
@@ -256,8 +357,30 @@
         },
         error: function(error) {
           console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
+    },
+
+    convertWeiToNormal: function(value) {
+      var eth = new BigNumber(10).pow(18);
+      var thousand = new BigNumber(10).pow(3);
+
+      var normalValueBn = new BigNumber(value).div(eth);
+
+      if (normalValueBn.gt(thousand)) {
+        normalValueBn =
+          normalValueBn
+            .div(thousand)
+            .decimalPlaces(2)
+            .toString(10) + ' K';
+        return normalValueBn;
+      }
+
+      return normalValueBn.decimalPlaces(2).toString(10);
     },
 
     adminUserSearchUrl: function() {

@@ -1,0 +1,40 @@
+<script id="profile-header-template" type="text/x-handlebars-template">
+  <div class="row">
+    <div class="col-2 float-right ml-auto" style="font-weight: bold; margin-bottom: 2%;" id="user-balance">BALANCE: \{{balance}}</div>
+  </div>
+  <div class="row">
+    <div class='col-1' id="user-profile-img" data-user-id=\{{userId}}>
+      \{{#if imageLink}}
+        <img src=\{{imageLink}} style="height: 45px; width: 45px; border-radius: 50%;">
+      \{{else}}
+        <i class="fa fa-user-circle" style="font-size: 2.7rem; color: #dc3545;"></i>
+      \{{/if}}
+    </div>
+    <div class="col-4" id="profile-name" style="margin-left: -3%;">
+      \{{name}}
+      <br/>
+      <small>@\{{userName}}</small>
+    </div>
+
+    <div class="col-2 ml-auto float-right">
+      <select class="form-control custom-select mr-sm-2" data-user-id=\{{userId}} id="admin-action">
+        \{{#ifCond status '===' "ACTIVE"}}
+
+          \{{#ifCond isCreator '===' 'true'}}
+            <option value="approved" selected>Approved</option>
+          \{{else}}
+            <option value="0" selected>Pending</option>
+            <option value="approve">Approve</option>
+          \{{/ifCond}}
+
+          <option value="block">Block</option>
+        \{{/ifCond}}
+
+        \{{#ifCond status '===' "INACTIVE"}}
+          <option value="blocked" selected>Blocked</option>
+        \{{/ifCond}}
+      
+      </select>
+    </div>
+  </div>
+</script>  
