@@ -143,6 +143,7 @@ app.use(
 
 // Helmet helps secure Express apps by setting various HTTP headers.
 app.use(helmet());
+app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
 
 //Setting view engine template handlebars
 app.set('views', path.join(__dirname, 'views'));
