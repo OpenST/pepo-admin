@@ -137,6 +137,7 @@
 
           var userStats = response.data['user_stats'][userId];
           var pepoCoins = response.data['user_pepo_coins_map'][userId];
+          var inviteCodes = response.data['invite_codes'][userId];
 
           var handle = response.data['twitter_users'][userId]['handle'];
           var email = response.data['twitter_users'][userId]['email'];
@@ -170,6 +171,8 @@
           userStats['total_amount_raised'] = amountRaised;
           userStats['total_amount_spent'] = amountSpent;
 
+          var referralCount = inviteCodes && inviteCodes.invited_user_count ? inviteCodes.invited_user_count : '0';
+
           var context = {
             userId: userId,
             name: userData.name,
@@ -182,8 +185,8 @@
             pepoCoins: pepoCoins,
             userViewLink: viewLink,
             twitterLink: twitterLink,
-            refferalCount: '0',
             userEmail: email,
+            referralCount: referralCount,
             tokenHolder: userData.ost_token_holder_address,
             isCreator: userData.approved_creator
           };
