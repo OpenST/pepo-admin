@@ -47,7 +47,6 @@
         success: function(response) {
           $('#videos-load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
-          oThis.bindUserStateChangeEvents();
         },
         error: function(error) {
           console.error('===error', error);
@@ -218,6 +217,7 @@
         contentType: 'application/json',
         success: function(response) {
           oThis.updateProfile(response);
+          oThis.bindUserStateChangeEvents();
         },
         error: function(error) {
           console.error('===error', error);
@@ -294,6 +294,8 @@
           oThis.blockUser(user_id, successCallback);
         }
       });
+
+      console.log('=====Done');
     },
 
     approveUserAsCreator: function(user_id, successCallback) {
