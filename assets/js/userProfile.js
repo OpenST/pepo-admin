@@ -16,7 +16,7 @@
     oThis.userId = +window.location.pathname.split('user-profile/')[1];
 
     oThis.loadVideos(oThis.userId);
-    oThis.loadBalance(oThis.userId);
+    oThis.loadProfile(oThis.userId);
   };
 
   UserProfile.prototype = {
@@ -207,17 +207,17 @@
       });
     },
 
-    loadBalance: function(data) {
+    loadProfile: function(data) {
       const oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
-        url: oThis.balanceUrl(oThis.userId),
+        url: oThis.profileUrl(oThis.userId),
         type: 'GET',
         data: data,
         contentType: 'application/json',
         success: function(response) {
-          oThis.replaceBalance(response);
+          oThis.updateProfile(response);
         },
         error: function(error) {
           console.error('===error', error);
@@ -229,28 +229,36 @@
       });
     },
 
-    replaceBalance: function(response) {
+    updateProfile: function(response) {
       const oThis = this;
 
       var profileHeaderSource = document.getElementById('profile-header-template').innerHTML;
       var profileHeaderTemplate = Handlebars.compile(profileHeaderSource);
 
-      var responseData = response.data[response.data.result_type];
+      var responseData = response.data;
 
-      var name = localStorage.getItem('name');
-      var userName = localStorage.getItem('userName');
-      var imageLink = localStorage.getItem('imageLink');
-      var isCreator = localStorage.getItem('creatorStatus');
-      var status = localStorage.getItem('userStatus');
+      var userData = responseData['users'][oThis.userId];
+      var imageData = responseData['images'];
 
-      imageLink = imageLink == 'null' ? null : imageLink;
+      var profile_image_id = userData.profile_image_id;
+
+      var imageLink = null;
+
+      if (profile_image_id) {
+        imageLink = response.data['images'][profile_image_id].resolutions['144w']
+          ? response.data['images'][profile_image_id].resolutions['144w'].url
+          : response.data['images'][profile_image_id].resolutions['original'].url;
+      }
+
+      var isCreator = userData.approved_creator ? true : false;
+      var status = userData.status;
 
       var headerContext = {
-        name: name,
-        userName: userName,
+        name: userData.name,
+        userName: userData.user_name,
         userId: oThis.userId,
         imageLink: imageLink,
-        balance: oThis.convertWeiToNormal(responseData.available_balance),
+        balance: oThis.convertWeiToNormal(responseData.balance),
         isCreator: isCreator,
         status: status
       };
@@ -346,13 +354,16 @@
 
     convertWeiToNormal: function(value) {
       var divisor = new BigNumber(10).pow(18);
-      return new BigNumber(value).div(divisor).toString(10);
+      return new BigNumber(value)
+        .div(divisor)
+        .toFixed(2)
+        .toString(10);
     },
 
-    balanceUrl: function(user_id) {
+    profileUrl: function(user_id) {
       const oThis = this;
 
-      return oThis.apiUrl + '/admin/users/' + user_id + '/balance';
+      return oThis.apiUrl + '/admin/users/' + user_id + '/profile';
     },
 
     videoHistoryUrl: function(user_id) {
