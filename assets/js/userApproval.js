@@ -270,24 +270,6 @@
 
       $('div#user-profile-img').click(function(event) {
         var userId = $(this).attr('data-user-id');
-        var userName = $(this).attr('data-user-name');
-        var name = $(this).attr('data-name');
-        var imageLink = $(this).attr('data-image-link');
-        var creatorStatus = $(this).attr('data-creator-status');
-        var userStatus = $(this).attr('data-user-status');
-
-        localStorage.setItem('userName', userName);
-        localStorage.setItem('name', name);
-
-        if (imageLink) {
-          localStorage.setItem('imageLink', imageLink);
-        } else {
-          localStorage.setItem('imageLink', null);
-        }
-
-        localStorage.setItem('creatorStatus', creatorStatus);
-        localStorage.setItem('userStatus', userStatus);
-
         window.location = '/admin/user-profile/' + userId;
       });
 
