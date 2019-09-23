@@ -20,12 +20,12 @@
       <select class="form-control custom-select mr-sm-2" data-user-id=\{{userId}} id="admin-action">
         \{{#ifCond status '===' "ACTIVE"}}
 
-          \{{#ifCond isCreator '===' 'true'}}
+          \{{#if isCreator}}
             <option value="approved" selected>Approved</option>
           \{{else}}
             <option value="0" selected>Pending</option>
             <option value="approve">Approve</option>
-          \{{/ifCond}}
+          \{{/if}}
 
           <option value="block">Block</option>
         \{{/ifCond}}
@@ -33,8 +33,8 @@
         \{{#ifCond status '===' "INACTIVE"}}
           <option value="blocked" selected>Blocked</option>
         \{{/ifCond}}
-      
+
       </select>
     </div>
   </div>
-</script>  
+</script>
