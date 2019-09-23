@@ -206,6 +206,12 @@
     approveUser: function(invite_id, successCallback) {
       const oThis = this;
 
+      var resp = confirm('Are you sure you want to approve user as creator?');
+
+      if (!resp) {
+        return;
+      }
+
       $.ajax({
         url: oThis.approveUserUrl(invite_id),
         type: 'POST',
@@ -233,6 +239,12 @@
 
     whitelistUser: function(invite_id, successCallback) {
       const oThis = this;
+
+      var resp = confirm('Are you sure you want to whitelist the user?');
+
+      if (!resp) {
+        return;
+      }
 
       $.ajax({
         url: oThis.whitelistUserUrl(invite_id),

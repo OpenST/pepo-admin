@@ -294,6 +294,12 @@
     approveUserAsCreator: function(user_id, successCallback) {
       const oThis = this;
 
+      var resp = confirm('Are you sure you want to approve user as creator?');
+
+      if (!resp) {
+        return;
+      }
+
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
         type: 'POST',
@@ -321,6 +327,12 @@
 
     blockUser: function(user_id, successCallback) {
       const oThis = this;
+
+      var resp = confirm('Are you sure you want to block user?');
+
+      if (!resp) {
+        return;
+      }
 
       $.ajax({
         url: oThis.blockUserUrl(user_id),
