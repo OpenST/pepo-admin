@@ -193,6 +193,12 @@ hbs.registerHelper('json', function(context) {
   return JSON.stringify(context);
 });
 
+hbs.registerHelper('randomStr', function() {
+  return Math.random()
+    .toString(36)
+    .replace(/[^a-z]+/g, '');
+});
+
 hbs.registerHelper('with', function(context) {
   return options.fn(context);
 });

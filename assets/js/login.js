@@ -1,8 +1,6 @@
 (function(window, $) {
-  const Login = function(config) {
+  const Login = function() {
     const oThis = this;
-
-    $.extend(oThis.config, config);
     oThis.bindEvents();
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');

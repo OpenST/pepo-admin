@@ -46,8 +46,7 @@
 {{#contentFor "pageScripts"}}
   <script type="text/javascript">
       $(document).ready(function() {
-              var initParams  = {{{json decodedParams}}};
-              var whitelistUser = new window.WhitelistUser(initParams);
+              var whitelistUser = new window.WhitelistUser();
               whitelistUser.loadUsers();
       });
   </script>

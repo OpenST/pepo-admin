@@ -18,8 +18,7 @@
 {{#contentFor "pageScripts"}}
 	<script type="text/javascript">
 	    $(document).ready(function() {
-	        var initParams  = {{{json decodedParams}}};
-            var login = new window.Login(initParams);
+            var login = new window.Login();
 	    });
 	</script>
 {{/contentFor}}

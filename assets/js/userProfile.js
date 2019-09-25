@@ -1,10 +1,10 @@
 (function(window, $) {
-  const UserProfile = function(config) {
+  const UserProfile = function() {
     const oThis = this;
 
     oThis.config = {};
 
-    $.extend(oThis.config, config);
+    $.extend(oThis.config);
     oThis.bindEvents();
 
     oThis.lastPaginationId = null;

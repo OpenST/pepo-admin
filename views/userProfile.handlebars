@@ -33,8 +33,7 @@
 {{#contentFor "pageScripts"}}
   <script type="text/javascript">
       $(document).ready(function() {
-          var initParams  = {{{json decodedParams}}};
-          var userProfile = new window.UserProfile(initParams);
+          var userProfile = new window.UserProfile();
       });
   </script>
   {{>profileHeaderRow}}

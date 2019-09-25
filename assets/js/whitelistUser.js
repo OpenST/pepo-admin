@@ -1,10 +1,9 @@
 (function(window, $) {
-  const WhitelistUser = function(config) {
+  const WhitelistUser = function() {
     const oThis = this;
 
     oThis.config = {};
 
-    $.extend(oThis.config, config);
     oThis.bindEvents();
 
     oThis.lastPaginationId = null;
