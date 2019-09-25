@@ -159,8 +159,6 @@
 
         var videoLink = $(this).attr('data-video-link');
 
-        console.log('====videoLink', videoLink);
-
         $('#modal-container').html(videoTemplate({ videoLink: videoLink }));
 
         $('.modal').modal('show');
