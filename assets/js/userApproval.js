@@ -78,6 +78,13 @@
       if (response.data) {
         var searchResults = response.data[response.data.result_type];
 
+        if (searchResults.length == 0) {
+          $('#user-search-results').append(
+            '<br/><p class="text-danger" style="text-align: center;">No result found.</p>'
+          );
+          return;
+        }
+
         var ubtAddress = response.data['token'].utility_branded_token;
         var chainId = response.data['token'].aux_chain_id;
 
@@ -85,10 +92,6 @@
         var nextPageId = response.data.meta.next_page_payload
           ? response.data.meta.next_page_payload['pagination_identifier']
           : null;
-
-        if (searchResults.length == 0) {
-          $('#user-search-results').append('<br/><p class="text-danger">No result found.</p>');
-        }
 
         oThis.lastPaginationId = nextPageId;
 
@@ -143,10 +146,14 @@
           var pepoCoins = response.data['user_pepo_coins_map'][userId];
           var inviteCodes = response.data['invite_codes'][userId];
 
-          var handle = response.data['twitter_users'][userId]['handle'];
-          var email = response.data['twitter_users'][userId]['email'];
-          var token = response.data['token'];
-          var viewLink = null;
+          var twitterUser = response.data['twitter_users'][userId],
+            handle = twitterUser['handle'],
+            email = userData['email'],
+            viewLink = null;
+
+          if (!email) {
+            email = twitterUser['email'];
+          }
 
           if (ubtAddress && chainId && userData.ost_token_holder_address) {
             viewLink =
