@@ -94,6 +94,8 @@
       if (response.data) {
         var searchResults = response.data[response.data.result_type];
 
+        $('#total-count').html('Total Count: ' + response.data.meta.total_no);
+
         // Handle pagination
         var nextPageId = response.data.meta.next_page_payload
           ? response.data.meta.next_page_payload['pagination_identifier']
