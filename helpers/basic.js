@@ -4,8 +4,6 @@
  * @module helpers/basic
  */
 
-const BigNumber = require('bignumber.js');
-
 const rootPrefix = '..',
   base64Helper = require(rootPrefix + '/lib/base64Helper'),
   coreConstants = require(rootPrefix + '/config/coreConstants');

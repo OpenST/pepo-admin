@@ -1,60 +1,120 @@
 <script id="user-row" type="text/x-handlebars-template">
   <tr>
     <td scope="col">
-      \{{name}}
-      <br/>
-      <small>@\{{userName}}</small>
+      <div class="row">
+        <div class='col-3' id="user-profile-img" data-user-id=\{{userId}} data-name=\{{name}} data-user-name=\{{userName}} data-creator-status=\{{isCreator}} data-user-status=\{{status}} data-image-link=\{{imageLink}}>
+          \{{#if imageLink}}
+            <img src=\{{imageLink}} style="height: 45px; width: 45px; border-radius: 50%;">
+          \{{else}}
+            <i class="fa fa-user-circle" style="font-size: 2.7rem; color: #dc3545;"></i>
+          \{{/if}}
+        </div>
+
+        <div class='col-9'>
+          <a id="dashboard-user-name" data-user-id=\{{userId}}>\{{name}}</a>
+          <br/>
+          <small>@\{{userName}}</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class='col-3'></div>
+        <div class='col-9'>
+          \{{#if twitterLink}}
+            <a href=\{{twitterLink}} target="_blank" data-toggle="tooltip" rel="noopener noreferrer nofollow" title="twitter link"><i class="fa fa-twitter icon-border"></i></a>
+          \{{/if}}
+          \{{#if socialLink}}
+            <a href=\{{socialLink}} target="_blank" data-toggle="tooltip" title="social link" rel= "noopener noreferrer nofollow"><i class="fa fa-link icon-border"></i></a>
+          \{{/if}}
+          \{{#if userEmail}}
+            <span class="email-copy" data-user-email=\{{userEmail}} data-toggle="tooltip" title="copy email"><i class="fa fa-envelope icon-border"></i></span>
+          \{{/if}}
+          \{{#if userViewLink}}
+            <a href=\{{userViewLink}} target="_blank" rel= "noopener noreferrer nofollow" data-toggle="tooltip" title="ost view"><i class="fa fa-book icon-border"></i></a>
+          \{{/if}}
+        </div>
+      </div>
     </td>
 
     <td scope="col">
-      \{{#if socialLink}}
-        <a href=\{{socialLink}} target="_blank"><i class="fa fa-link"></i></a>
-      \{{/if}}
+      \{{referralCount}}
     </td>
 
-    <td scope="col">\{{status}}</td>
-    
+    <td scope="col">
+        <div class="row">
+        <div class='col'>
+          \{{userStats.total_contributed_to}}
+          <br/>
+          <small>Supporting</small>
+        </div>
+        <div class='col'>
+          \{{userStats.total_contributed_by}}
+          <br/>
+          <small>Supporters</small>
+        </div>
+      </div>
+    </td>
+
+    <td scope="col">
+        <div class="row">
+        <div class='col'>
+          \{{userStats.total_amount_raised}}
+          <br/>
+          <small>Received</small>
+        </div>
+
+        <div class='col'>
+          \{{userStats.total_amount_spent}}
+          <br/>
+          <small>Spent</small>
+        </div>
+
+        <div class='col'>
+          \{{pepoCoins.purchased}}
+          <br/>
+          <small>Purchased</small>
+        </div>
+
+        <div class='col'>
+          \{{pepoCoins.redeemed}}
+          <br/>
+          <small>Redeemed</small>
+        </div>
+      </div>
+    </td>
+
     <td scope="col">
       \{{#if videoLink}}
-        <a href=\{{videoLink}} id="video-link">Latest Video <i class="fa fa-video-camera" aria-hidden="true"></i></a>
-      \{{/if}}
-    </td> 
-
-    <td scope="col">
-      \{{#ifCond status '==' "Pending"}}
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="userCreatorState" id="radio1" value="1" data-user-id=\{{userId}}>
-          <label class="form-check-label" for="radio1">
-            Approve
-          </label>
-        </div>
-      \{{/ifCond}}
-
-      \{{#ifCond status '!=' "Blocked"}}
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="userCreatorState" id="radio2" value="2" data-user-id=\{{userId}}>
-          <label class="form-check-label" for="radio2">
-            Block
-          </label>
-        </div>
-      \{{/ifCond}}
-    </td>
-    <td scope="col">
-      \{{#if adminAction}}
-      \{{adminAction.adminName}}
-      <br/>
-      \{{adminAction.createdAt}}
+        <a href=\{{videoLink}} id="video-link" rel= "noopener noreferrer nofollow"><i class="fa fa-play-circle text-danger" aria-hidden="true" style="font-size: 2rem;"></i></a>
       \{{/if}}
     </td>
 
     <td scope="col">
-      \{{#ifCond status '!=' "Blocked"}}
-        <button class="btn btn-outline-danger" id="user-save-btn" data-user-id=\{{userId}}>Save</button>
-      \{{/ifCond}}
+      \{{#if tokenHolder}}
+          <select class="form-control custom-select mr-sm-2 admin-action" data-user-id=\{{userId}}>
 
-      \{{#ifCond status '==' "Blocked"}}
-        <button class="btn btn-danger" id="user-save-btn" data-user-id=\{{userId}} disabled>Saved</button>
-      \{{/ifCond}}
+            \{{#ifCond status '===' "ACTIVE"}}
+
+              \{{#if isCreator}}
+                <option value="approved" selected>Approved</option>
+              \{{else}}
+                <option value="0" selected>Pending</option>
+                <option value="approve">Approve</option>
+              \{{/if}}
+
+              <option value="block">Block</option>
+            \{{/ifCond}}
+
+            \{{#ifCond status '===' "INACTIVE"}}
+              <option value="blocked" selected>Blocked</option>
+            \{{/ifCond}}
+
+          </select>
+      \{{else}}
+        <span class="badge badge-pill badge-danger">TH Not Deployed</span>
+      \{{/if}}
+
+
     </td>
   </tr>
 </script>

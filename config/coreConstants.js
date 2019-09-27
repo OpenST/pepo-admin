@@ -32,7 +32,7 @@ class CoreConstants {
   get isStaging() {
     return process.env.PAD_ENVIRONMENT == 'staging';
   }
-  
+
   get isDevelopment() {
     return process.env.PAD_ENVIRONMENT == 'development';
   }
@@ -45,32 +45,36 @@ class CoreConstants {
     return process.env.PAD_DEBUG_ENABLED;
   }
 
-  get PAD_CSRF_COOKIE_KEY() {
-    return '_ad_csrf';
-  }
-
   get PAD_CLOUD_FRONT_BASE_DOMAIN() {
     return process.env.PAD_CLOUD_FRONT_BASE_DOMAIN;
   }
 
+  get PAD_PA_COOKIE_DOMAIN() {
+    return process.env.PAD_PA_COOKIE_DOMAIN;
+  }
+
   get appName() {
-    return process.env.DEVOPS_APP_NAME;
+    return process.env.PAD_DEVOPS_APP_NAME;
   }
 
   get DEVOPS_ENV_ID() {
-    return process.env.DEVOPS_ENV_ID;
+    return process.env.PAD_DEVOPS_ENV_ID;
   }
 
   get DEVOPS_IP_ADDRESS() {
-    return process.env.DEVOPS_IP_ADDRESS;
+    return process.env.PAD_DEVOPS_IP_ADDRESS;
   }
 
   get DEVOPS_SERVER_IDENTIFIER() {
-    return process.env.DEVOPS_SERVER_IDENTIFIER;
+    return process.env.PAD_DEVOPS_SERVER_IDENTIFIER;
   }
 
   get PAD_PA_ROOT_URL() {
     return process.env.PAD_PA_ROOT_URL;
+  }
+
+  get VIEW_ROOT_URL() {
+    return process.env.VIEW_ROOT_URL;
   }
 }
 

@@ -8,6 +8,7 @@ const express = require('express'),
   basicAuth = require('basic-auth'),
   helmet = require('helmet'),
   customUrlParser = require('url'),
+  cookieParser = require('cookie-parser'),
   exphbs = require('express-handlebars');
 
 const responseHelper = require(rootPrefix + '/lib/formatter/response'),
@@ -16,6 +17,7 @@ const responseHelper = require(rootPrefix + '/lib/formatter/response'),
   adminRoutes = require(rootPrefix + '/routes/admin'),
   basicHelper = require(rootPrefix + '/helpers/basic'),
   errorConfig = require(rootPrefix + '/config/apiErrorConfig'),
+  cookieHelper = require(rootPrefix + '/helpers/cookie'),
   coreConstants = require(rootPrefix + '/config/coreConstants'),
   handlebarHelper = require(rootPrefix + '/helpers/handlebar'),
   sanitizer = require(rootPrefix + '/helpers/sanitizer');
@@ -105,15 +107,9 @@ const basicAuthentication = function(req, res, next) {
   function unauthorized(res) {
     res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
 
-    return responseHelper
-      .error({
-        internal_error_identifier: 'a_1',
-        api_error_identifier: 'unauthorized_api_request',
-        debug_options: {}
-      })
-      .renderResponse(res, {
-        api_error_config: errorConfig
-      });
+    res.status(401);
+
+    return res.sendFile(path.join(__dirname + '/' + rootPrefix + '/public/401.html'));
   }
 
   let user = basicAuth(req);
@@ -147,6 +143,11 @@ app.use(
 
 // Helmet helps secure Express apps by setting various HTTP headers.
 app.use(helmet());
+app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
+
+//Setting view engine template handlebars
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'handlebars');
 
 // Node.js body parsing middleware.
 app.use(bodyParser.json());
@@ -154,8 +155,16 @@ app.use(bodyParser.json());
 // Parsing the URL-encoded data with the qs library (extended: true)
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//Setting view engine template handlebars
-app.set('views', path.join(__dirname, 'views'));
+// Sanitize request body and query params
+// NOTE: dynamic variables in URL will be sanitized in routes
+app.use(sanitizer.sanitizeBodyAndQuery, assignParams);
+
+app.use(basicAuthentication);
+
+// Node.js cookie parsing middleware.
+app.use(cookieParser(coreConstants.COOKIE_SECRET));
+
+app.use(cookieHelper.setAdminCsrf());
 
 //Helper is used to ease stringifying JSON
 app.engine(
@@ -167,7 +176,42 @@ app.engine(
     layoutsDir: path.join(__dirname, 'views/layouts')
   })
 );
-app.set('view engine', 'handlebars');
+
+const hbs = require('handlebars');
+hbs.registerHelper('css', function() {
+  const css = connectAssets.options.helperContext.css.apply(this, arguments);
+
+  return new hbs.SafeString(css);
+});
+
+hbs.registerHelper('js', function() {
+  const js = connectAssets.options.helperContext.js.apply(this, arguments);
+  return new hbs.SafeString(js);
+});
+
+hbs.registerHelper('json', function(context) {
+  return JSON.stringify(context);
+});
+
+hbs.registerHelper('randomStr', function() {
+  return Math.random()
+    .toString(36)
+    .replace(/[^a-z]+/g, '');
+});
+
+hbs.registerHelper('with', function(context) {
+  return options.fn(context);
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(appendRequestDebugInfo, startRequestLogLine);
+
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname + '/public/pepo.html'));
+});
+
+app.use('/admin', adminRoutes);
 
 // connect-assets relies on to use defaults in config
 const connectAssetConfig = {
@@ -187,38 +231,6 @@ if (!coreConstants.isDevelopment) {
 
 const connectAssets = require('connect-assets')(connectAssetConfig);
 app.use(connectAssets);
-
-const hbs = require('handlebars');
-hbs.registerHelper('css', function() {
-  const css = connectAssets.options.helperContext.css.apply(this, arguments);
-
-  return new hbs.SafeString(css);
-});
-
-hbs.registerHelper('js', function() {
-  const js = connectAssets.options.helperContext.js.apply(this, arguments);
-  return new hbs.SafeString(js);
-});
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname + '/public/pepo.html'));
-});
-
-app.use(
-  '/admin',
-  basicAuthentication,
-  appendRequestDebugInfo,
-  startRequestLogLine,
-  sanitizer.sanitizeBodyAndQuery,
-  assignParams,
-  adminRoutes
-);
-
-app.use('/admin', function(req, res, next) {
-  return res.redirect('/admin/login');
-});
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {

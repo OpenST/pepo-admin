@@ -1,14 +1,16 @@
 (function(window, $) {
-  const WhitelistUser = function(config) {
+  const WhitelistUser = function() {
     const oThis = this;
 
-    $.extend(oThis.config, config);
+    oThis.config = {};
+
     oThis.bindEvents();
 
     oThis.lastPaginationId = null;
     oThis.query = null;
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
     $('#whitelist-link').addClass('active');
   };
@@ -40,7 +42,7 @@
         oThis.loadUsers(query);
       });
 
-      // Load next page
+      // Apply sort filter
       $('#user-sort').change(function(event) {
         event.preventDefault();
 
@@ -69,10 +71,16 @@
         data: data,
         contentType: 'application/json',
         success: function(response) {
+          $('#videos-load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
         },
         error: function(error) {
           console.error('===error', error);
+
+          $('#videos-load-btn').addClass('hidden');
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },
@@ -85,6 +93,8 @@
 
       if (response.data) {
         var searchResults = response.data[response.data.result_type];
+
+        $('#total-count').html('Total Count: ' + response.data.meta.total_no);
 
         // Handle pagination
         var nextPageId = response.data.meta.next_page_payload
@@ -132,9 +142,12 @@
             name: inviteData.name,
             userName: inviteData.handle,
             status: whitelistStatus,
+            invitedUserCount: inviteData.invited_user_count,
             creatorStatus: creatorStatus,
             email: inviteData.email
           };
+
+          $('#total-count').html('Total Count: ' + response.data.meta.total_no);
 
           var html = userRowTemplate(context);
 
@@ -194,7 +207,11 @@
     approveUser: function(invite_id, successCallback) {
       const oThis = this;
 
-      var token = $('meta[name="csrf-token"]').attr('content');
+      var resp = confirm('Are you sure you want to approve user as creator?');
+
+      if (!resp) {
+        return;
+      }
 
       $.ajax({
         url: oThis.approveUserUrl(invite_id),
@@ -202,7 +219,7 @@
         data: {},
         contentType: 'application/json',
         headers: {
-          'csrf-token': token
+          'csrf-token': oThis.csrfToken
         },
         success: function(response) {
           if (response.data) {
@@ -213,6 +230,10 @@
         },
         error: function(error) {
           console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },
@@ -220,7 +241,11 @@
     whitelistUser: function(invite_id, successCallback) {
       const oThis = this;
 
-      var token = $('meta[name="csrf-token"]').attr('content');
+      var resp = confirm('Are you sure you want to whitelist the user?');
+
+      if (!resp) {
+        return;
+      }
 
       $.ajax({
         url: oThis.whitelistUserUrl(invite_id),
@@ -228,7 +253,7 @@
         data: {},
         contentType: 'application/json',
         headers: {
-          'csrf-token': token
+          'csrf-token': oThis.csrfToken
         },
         success: function(response) {
           if (response.data) {
@@ -239,6 +264,10 @@
         },
         error: function(error) {
           console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
         }
       });
     },

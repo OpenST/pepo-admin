@@ -1,0 +1,42 @@
+<div class="container">
+  <br/>
+
+  <div id="profile-header"></div>
+
+  <br/>
+
+  <div id="toast-div"></div>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">VIDEO</th>
+      <th scope="col">FANS</th>
+      <th scope="col">PEPO RECEIVED</th>
+      <th scope="col">ACTION</th>
+    </tr>
+    </thead>
+    <tbody id="video-results"></tbody>
+  </table>
+
+  <div id="modal-container"></div>
+
+  <br/>
+
+  <div class="text-center"> 
+    <button class="btn btn-outline-danger my-2 my-sm-0 justify-content-center" type="submit" id="videos-load-btn">Load more</button>
+  </div>
+
+  <br/>
+</div>
+
+{{#contentFor "pageScripts"}}
+  <script type="text/javascript">
+      $(document).ready(function() {
+          var userProfile = new window.UserProfile();
+      });
+  </script>
+  {{>profileHeaderRow}}
+  {{>videoDetailRow}}
+  {{>videoModal}}
+{{/contentFor}}

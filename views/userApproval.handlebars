@@ -1,22 +1,23 @@
-<div class="container">
+<div class="">
   <br/>
-  <form class="form-inline" id="user-search-form">
+  <form class="form-inline" id="user-search-form" style="padding-left: 5%;">
     <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search-btn">Search</button>
   </form>
 
   <br/>
 
+  <div id="toast-div"></div>
+
   <table class="table table-striped">
     <thead>
-    <tr>
+    <tr id="dashboard-table-head">
       <th scope="col">NAME</th>
-      <th scope="col">SOCIAL LINKS</th>
-      <th scope="col">STATUS</th>
-      <th scope="col">SUBMISSION</th>
+      <th scope="col">REFERRALS</th>
+      <th scope="col">PEPO STATS</th>
+      <th scope="col">PEPO COINS</th>
+      <th scope="col">VIDEO</th>
       <th scope="col">ACTION</th>
-      <th scope="col">ADMIN ACTION</th>
-      <th scope="col"></th>
     </tr>
     </thead>
     <tbody id="user-search-results"></tbody>
@@ -35,9 +36,9 @@
 {{#contentFor "pageScripts"}}
   <script type="text/javascript">
       $(document).ready(function() {
-          let userApproval = new window.UserApproval({});
-
-          userApproval.loadUsers();
+           var initParams  = {{{json decodedParams}}};
+           var userApproval = new window.UserApproval(initParams);
+            userApproval.loadUsers();
       });
   </script>
   {{>userDetailRow}}

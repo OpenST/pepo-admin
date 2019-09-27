@@ -1,60 +1,72 @@
 const express = require('express'),
-  router = express.Router(),
-  cookieParser = require('cookie-parser');
+  path = require('path'),
+  router = express.Router();
 
 const rootPrefix = '..',
   routeHelper = require(rootPrefix + '/routes/helper'),
   sanitizer = require(rootPrefix + '/helpers/sanitizer'),
-  coreConstant = require(rootPrefix + '/config/coreConstants'),
+  coreConstants = require(rootPrefix + '/config/coreConstants'),
   basicHelper = require(rootPrefix + '/helpers/basic'),
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
-  csrf = require('csurf');
+  cookieHelper = require(rootPrefix + '/helpers/cookie'),
+  FetchCurrentAdmin = require(rootPrefix + '/lib/FetchCurrentAdmin'),
+  cookieConstants = require(rootPrefix + '/lib/globalConstant/cookie');
 
-// Node.js cookie parsing middleware.
-router.use(cookieParser(coreConstant.COOKIE_SECRET));
+const validateLoggedInAdmin = async function(req, res, next) {
+  let response = await new FetchCurrentAdmin({ headers: req.headers }).perform().catch(function(r) {
+    return responseHelper.error({
+      internal_error_identifier: 'pa_r_a_1',
+      api_error_identifier: 'something_went_wrong',
+      debug_options: { error: r }
+    });
+  });
 
-const csrfProtection = csrf({
-  cookie: {
-    key: coreConstant.PAD_CSRF_COOKIE_KEY,
-    maxAge: 30 * 24 * 60 * 60, // Cookie would expire after 1 month
-    httpOnly: true, // The cookie only accessible by the web server
-    signed: true, // Indicates if the cookie should be signed
-    secure: coreConstant.isProduction, // Marks the cookie to be used with HTTPS only
-    path: '/',
-    sameSite: 'strict', // sets the same site policy for the cookie
-    domain: coreConstant.PAD_PA_COOKIE_DOMAIN
+  if (response.isFailure() || !response.data.loggedInAdmin) {
+    return res.redirect('/admin/login');
+  } else {
+    req.decodedParams.loggedInAdmin = response.data.loggedInAdmin;
   }
+  next();
+};
+
+/* Render unauthorized page */
+router.get('/unauthorized', function(req, res, next) {
+  return res.sendFile(path.join(__dirname + '/' + rootPrefix + '/public/401.html'));
 });
 
-/* Login admin*/
-router.get('/login', csrfProtection, sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
-  const onServiceSuccess = async function(serviceResponse) {};
+/*admin homepage*/
+router.get('/', sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
+  return res.redirect('/admin/login');
+});
 
-  const onServiceFailure = async function(serviceResponse) {};
+/* Login admin */
+router.get('/login', sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
+  // Delete admin login cookie
+  cookieHelper.deleteLoginCookie(res);
 
-  Promise.resolve(routeHelper.perform(req, res, next, 'login', 'r_a_ad_1', null, onServiceSuccess, onServiceFailure));
+  Promise.resolve(routeHelper.perform(req, res, next, 'login', 'r_a_ad_1'));
 });
 
 /* Admin dashboard */
-router.get('/user-approval', csrfProtection, sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
-  const onServiceSuccess = async function(serviceResponse) {};
-
-  const onServiceFailure = async function(serviceResponse) {};
-
-  Promise.resolve(
-    routeHelper.perform(req, res, next, 'userApproval', 'r_a_ad_2', null, onServiceSuccess, onServiceFailure)
-  );
+router.get('/user-approval', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  req.decodedParams.viewBaseUrl = coreConstants.VIEW_ROOT_URL;
+  Promise.resolve(routeHelper.perform(req, res, next, 'userApproval', 'r_a_ad_2'));
 });
 
 /* User whitelist */
-router.get('/whitelist', csrfProtection, sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
-  const onServiceSuccess = async function(serviceResponse) {};
+router.get('/whitelist', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  Promise.resolve(routeHelper.perform(req, res, next, 'whitelistUser', 'r_a_ad_3'));
+});
 
-  const onServiceFailure = async function(serviceResponse) {};
+/* User profile */
+router.get('/user-profile/:user_id', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(
+  req,
+  res,
+  next
+) {
+  req.decodedParams.user_id = req.params.user_id;
 
-  Promise.resolve(
-    routeHelper.perform(req, res, next, 'whitelistUser', 'r_a_ad_3', null, onServiceSuccess, onServiceFailure)
-  );
+  Promise.resolve(routeHelper.perform(req, res, next, 'userProfile', 'r_a_ad_4'));
 });
 
 module.exports = router;
