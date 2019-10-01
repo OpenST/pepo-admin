@@ -36,8 +36,6 @@
     loadVideos: function(data) {
       const oThis = this;
 
-      var status = localStorage.getItem('userStatus');
-
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
         url: oThis.videoHistoryUrl(oThis.userId),
@@ -91,7 +89,6 @@
 
         for (var ind = 0; ind < searchResults.length; ind++) {
           var videoId = searchResults[ind]['payload'].video_id;
-          var userId = searchResults[ind]['payload'].user_id;
           var video = response.data['videos'][videoId];
           var posterImageId = video.poster_image_id;
 
@@ -106,6 +103,7 @@
           var context = {
             videoId: videoId,
             posterImageLink: imageLink,
+            updatedAt: new Date(video.uts * 1000).toLocaleString(),
             fanCount: videoData.total_contributed_by,
             pepoReceived: oThis.convertWeiToNormal(videoData.total_amount_raised_in_wei),
             videoLink: videoLink
@@ -148,8 +146,6 @@
     },
 
     bindVideoModalEvents: function() {
-      const oThis = this;
-
       var videoSource = document.getElementById('video-tray').innerHTML;
       var videoTemplate = Handlebars.compile(videoSource);
 
