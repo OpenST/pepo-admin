@@ -14,6 +14,7 @@
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
+    oThis.toggleLoadMoreVisibility();
     $('#user-approval-link').addClass('active');
   };
 
@@ -24,6 +25,9 @@
       // Trigger search
       $('#search-btn').click(function(event) {
         event.preventDefault();
+
+        oThis.toggleLoadMoreVisibility();
+        oThis.toggleLoaderVisibility();
 
         var data = $('#user-search-form').serialize();
 
@@ -57,8 +61,28 @@
 
         query = query + '&pagination_identifier=' + oThis.lastPaginationId;
 
+        oThis.toggleLoadMoreVisibility();
+        oThis.toggleLoaderVisibility();
         oThis.loadUsers(query);
       });
+    },
+
+    toggleLoadMoreVisibility: function() {
+      if ($('#load-btn').css('visibility') == 'hidden') {
+        $('#load-btn').css('visibility', 'visible');
+      } else {
+        $('#load-btn').css('visibility', 'hidden');
+      }
+    },
+
+    toggleLoaderVisibility: function() {
+      const oThis = this;
+
+      if ($('.loader').css('visibility') == 'hidden') {
+        $('.loader').css('visibility', 'visible');
+      } else {
+        $('.loader').css('visibility', 'hidden');
+      }
     },
 
     bindSortAndFilterEvents: function() {
@@ -110,9 +134,12 @@
 
       if (query != '') {
         query = oThis.query + query;
-        $('#user-search-results').html('');
-        oThis.loadUsers(query);
+      } else {
+        query = oThis.query;
       }
+
+      $('#user-search-results').html('');
+      oThis.loadUsers(query);
     },
 
     loadUsers: function(data) {
@@ -125,13 +152,14 @@
         data: data,
         contentType: 'application/json',
         success: function(response) {
-          $('#load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
+          oThis.toggleLoaderVisibility();
+          oThis.toggleLoadMoreVisibility();
         },
         error: function(error) {
           console.error('===error', error);
 
-          $('#load-btn').addClass('hidden');
+          oThis.toggleLoadMoreVisibility();
 
           if (error.responseJSON.err.code == 'UNAUTHORIZED') {
             window.location = '/admin/unauthorized';
@@ -150,12 +178,13 @@
         var searchResults = response.data[response.data.result_type];
 
         if (searchResults.length == 0) {
-          $('#user-search-results').append('<br/><p class="text-danger">No result found.</p>');
+          $('#user-search-results').append(
+            '<br/><p class="text-danger" style="margin-left: 25%;">No result found.</p>'
+          );
 
           $('#load-btn').css('pointer-events', 'none');
           $('#load-btn').html("That's all!");
           $('#load-btn').addClass('disabled');
-
           return;
         }
 
