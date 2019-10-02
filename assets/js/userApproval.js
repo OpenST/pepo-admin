@@ -39,7 +39,7 @@
       $('#load-btn').click(function(event) {
         event.preventDefault();
 
-        let query = oThis.prepareQuery();
+        var query = oThis.prepareQuery();
 
         if (query != '') {
           query = oThis.query + query;
@@ -98,7 +98,7 @@
     applyFilterOrSort: function() {
       const oThis = this;
 
-      let query = oThis.prepareQuery();
+      var query = oThis.prepareQuery();
 
       if (query != '') {
         query = oThis.query + query;
