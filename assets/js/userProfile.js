@@ -99,9 +99,12 @@
 
           var videoData = response.data['video_details'][videoId];
 
-          var imageLink = response.data['images'][posterImageId].resolutions['144w']
-            ? response.data['images'][posterImageId].resolutions['144w'].url
-            : response.data['images'][posterImageId].resolutions['original'].url;
+          var imageLink = null;
+          if (posterImageId) {
+            imageLink = response.data['images'][posterImageId].resolutions['144w']
+              ? response.data['images'][posterImageId].resolutions['144w'].url
+              : response.data['images'][posterImageId].resolutions['original'].url;
+          }
 
           var context = {
             videoId: videoId,
