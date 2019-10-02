@@ -261,7 +261,7 @@
             userViewLink: viewLink,
             twitterLink: twitterLink,
             userEmail: email,
-            lastUpdated: new Date(userData.uts * 1000).toLocaleString(),
+            createdAt: new Date(userData.created_at * 1000).toLocaleString(),
             referralCount: referralCount,
             tokenHolder: userData.ost_token_holder_address,
             isCreator: approvedCreator,

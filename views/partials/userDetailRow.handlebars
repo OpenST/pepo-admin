@@ -11,15 +11,16 @@
         </div>
 
         <div class='col-9'>
-          <a id="dashboard-user-name" data-user-id=\{{userId}}>\{{name}}</a>
+          <div style="max-width:200px;word-break: break-all;" class="d-inline-block" data-user-id=\{{userId}}>\{{name}}</div>
           <br/>
-          <small>@\{{userName}}</small>
+          <div  class="d-inline-block">@\{{userName}}</div>
         </div>
+
       </div>
 
       <div class="row">
         <div class='col-3'></div>
-        <div class='col-9'>\{{lastUpdated}}</div>
+        <div class='col-9'>\{{createdAt}}</div>
       </div>
 
       <div class="row">
