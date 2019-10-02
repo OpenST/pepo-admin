@@ -32,7 +32,15 @@
         // Reset search results table
         $('#user-search-results').html('');
 
-        oThis.loadUsers(data);
+        var query = oThis.prepareQuery();
+
+        if (query != '') {
+          query = oThis.query + query;
+        } else {
+          query = oThis.query;
+        }
+
+        oThis.loadUsers(query);
       });
 
       // Load next page
