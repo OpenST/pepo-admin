@@ -102,8 +102,11 @@
 
               \{{#if isCreator}}
                 <option value="approved" selected>Approved</option>
+              \{{else if isDeniedApproval}}
+                <option value="denied" selected>Denied</option>
               \{{else}}
                 <option value="0" selected>Pending</option>
+                <option value="deny">Deny</option>
                 <option value="approve">Approve</option>
               \{{/if}}
 

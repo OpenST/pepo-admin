@@ -6,6 +6,7 @@
 
     $.extend(oThis.config, config);
     oThis.bindEvents();
+    oThis.bindSortAndFilterEvents();
 
     oThis.lastPaginationId = null;
     oThis.query = null;
@@ -38,10 +39,72 @@
       $('#load-btn').click(function(event) {
         event.preventDefault();
 
-        var query = oThis.query;
+        let query = oThis.prepareQuery();
+
+        if (query != '') {
+          query = oThis.query + query;
+        } else {
+          query = oThis.query;
+        }
+
         query = query + '&pagination_identifier=' + oThis.lastPaginationId;
+
         oThis.loadUsers(query);
       });
+    },
+
+    bindSortAndFilterEvents: function() {
+      const oThis = this;
+
+      // Apply sort
+      $('#signed-up-user-sort').change(function(event) {
+        event.preventDefault();
+
+        oThis.applyFilterOrSort();
+      });
+
+      // Apply filter
+      $('#signed-up-user-filter').change(function(event) {
+        event.preventDefault();
+
+        oThis.applyFilterOrSort();
+      });
+    },
+
+    prepareQuery: function() {
+      const oThis = this;
+
+      var sortBy = $('#signed-up-user-sort')
+        .children('option:selected')
+        .val();
+
+      var filterBy = $('#signed-up-user-filter')
+        .children('option:selected')
+        .val();
+
+      var query = '';
+
+      if (sortBy != 0) {
+        query = query + '&sort_by=' + sortBy;
+      }
+
+      if (filterBy != 0) {
+        query = query + '&filter=' + filterBy;
+      }
+
+      return query;
+    },
+
+    applyFilterOrSort: function() {
+      const oThis = this;
+
+      let query = oThis.prepareQuery();
+
+      if (query != '') {
+        query = oThis.query + query;
+        $('#user-search-results').html('');
+        oThis.loadUsers(query);
+      }
     },
 
     loadUsers: function(data) {
@@ -78,6 +141,16 @@
       if (response.data) {
         var searchResults = response.data[response.data.result_type];
 
+        if (searchResults.length == 0) {
+          $('#user-search-results').append('<br/><p class="text-danger">No result found.</p>');
+
+          $('#load-btn').css('pointer-events', 'none');
+          $('#load-btn').html("That's all!");
+          $('#load-btn').addClass('disabled');
+
+          return;
+        }
+
         var ubtAddress = response.data['token'].utility_branded_token;
         var chainId = response.data['token'].aux_chain_id;
 
@@ -85,10 +158,6 @@
         var nextPageId = response.data.meta.next_page_payload
           ? response.data.meta.next_page_payload['pagination_identifier']
           : null;
-
-        if (searchResults.length == 0) {
-          $('#user-search-results').append('<br/><p class="text-danger">No result found.</p>');
-        }
 
         oThis.lastPaginationId = nextPageId;
 
@@ -145,7 +214,6 @@
 
           var handle = response.data['twitter_users'][userId]['handle'];
           var email = response.data['twitter_users'][userId]['email'];
-          var token = response.data['token'];
           var viewLink = null;
 
           if (ubtAddress && chainId && userData.ost_token_holder_address) {
@@ -177,6 +245,9 @@
 
           var referralCount = inviteCodes && inviteCodes.invited_user_count ? inviteCodes.invited_user_count : '0';
 
+          var approvedCreator = userData.properties.includes('IS_APPROVED_CREATOR');
+          var deniedApproval = userData.properties.includes('IS_DENIED_CREATOR');
+
           var context = {
             userId: userId,
             name: userData.name,
@@ -193,7 +264,8 @@
             lastUpdated: new Date(userData.uts * 1000).toLocaleString(),
             referralCount: referralCount,
             tokenHolder: userData.ost_token_holder_address,
-            isCreator: userData.approved_creator
+            isCreator: approvedCreator,
+            isDeniedApproval: deniedApproval
           };
 
           var html = userRowTemplate(context);
@@ -254,7 +326,16 @@
           .val();
 
         var successCallback = function() {
-          var dropdownText = action == 'approve' ? 'Approved' : 'Blocked';
+          var dropdownText = null;
+          switch (action) {
+            case 'approve':
+              dropdownText = 'Approved';
+            case 'block':
+              dropdownText = 'Blocked';
+            case 'deny':
+              dropdownText = 'Denied';
+          }
+
           dropdown.children('option:selected').text(dropdownText);
         };
 
@@ -262,6 +343,8 @@
           oThis.approveUserAsCreator(user_id, successCallback);
         } else if (action == 'block') {
           oThis.blockUser(user_id, successCallback);
+        } else if (action == 'deny') {
+          oThis.denyUser(user_id, successCallback);
         }
       });
     },
@@ -360,6 +443,40 @@
       });
     },
 
+    denyUser: function(user_id, successCallback) {
+      const oThis = this;
+
+      var resp = confirm('Are you sure you want to deny user approval?');
+
+      if (!resp) {
+        return;
+      }
+
+      $.ajax({
+        url: oThis.denyUserUrl(user_id),
+        type: 'POST',
+        data: {},
+        contentType: 'application/json',
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        success: function(response) {
+          if (response.data) {
+            successCallback();
+          } else {
+            console.error('=======Unknown response====');
+          }
+        },
+        error: function(error) {
+          console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
+        }
+      });
+    },
+
     convertWeiToNormal: function(value) {
       var eth = new BigNumber(10).pow(18);
       var thousand = new BigNumber(10).pow(3);
@@ -394,6 +511,12 @@
       const oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/block';
+    },
+
+    denyUserUrl: function(user_id) {
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/users/' + user_id + '/deny';
     }
   };
 

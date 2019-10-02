@@ -1,13 +1,28 @@
-<div class="">
-  <br/>
-  <form class="form-inline" id="user-search-form" style="padding-left: 5%;">
+<br/>
+
+<form class="form-inline" id="user-search-form" style="padding-left: 5%; margin-right: 5%;">
     <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search-btn">Search</button>
-  </form>
 
-  <br/>
+    <select class="form-control custom-select mr-sm-2 float-right ml-auto" id="signed-up-user-filter">
+        <option value="0" selected>Filter by...</option>
+        <option value="pending">Pending Approval</option>
+        <option value="denied">Denied Approval</option>
+        <option value="approved">Approved</option>
+    </select>
 
-  <div id="toast-div"></div>
+    <select class="form-control custom-select mr-sm-2 float-right" id="signed-up-user-sort">
+        <option value="0" selected>Sort by...</option>
+        <option value="desc">New First</option>
+        <option value="asc">Old First</option>
+        <option value="0">Highest Pepo Purchase</option>
+        <option value="0">Highest Pepo Redeem</option>
+    </select>
+</form>
+
+<br/>
+
+<div id="toast-div"></div>
 
   <table class="table table-striped">
     <thead>
@@ -23,14 +38,13 @@
     <tbody id="user-search-results"></tbody>
   </table>
 
-  <div id="modal-container"></div>
+<div id="modal-container"></div>
 
-  <br/>
-  <div class="text-center">
+<br/>
+<div class="text-center">
     <button class="btn btn-outline-danger my-2 my-sm-0 justify-content-center" type="submit" id="load-btn">Load more</button>
-  </div>
-  <br/>
 </div>
+<br/>
 
 
 {{#contentFor "pageScripts"}}
