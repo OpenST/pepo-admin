@@ -26,9 +26,6 @@
       $('#search-btn').click(function(event) {
         event.preventDefault();
 
-        oThis.toggleLoadMoreVisibility();
-        oThis.toggleLoaderVisibility();
-
         var data = $('#user-search-form').serialize();
 
         oThis.query = data;
@@ -44,6 +41,8 @@
           query = oThis.query;
         }
 
+        oThis.toggleLoadMoreVisibility();
+        oThis.toggleLoaderVisibility();
         oThis.loadUsers(query);
       });
 
@@ -139,6 +138,8 @@
       }
 
       $('#user-search-results').html('');
+      oThis.toggleLoadMoreVisibility();
+      oThis.toggleLoaderVisibility();
       oThis.loadUsers(query);
     },
 
