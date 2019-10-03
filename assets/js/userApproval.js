@@ -6,6 +6,7 @@
 
     $.extend(oThis.config, config);
     oThis.bindEvents();
+    oThis.bindSortAndFilterEvents();
 
     oThis.lastPaginationId = null;
     oThis.query = null;
@@ -13,6 +14,7 @@
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
+    oThis.toggleLoadMoreVisibility();
     $('#user-approval-link').addClass('active');
   };
 
@@ -31,17 +33,114 @@
         // Reset search results table
         $('#user-search-results').html('');
 
-        oThis.loadUsers(data);
+        var query = oThis.prepareQuery();
+
+        if (query != '') {
+          query = oThis.query + query;
+        } else {
+          query = oThis.query;
+        }
+
+        oThis.toggleLoadMoreVisibility();
+        oThis.toggleLoaderVisibility();
+        oThis.loadUsers(query);
       });
 
       // Load next page
       $('#load-btn').click(function(event) {
         event.preventDefault();
 
-        var query = oThis.query;
+        var query = oThis.prepareQuery();
+
+        if (query != '') {
+          query = oThis.query + query;
+        } else {
+          query = oThis.query;
+        }
+
         query = query + '&pagination_identifier=' + oThis.lastPaginationId;
+
+        oThis.toggleLoadMoreVisibility();
+        oThis.toggleLoaderVisibility();
         oThis.loadUsers(query);
       });
+    },
+
+    toggleLoadMoreVisibility: function() {
+      if ($('#load-btn').css('visibility') == 'hidden') {
+        $('#load-btn').css('visibility', 'visible');
+      } else {
+        $('#load-btn').css('visibility', 'hidden');
+      }
+    },
+
+    toggleLoaderVisibility: function() {
+      const oThis = this;
+
+      if ($('.loader').css('visibility') == 'hidden') {
+        $('.loader').css('visibility', 'visible');
+      } else {
+        $('.loader').css('visibility', 'hidden');
+      }
+    },
+
+    bindSortAndFilterEvents: function() {
+      const oThis = this;
+
+      // Apply sort
+      $('#signed-up-user-sort').change(function(event) {
+        event.preventDefault();
+
+        oThis.applyFilterOrSort();
+      });
+
+      // Apply filter
+      $('#signed-up-user-filter').change(function(event) {
+        event.preventDefault();
+
+        oThis.applyFilterOrSort();
+      });
+    },
+
+    prepareQuery: function() {
+      const oThis = this;
+
+      var sortBy = $('#signed-up-user-sort')
+        .children('option:selected')
+        .val();
+
+      var filterBy = $('#signed-up-user-filter')
+        .children('option:selected')
+        .val();
+
+      var query = '';
+
+      if (sortBy != 0) {
+        query = query + '&sort_by=' + sortBy;
+      }
+
+      if (filterBy != 0) {
+        query = query + '&filter=' + filterBy;
+      }
+
+      return query;
+    },
+
+    applyFilterOrSort: function() {
+      const oThis = this;
+
+      var query = oThis.prepareQuery();
+
+      if (query != '') {
+        query = oThis.query + query;
+      } else {
+        query = oThis.query;
+      }
+
+      $('#user-search-results').html('');
+      oThis.toggleLoadMoreVisibility();
+      oThis.toggleLoaderVisibility();
+      oThis.loadUsers(query);
     },
 
     loadUsers: function(data) {
@@ -54,13 +153,14 @@
         data: data,
         contentType: 'application/json',
         success: function(response) {
-          $('#load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
+          oThis.toggleLoaderVisibility();
+          oThis.toggleLoadMoreVisibility();
         },
         error: function(error) {
           console.error('===error', error);
 
-          $('#load-btn').addClass('hidden');
+          oThis.toggleLoadMoreVisibility();
 
           if (error.responseJSON.err.code == 'UNAUTHORIZED') {
             window.location = '/admin/unauthorized';
@@ -78,6 +178,17 @@
       if (response.data) {
         var searchResults = response.data[response.data.result_type];
 
+        if (searchResults.length == 0) {
+          $('#user-search-results').append(
+            '<br/><p class="text-danger" style="margin-left: 25%;">No result found.</p>'
+          );
+
+          $('#load-btn').css('pointer-events', 'none');
+          $('#load-btn').html("That's all!");
+          $('#load-btn').addClass('disabled');
+          return;
+        }
+
         var ubtAddress = response.data['token'].utility_branded_token;
         var chainId = response.data['token'].aux_chain_id;
 
@@ -85,10 +196,6 @@
         var nextPageId = response.data.meta.next_page_payload
           ? response.data.meta.next_page_payload['pagination_identifier']
           : null;
-
-        if (searchResults.length == 0) {
-          $('#user-search-results').append('<br/><p class="text-danger">No result found.</p>');
-        }
 
         oThis.lastPaginationId = nextPageId;
 
@@ -143,10 +250,14 @@
           var pepoCoins = response.data['user_pepo_coins_map'][userId];
           var inviteCodes = response.data['invite_codes'][userId];
 
-          var handle = response.data['twitter_users'][userId]['handle'];
-          var email = response.data['twitter_users'][userId]['email'];
-          var token = response.data['token'];
-          var viewLink = null;
+          var twitterUser = response.data['twitter_users'][userId],
+            handle = twitterUser['handle'],
+            email = userData['email'],
+            viewLink = null;
+
+          if (!email) {
+            email = twitterUser['email'];
+          }
 
           if (ubtAddress && chainId && userData.ost_token_holder_address) {
             viewLink =
@@ -177,6 +288,9 @@
 
           var referralCount = inviteCodes && inviteCodes.invited_user_count ? inviteCodes.invited_user_count : '0';
 
+          var approvedCreator = userData.properties.includes('IS_APPROVED_CREATOR');
+          var deniedApproval = userData.properties.includes('IS_DENIED_CREATOR');
+
           var context = {
             userId: userId,
             name: userData.name,
@@ -190,9 +304,11 @@
             userViewLink: viewLink,
             twitterLink: twitterLink,
             userEmail: email,
+            createdAt: new Date(userData.created_at * 1000).toLocaleString(),
             referralCount: referralCount,
             tokenHolder: userData.ost_token_holder_address,
-            isCreator: userData.approved_creator
+            isCreator: approvedCreator,
+            isDeniedApproval: deniedApproval
           };
 
           var html = userRowTemplate(context);
@@ -240,29 +356,56 @@
     bindUserStateChangeEvents: function() {
       const oThis = this;
 
+      var lastValue = null;
+
       // Invoke admin action
-      $('.admin-action').change(function(event) {
-        event.preventDefault();
+      $('.admin-action')
+        .focus(function() {
+          lastValue = $(this).val();
+        })
+        .change(function(event) {
+          event.preventDefault();
 
-        const dropdown = $(this);
+          const dropdown = $(this);
 
-        var user_id = $(this).attr('data-user-id');
+          var user_id = $(this).attr('data-user-id');
 
-        var action = $(this)
-          .children('option:selected')
-          .val();
+          var action = $(this)
+            .children('option:selected')
+            .val();
 
-        var successCallback = function() {
-          var dropdownText = action == 'approve' ? 'Approved' : 'Blocked';
-          dropdown.children('option:selected').text(dropdownText);
-        };
+          var successCallback = function() {
+            var dropdownText = null;
 
-        if (action == 'approve') {
-          oThis.approveUserAsCreator(user_id, successCallback);
-        } else if (action == 'block') {
-          oThis.blockUser(user_id, successCallback);
-        }
-      });
+            switch (action) {
+              case 'approve':
+                dropdownText = 'Approved';
+                break;
+              case 'block':
+                dropdownText = 'Blocked';
+                break;
+              case 'deny':
+                dropdownText = 'Denied';
+            }
+
+            dropdown.children('option:selected').text(dropdownText);
+          };
+
+          var resp = confirm('Are you sure you want to approve user as creator?');
+
+          if (!resp) {
+            dropdown.val(lastValue);
+            return;
+          }
+
+          if (action == 'approve') {
+            oThis.approveUserAsCreator(user_id, successCallback);
+          } else if (action == 'block') {
+            oThis.blockUser(user_id, successCallback);
+          } else if (action == 'deny') {
+            oThis.denyUser(user_id, successCallback);
+          }
+        });
     },
 
     bindPostRenderEvents: function() {
@@ -294,12 +437,6 @@
     approveUserAsCreator: function(user_id, successCallback) {
       const oThis = this;
 
-      var resp = confirm('Are you sure you want to approve user as creator?');
-
-      if (!resp) {
-        return;
-      }
-
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
         type: 'POST',
@@ -328,14 +465,36 @@
     blockUser: function(user_id, successCallback) {
       const oThis = this;
 
-      var resp = confirm('Are you sure you want to block user?');
-
-      if (!resp) {
-        return;
-      }
-
       $.ajax({
         url: oThis.blockUserUrl(user_id),
+        type: 'POST',
+        data: {},
+        contentType: 'application/json',
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        success: function(response) {
+          if (response.data) {
+            successCallback();
+          } else {
+            console.error('=======Unknown response====');
+          }
+        },
+        error: function(error) {
+          console.error('===error', error);
+
+          if (error.responseJSON.err.code == 'UNAUTHORIZED') {
+            window.location = '/admin/unauthorized';
+          }
+        }
+      });
+    },
+
+    denyUser: function(user_id, successCallback) {
+      const oThis = this;
+
+      $.ajax({
+        url: oThis.denyUserUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
@@ -393,6 +552,12 @@
       const oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/block';
+    },
+
+    denyUserUrl: function(user_id) {
+      const oThis = this;
+
+      return oThis.apiUrl + '/admin/users/' + user_id + '/deny';
     }
   };
 
