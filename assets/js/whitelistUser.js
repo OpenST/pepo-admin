@@ -37,7 +37,16 @@
       $('#whitelist-load-btn').click(function(event) {
         event.preventDefault();
 
+        var sortBy = $('#user-sort')
+          .children('option:selected')
+          .val();
+
         var query = oThis.query;
+
+        if (sortBy != 0) {
+          query = query + '&sort_by=' + sortBy;
+        }
+
         query = query + '&pagination_identifier=' + oThis.lastPaginationId;
         oThis.loadUsers(query);
       });
