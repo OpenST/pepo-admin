@@ -385,13 +385,13 @@
                 dropdownText = 'Blocked';
                 break;
               case 'deny':
-                dropdownText = 'Denied';
+                dropdownText = 'Not Eligible';
             }
 
             dropdown.children('option:selected').text(dropdownText);
           };
 
-          var resp = confirm('Are you sure you want to approve user as creator?');
+          var resp = confirm('Are you sure?');
 
           if (!resp) {
             dropdown.val(lastValue);
