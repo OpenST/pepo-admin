@@ -9,6 +9,9 @@
 
     oThis.lastPaginationId = null;
     oThis.query = null;
+    oThis.videoDescription = null;
+    oThis.videoDetails = {};
+    oThis.linkDetails = {};
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
@@ -87,6 +90,10 @@
           $('#videos-load-btn').removeClass('disabled');
         }
 
+        oThis.videoDescriptions = response.data['video_descriptions'];
+        oThis.videoDetails = response.data['video_details'];
+        oThis.linkDetails = response.data['links'];
+
         for (var ind = 0; ind < searchResults.length; ind++) {
           var videoId = searchResults[ind]['payload'].video_id;
           var video = response.data['videos'][videoId];
@@ -97,11 +104,15 @@
           var videoData = response.data['video_details'][videoId];
 
           var imageLink = null;
+          var descriptionId = null;
+
           if (posterImageId) {
             imageLink = response.data['images'][posterImageId].resolutions['144w']
               ? response.data['images'][posterImageId].resolutions['144w'].url
               : response.data['images'][posterImageId].resolutions['original'].url;
           }
+
+          descriptionId = videoData.description_id;
 
           var context = {
             videoId: videoId,
@@ -109,7 +120,8 @@
             updatedAt: new Date(video.uts * 1000).toLocaleString(),
             fanCount: videoData.total_contributed_by,
             pepoReceived: oThis.convertWeiToNormal(videoData.total_amount_raised_in_wei),
-            videoLink: videoLink
+            videoLink: videoLink,
+            descriptionId: descriptionId
           };
 
           var html = videoRowTemplate(context);
@@ -149,6 +161,8 @@
     },
 
     bindVideoModalEvents: function() {
+      const oThis = this;
+
       var videoSource = document.getElementById('video-tray').innerHTML;
       var videoTemplate = Handlebars.compile(videoSource);
 
@@ -157,8 +171,25 @@
         event.preventDefault();
 
         var videoLink = $(this).attr('data-video-link');
+        var videoId = +$(this).attr('data-video-id');
+        var descriptionId = +$(this).attr('data-desc-id');
+        var description = null;
 
-        $('#modal-container').html(videoTemplate({ videoLink: videoLink }));
+        if (descriptionId) {
+          description = oThis.videoDescriptions[descriptionId].text;
+        }
+
+        var links = oThis.videoDetails[videoId].link_ids;
+
+        var descriptionLink = links && links.length > 0 ? oThis.linkDetails[links[0]].url : null;
+
+        $('#modal-container').html(
+          videoTemplate({
+            videoLink: videoLink,
+            description: description,
+            descriptionLink: descriptionLink
+          })
+        );
 
         $('.modal').modal('show');
 
@@ -242,9 +273,9 @@
       var imageLink = null;
 
       if (profile_image_id) {
-        imageLink = response.data['images'][profile_image_id].resolutions['144w']
-          ? response.data['images'][profile_image_id].resolutions['144w'].url
-          : response.data['images'][profile_image_id].resolutions['original'].url;
+        imageLink = imageData[profile_image_id].resolutions['144w']
+          ? imageData[profile_image_id].resolutions['144w'].url
+          : imageData[profile_image_id].resolutions['original'].url;
       }
 
       var isCreator = userData.approved_creator ? true : false;
@@ -291,8 +322,6 @@
           oThis.blockUser(user_id, successCallback);
         }
       });
-
-      console.log('=====Done');
     },
 
     approveUserAsCreator: function(user_id, successCallback) {
