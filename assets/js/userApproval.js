@@ -351,40 +351,56 @@
     bindUserStateChangeEvents: function() {
       const oThis = this;
 
+      var lastValue = null;
+
       // Invoke admin action
-      $('.admin-action').change(function(event) {
-        event.preventDefault();
+      $('.admin-action')
+        .focus(function() {
+          lastValue = $(this).val();
+        })
+        .change(function(event) {
+          event.preventDefault();
 
-        const dropdown = $(this);
+          const dropdown = $(this);
 
-        var user_id = $(this).attr('data-user-id');
+          var user_id = $(this).attr('data-user-id');
 
-        var action = $(this)
-          .children('option:selected')
-          .val();
+          var action = $(this)
+            .children('option:selected')
+            .val();
 
-        var successCallback = function() {
-          var dropdownText = null;
-          switch (action) {
-            case 'approve':
-              dropdownText = 'Approved';
-            case 'block':
-              dropdownText = 'Blocked';
-            case 'deny':
-              dropdownText = 'Denied';
+          var successCallback = function() {
+            var dropdownText = null;
+
+            switch (action) {
+              case 'approve':
+                dropdownText = 'Approved';
+                break;
+              case 'block':
+                dropdownText = 'Blocked';
+                break;
+              case 'deny':
+                dropdownText = 'Denied';
+            }
+
+            dropdown.children('option:selected').text(dropdownText);
+          };
+
+          var resp = confirm('Are you sure you want to approve user as creator?');
+
+          if (!resp) {
+            dropdown.val(lastValue);
+            return;
           }
 
-          dropdown.children('option:selected').text(dropdownText);
-        };
-
-        if (action == 'approve') {
-          oThis.approveUserAsCreator(user_id, successCallback);
-        } else if (action == 'block') {
-          oThis.blockUser(user_id, successCallback);
-        } else if (action == 'deny') {
-          oThis.denyUser(user_id, successCallback);
-        }
-      });
+          if (action == 'approve') {
+            oThis.approveUserAsCreator(user_id, successCallback);
+          } else if (action == 'block') {
+            oThis.blockUser(user_id, successCallback);
+          } else if (action == 'deny') {
+            oThis.denyUser(user_id, successCallback);
+          }
+        });
     },
 
     bindPostRenderEvents: function() {
@@ -416,12 +432,6 @@
     approveUserAsCreator: function(user_id, successCallback) {
       const oThis = this;
 
-      var resp = confirm('Are you sure you want to approve user as creator?');
-
-      if (!resp) {
-        return;
-      }
-
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
         type: 'POST',
@@ -450,12 +460,6 @@
     blockUser: function(user_id, successCallback) {
       const oThis = this;
 
-      var resp = confirm('Are you sure you want to block user?');
-
-      if (!resp) {
-        return;
-      }
-
       $.ajax({
         url: oThis.blockUserUrl(user_id),
         type: 'POST',
@@ -483,12 +487,6 @@
 
     denyUser: function(user_id, successCallback) {
       const oThis = this;
-
-      var resp = confirm('Are you sure you want to deny user approval?');
-
-      if (!resp) {
-        return;
-      }
 
       $.ajax({
         url: oThis.denyUserUrl(user_id),
