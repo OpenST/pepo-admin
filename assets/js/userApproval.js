@@ -374,6 +374,12 @@
             .children('option:selected')
             .val();
 
+          dropdown.css('border', '1px solid #ced4da'); // Initialize with default
+
+          if ($('#action-error')) {
+            $('#action-error').remove();
+          }
+
           var successCallback = function() {
             var dropdownText = null;
 
@@ -386,9 +392,18 @@
                 break;
               case 'deny':
                 dropdownText = 'Not Eligible';
+                break;
             }
 
             dropdown.children('option:selected').text(dropdownText);
+            dropdown.css('border', '2px solid green');
+          };
+
+          var failureCallBack = function() {
+            dropdown.css('border', '2px solid red'); // Initialize with default
+            dropdown
+              .parent()
+              .append('<div id="action-error"><span class="badge badge-danger">Action not allowed</span></div>');
           };
 
           var resp = confirm('Are you sure?');
@@ -399,11 +414,16 @@
           }
 
           if (action == 'approve') {
-            oThis.approveUserAsCreator(user_id, successCallback);
+            oThis.approveUserAsCreator(user_id, successCallback, failureCallBack);
           } else if (action == 'block') {
-            oThis.blockUser(user_id, successCallback);
+            oThis.blockUser(user_id, successCallback, failureCallBack);
           } else if (action == 'deny') {
-            oThis.denyUser(user_id, successCallback);
+            oThis.denyUser(user_id, successCallback, failureCallBack);
+          } else {
+            dropdown.css('border', '2px solid red'); // Initialize with default
+            dropdown
+              .parent()
+              .append('<div id="action-error"><span class="badge badge-danger">Action not allowed</span></div>');
           }
         });
     },
@@ -434,7 +454,7 @@
       $('[data-toggle="tooltip"]').tooltip();
     },
 
-    approveUserAsCreator: function(user_id, successCallback) {
+    approveUserAsCreator: function(user_id, successCallback, failureCallBack) {
       const oThis = this;
 
       $.ajax({
@@ -455,6 +475,8 @@
         error: function(error) {
           console.error('===error', error);
 
+          failureCallBack();
+
           if (error.responseJSON.err.code == 'UNAUTHORIZED') {
             window.location = '/admin/unauthorized';
           }
@@ -462,7 +484,7 @@
       });
     },
 
-    blockUser: function(user_id, successCallback) {
+    blockUser: function(user_id, successCallback, failureCallBack) {
       const oThis = this;
 
       $.ajax({
@@ -483,6 +505,8 @@
         error: function(error) {
           console.error('===error', error);
 
+          failureCallBack();
+
           if (error.responseJSON.err.code == 'UNAUTHORIZED') {
             window.location = '/admin/unauthorized';
           }
@@ -490,7 +514,7 @@
       });
     },
 
-    denyUser: function(user_id, successCallback) {
+    denyUser: function(user_id, successCallback, failureCallBack) {
       const oThis = this;
 
       $.ajax({
@@ -510,6 +534,8 @@
         },
         error: function(error) {
           console.error('===error', error);
+
+          failureCallBack();
 
           if (error.responseJSON.err.code == 'UNAUTHORIZED') {
             window.location = '/admin/unauthorized';
