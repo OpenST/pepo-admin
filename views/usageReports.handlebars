@@ -1,0 +1,26 @@
+<div class="container">
+	<br/>
+	<div class="row">
+		<div class="col-3">
+			<select class="form-control custom-select mr-sm-2" id="usage-report">
+			  <option value="0" selected>Report type...</option>
+			  <option value="user">User data report</option>
+			  <option value="video">Video performance report</option>
+			  <option value="tag">Tags usage report</option>
+			</select>
+		</div>
+		<div class="col-3">
+			<button class="btn btn-outline-danger" id="generate-report-btn">Generate</button>
+		</div>
+	</div>
+	<br/>
+	<span class="badge badge-success" id="report-success">Report generation enqueued. Data in sheets should be updated in a moment.</span>
+</div>
+
+{{#contentFor "pageScripts"}}
+	<script type="text/javascript">
+	  $(document).ready(function() {
+	    var UsageReports = new window.UsageReports();
+	  });
+	</script>
+{{/contentFor}}
