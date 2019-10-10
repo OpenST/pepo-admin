@@ -69,4 +69,9 @@ router.get('/user-profile/:user_id', sanitizer.sanitizeDynamicUrlParams, validat
   Promise.resolve(routeHelper.perform(req, res, next, 'userProfile', 'r_a_ad_4'));
 });
 
+/* Usage reports */
+router.get('/usage-reports', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  Promise.resolve(routeHelper.perform(req, res, next, 'usageReports', 'r_a_ad_5'));
+});
+
 module.exports = router;
