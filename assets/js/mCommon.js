@@ -5,3 +5,4 @@
 //= require userApproval.js
 //= require whitelistUser.js
 //= require userProfile.js
+//= require usageReports.js
