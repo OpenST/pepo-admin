@@ -34,6 +34,10 @@
           .children('option:selected')
           .val();
 
+        if (reportType == 0) {
+          return;
+        }
+
         $(this).css('pointer-events', 'none');
         $(this).html('Generating!');
         $(this).addClass('disabled');
