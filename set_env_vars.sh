@@ -30,4 +30,4 @@ export PAD_DEVOPS_SERVER_IDENTIFIER='localhost'
 export VIEW_ROOT_URL='https://view.stagingost.com/testnet'
 
 # Usage data sheet url
-export USAGE_DATA_URL='https://docs.google.com/spreadsheets/d/1zB67I1MaWo8Ohw4A-yZNHbY0A9nrA1NifhdueTLUBMg'
+export PAD_USAGE_DATA_URL='https://docs.google.com/spreadsheets/d/1zB67I1MaWo8Ohw4A-yZNHbY0A9nrA1NifhdueTLUBMg'
