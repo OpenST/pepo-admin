@@ -71,6 +71,7 @@ router.get('/user-profile/:user_id', sanitizer.sanitizeDynamicUrlParams, validat
 
 /* Usage reports */
 router.get('/usage-reports', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  req.decodedParams.usageDataUrl = coreConstants.USAGE_DATA_URL;
   Promise.resolve(routeHelper.perform(req, res, next, 'usageReports', 'r_a_ad_5'));
 });
 
