@@ -286,7 +286,9 @@
         userName: userData.user_name,
         userId: oThis.userId,
         imageLink: imageLink,
-        balance: oThis.convertWeiToNormal(responseData.balance),
+        balanceInUsd: oThis.convertWeiToNormal(responseData.user_balance.balance_usd),
+        balanceInPepo: oThis.convertWeiToNormalWithoutRounding(responseData.user_balance.balance_pepo),
+        pepocornBalance: responseData.user_balance.balance_pepocorn,
         isCreator: isCreator,
         status: status
       };
@@ -398,6 +400,11 @@
         .div(divisor)
         .toFixed(2)
         .toString(10);
+    },
+
+    convertWeiToNormalWithoutRounding: function(value) {
+      var divisor = new BigNumber(10).pow(18);
+      return new BigNumber(value).div(divisor).toString(10);
     },
 
     profileUrl: function(user_id) {
