@@ -281,14 +281,20 @@
       var isCreator = userData.approved_creator ? true : false;
       var status = userData.status;
 
+      var balanceInUsd = oThis.convertWeiToNormal(responseData.user_balance.balance_usd);
+      var totalBalanceInUsd = new BigNumber(balanceInUsd)
+        .plus(new BigNumber(responseData.user_balance.balance_pepocorn))
+        .toString();
+
       var headerContext = {
         name: userData.name,
         userName: userData.user_name,
         userId: oThis.userId,
         imageLink: imageLink,
-        balanceInUsd: oThis.convertWeiToNormal(responseData.user_balance.balance_usd),
+        balanceInUsd: balanceInUsd,
         balanceInPepo: oThis.convertWeiToNormalWithoutRounding(responseData.user_balance.balance_pepo),
         pepocornBalance: responseData.user_balance.balance_pepocorn,
+        totalBalanceInUsd: totalBalanceInUsd,
         isCreator: isCreator,
         status: status
       };
