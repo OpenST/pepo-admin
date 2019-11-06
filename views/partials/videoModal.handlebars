@@ -1,6 +1,6 @@
 <script id="video-tray" type="text/x-handlebars-template">
   <div class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -8,11 +8,58 @@
           </button>
         </div>
         <div class="modal-body">
-          <p class="text-secondary">\{{{description}}}</p>
-          <a href=\{{descriptionLink}} target="_blank" rel= "noopener noreferrer nofollow">\{{descriptionLink}}</a>
-          <p></p>
-          <video width="100%" height="420" style="object-fit: cover;" controls autoplay><source src=\{{videoLink}} rel= "noopener noreferrer nofollow" type="video/mp4"></video>
+        <div class="row">
+            <div class="col-6">
+                <video width="100%" height="420" style="object-fit: cover;" controls autoplay><source src=\{{videoLink}} rel= "noopener noreferrer nofollow" type="video/mp4"></video>
+            </div>
+            <div class="col-6">
+                <div class="description">
+                             \{{#if description}}
+                             <div class="video_desc mb-3">
+                                <span class="font-weight-bold">Bio:</span>
+                                <br>
+                                <span class="text-secondary mb-0" id="bio_text">\{{{description}}}</span>
+
+                                <a href="javascript:void(0)" class="ml-1" id="edit-video-desc">
+                                    <span class="fa fa-pencil-square-o" aria-hidden="true"></span>
+                                </a>
+
+                             </div>
+                             <div class="video_desc_editable mb-3" style="display:none">
+                                <div class="form-group">
+                                   <label for="edit-video-description">Bio:</label>
+                                   <textarea type="text" class="form-control" id="edit-video-description" ></textarea>
+                                </div>
+                                <a class="mr-3 btn btn-outline-primary" href="javascript:void(0)"  id="save-video-description">Save</a>
+                                <a href="javascript:void(0)" class="btn btn-outline-danger" id="cancel-video-description">Cancel</a>
+                                <p class="error inline-error my-2">&nbsp</p>
+                             </div>
+                            \{{/if}}
+                            \{{#if descriptionLink}}
+                            <div class="video_desc_link">
+                                <span class="font-weight-bold">Link:</span>
+                                <br>
+                                <a href=\{{descriptionLink}} id="link_url" target="_blank" rel= "noopener noreferrer nofollow">\{{descriptionLink}}</a>
+
+                                <a href="javascript:void(0)" class="ml-1" id="edit-video-desc-link">
+                                    <span class="fa fa-pencil-square-o" aria-hidden="true">
+                                </a>
+                            </div>
+                            <div class="video_desc_link_editable mb-3" style="display:none">
+                                <div class="form-group">
+                                    <label for="edit-video-description-link">Link:</label>
+                                     <input type="text" class="form-control" id="edit-video-description-link">
+                                </div>
+                                 <a class="mr-3 btn btn-outline-primary" href="javascript:void(0)" id="save-video-description-link">Save</a>
+                                 <a href="javascript:void(0)" class="btn btn-outline-danger" id="cancel-video-description-link">Cancel</a>
+                                 <p class="error inline-error my-2">&nbsp</p>
+                                </div>
+                            \{{/if}}
+
+                </div>
+            </div>
         </div>
+       </div>
       </div>
     </div>
   </div>

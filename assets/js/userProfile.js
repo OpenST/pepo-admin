@@ -6,20 +6,18 @@
 
     $.extend(oThis.config);
     oThis.bindEvents();
-
     oThis.lastPaginationId = null;
     oThis.query = null;
     oThis.videoDescription = null;
+    oThis.videoId = null;
     oThis.videoDetails = {};
     oThis.linkDetails = {};
-
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
-
     oThis.userId = +window.location.pathname.split('user-profile/')[1];
-
     oThis.loadVideos(oThis.userId);
     oThis.loadProfile(oThis.userId);
+    oThis.autoCompleteInitialized = false;
   };
 
   UserProfile.prototype = {
@@ -174,6 +172,7 @@
         var videoId = +$(this).attr('data-video-id');
         var descriptionId = +$(this).attr('data-desc-id');
         var description = null;
+        oThis.videoId = videoId;
 
         if (descriptionId) {
           description = oThis.videoDescriptions[descriptionId].text;
@@ -192,6 +191,24 @@
         );
 
         $('.modal').modal('show');
+        $('#edit-video-desc').on('click', function() {
+          oThis.onVideoDescEdit();
+        });
+        $('#edit-video-desc-link').on('click', function() {
+          oThis.onVideoDescLinkEdit();
+        });
+        $('#cancel-video-description').on('click', function() {
+          oThis.onVideoDescCancel();
+        });
+        $('#cancel-video-description-link').on('click', function() {
+          oThis.onVideoDescLinkCancel();
+        });
+        $('#save-video-description').on('click', function() {
+          oThis.onVideoDescSave();
+        });
+        $('#save-video-description-link').on('click', function() {
+          oThis.onLinkSave();
+        });
 
         // Remove the backdrop explicitly - seems to be a bootstrap bug
         $('button.close').click(function(event) {
@@ -441,6 +458,170 @@
       const oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/block';
+    },
+    onVideoDescEdit: function() {
+      const oThis = this;
+      var oldDesc = $('#bio_text').text();
+      $('#edit-video-description').val(oldDesc);
+      $('.video_desc').hide();
+      $('.video_desc_editable').show();
+      if (!oThis.autoCompleteInitialized) {
+        oThis.initializeAutoComplete();
+      }
+    },
+    onVideoDescLinkEdit: function() {
+      var oldDescLink = $('#link_url').text();
+      $('#edit-video-description-link').val(oldDescLink);
+      $('.video_desc_link').hide();
+      $('.video_desc_link_editable').show();
+    },
+    onVideoDescCancel: function() {
+      $('.video_desc_editable .inline-error').empty();
+      $('.video_desc_editable').hide();
+      $('.video_desc').show();
+    },
+    onVideoDescLinkCancel: function() {
+      $('.video_desc_link_editable .inline-error').empty();
+      $('.video_desc_link_editable').hide();
+      $('.video_desc_link').show();
+    },
+    onVideoDescSave: function() {
+      const oThis = this;
+      oThis.saveDescription();
+    },
+    onLinkSave: function() {
+      const oThis = this;
+      oThis.saveLink();
+    },
+    initializeAutoComplete: function() {
+      const oThis = this;
+      oThis.autoCompleteInitialized = true;
+      $('#edit-video-description').jqueryautocompleteplus({
+        trigger2: '#',
+        outputTrigger2: true,
+        minLength2: 3,
+        onInputChange: oThis.onInputChange,
+        dataModifier: oThis.modifyData
+      });
+    },
+    modifyData: function(resData) {
+      var newData = [];
+      for (var i = 0; i < resData.length; i++) {
+        newData.push({
+          value: resData[i].text,
+          label: resData[i].text
+        });
+      }
+      return newData;
+    },
+    onInputChange: function(query, paginationIdTags, dataModifier, callBack) {
+      const oThis = this;
+      var ajaxUrl = null,
+        response;
+      if (paginationIdTags == null) {
+        ajaxUrl = '/api/admin/tags?q=' + query;
+      } else {
+        ajaxUrl = '/api/admin/tags?q=' + query + '&pagination_identifier=' + encodeURIComponent(paginationIdTags);
+      }
+
+      $.ajax({
+        url: ajaxUrl,
+        type: 'GET',
+        success: function(res) {
+          if (res.success) {
+            console.log('res', res);
+            var formatedData = dataModifier(res.data.tags);
+            var paginationIdTags =
+              res.data.meta.next_page_payload && res.data.meta.next_page_payload.pagination_identifier;
+            response = {
+              formatedData: formatedData,
+              paginationIdTags: paginationIdTags
+            };
+            callBack(response);
+          }
+        },
+        error: function(err) {
+          console.log('err', err);
+        }
+      });
+    },
+    onDescriptionSaveSuccess: function(newDescription) {
+      $('.video_desc_editable').hide();
+      $('.video_desc').show();
+      $('#bio_text').text(newDescription);
+    },
+    onDescriptionSaveError: function(errorMsg) {
+      $('.video_desc_editable .inline-error').text(errorMsg);
+    },
+    onLinkSaveSuccess: function(newLink) {
+      $('.video_desc_link_editable').hide();
+      $('.video_desc_link').show();
+      $('#link_url').text(newLink);
+    },
+    onLinkSaveError: function(errorMsg) {
+      $('.video_desc_link_editable .inline-error').text(errorMsg);
+    },
+
+    saveDescription: function() {
+      const oThis = this;
+      var newDescription = $('#edit-video-description').val();
+      var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/description';
+      $.ajax({
+        url: ajaxUrl,
+        type: 'POST',
+        data: JSON.stringify({
+          video_description: newDescription
+        }),
+        contentType: 'application/json',
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        success: function(res) {
+          if (res.success) {
+            oThis.onDescriptionSaveSuccess(newDescription);
+          } else {
+            console.log('====error====', res);
+            var errorMsg = res.err.error_data[0].msg;
+            oThis.onDescriptionSaveError(errorMsg);
+          }
+        },
+        error: function(err) {
+          console.log('====error====', err);
+          var errorMsg = err.responseJSON.err.msg;
+          oThis.onDescriptionSaveError(errorMsg);
+        }
+      });
+    },
+
+    saveLink: function() {
+      const oThis = this;
+      var newLink = $('#edit-video-description-link').val();
+      var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/link';
+      $.ajax({
+        url: ajaxUrl,
+        type: 'POST',
+        data: JSON.stringify({
+          link: newLink
+        }),
+        contentType: 'application/json',
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        success: function(res) {
+          if (res.success) {
+            oThis.onLinkSaveSuccess(newLink);
+          } else {
+            console.log('====error====', res);
+            var errorMsg = res.err.error_data[0].msg;
+            oThis.onLinkSaveError(errorMsg);
+          }
+        },
+        error: function(err) {
+          console.log('====error====', err);
+          var errorMsg = err.responseJSON.err.msg;
+          oThis.onLinkSaveError(errorMsg);
+        }
+      });
     }
   };
 
