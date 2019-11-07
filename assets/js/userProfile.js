@@ -91,7 +91,7 @@
         oThis.videoDescriptions = response.data['video_descriptions'];
         oThis.videoDetails = response.data['video_details'];
         oThis.linkDetails = response.data['links'];
-
+        var html;
         for (var ind = 0; ind < searchResults.length; ind++) {
           var videoId = searchResults[ind]['payload'].video_id;
           var video = response.data['videos'][videoId];
@@ -122,11 +122,10 @@
             descriptionId: descriptionId
           };
 
-          var html = videoRowTemplate(context);
-
-          $('#video-results').append(html);
+          html += videoRowTemplate(context);
         }
-
+        $('#video-results').empty();
+        $('#video-results').append(html);
         oThis.bindVideoModalEvents();
         oThis.bindVideoStateChangeEvents();
       } else {
@@ -546,17 +545,21 @@
       });
     },
     onDescriptionSaveSuccess: function(newDescription) {
+      const oThis = this;
       $('.video_desc_editable').hide();
       $('.video_desc').show();
       $('#bio_text').text(newDescription);
+      oThis.loadVideos(oThis.userId);
     },
     onDescriptionSaveError: function(errorMsg) {
       $('.video_desc_editable .inline-error').text(errorMsg);
     },
     onLinkSaveSuccess: function(newLink) {
+      const oThis = this;
       $('.video_desc_link_editable').hide();
       $('.video_desc_link').show();
       $('#link_url').text(newLink);
+      oThis.loadVideos(oThis.userId);
     },
     onLinkSaveError: function(errorMsg) {
       $('.video_desc_link_editable .inline-error').text(errorMsg);
