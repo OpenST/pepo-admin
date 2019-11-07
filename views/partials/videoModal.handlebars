@@ -14,15 +14,16 @@
             </div>
             <div class="col-6">
                 <div class="description">
-                             \{{#if description}}
+
                              <div class="video_desc mb-3">
                                 <span class="font-weight-bold">Bio:</span>
+                                <a href="javascript:void(0)" class="ml-1" id="edit-video-desc">
+                                   <span class="fa fa-pencil-square-o" aria-hidden="true"></span>
+                                </a>
                                 <br>
                                 <span class="text-secondary mb-0" id="bio_text">\{{{description}}}</span>
 
-                                <a href="javascript:void(0)" class="ml-1" id="edit-video-desc">
-                                    <span class="fa fa-pencil-square-o" aria-hidden="true"></span>
-                                </a>
+
 
                              </div>
                              <div class="video_desc_editable mb-3" style="display:none">
@@ -34,16 +35,16 @@
                                 <a href="javascript:void(0)" class="btn btn-outline-danger" id="cancel-video-description">Cancel</a>
                                 <p class="error inline-error my-2">&nbsp</p>
                              </div>
-                            \{{/if}}
-                            \{{#if descriptionLink}}
+
+
                             <div class="video_desc_link">
                                 <span class="font-weight-bold">Link:</span>
-                                <br>
-                                <a href=\{{descriptionLink}} id="link_url" target="_blank" rel= "noopener noreferrer nofollow">\{{descriptionLink}}</a>
-
                                 <a href="javascript:void(0)" class="ml-1" id="edit-video-desc-link">
                                     <span class="fa fa-pencil-square-o" aria-hidden="true">
                                 </a>
+                                <br>
+                                <a href="{{descriptionLink}}"   id="link_url" target="_blank" rel= "noopener noreferrer nofollow">\{{descriptionLink}}</a>
+
                             </div>
                             <div class="video_desc_link_editable mb-3" style="display:none">
                                 <div class="form-group">
@@ -54,7 +55,7 @@
                                  <a href="javascript:void(0)" class="btn btn-outline-danger" id="cancel-video-description-link">Cancel</a>
                                  <p class="error inline-error my-2">&nbsp</p>
                                 </div>
-                            \{{/if}}
+
 
                 </div>
             </div>

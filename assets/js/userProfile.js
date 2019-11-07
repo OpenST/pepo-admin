@@ -124,8 +124,11 @@
 
           html += videoRowTemplate(context);
         }
-        $('#video-results').empty();
-        $('#video-results').append(html);
+        if (html) {
+          $('#video-results').empty();
+          $('#video-results').append(html);
+        }
+
         oThis.bindVideoModalEvents();
         oThis.bindVideoStateChangeEvents();
       } else {
