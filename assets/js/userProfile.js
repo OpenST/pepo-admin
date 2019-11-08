@@ -184,6 +184,7 @@
 
         var descriptionLink = links && links.length > 0 ? oThis.linkDetails[links[0]].url : null;
 
+        descriptionLink = oThis.linkFormatting(descriptionLink);
         $('#modal-container').html(
           videoTemplate({
             videoLink: videoLink,
