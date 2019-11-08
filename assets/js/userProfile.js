@@ -561,8 +561,16 @@
       const oThis = this;
       $('.video_desc_link_editable').hide();
       $('.video_desc_link').show();
+      newLink = oThis.linkFormatting(newLink);
       $('#link_url').text(newLink);
+      $('#link_url').attr('href', newLink);
       oThis.loadVideos(oThis.userId);
+    },
+    linkFormatting: function(url) {
+      if (!(url.startsWith('http://', 0) || url.startsWith('https://', 0))) {
+        url = 'http://' + url;
+      }
+      return url;
     },
     onLinkSaveError: function(errorMsg) {
       $('.video_desc_link_editable .inline-error').text(errorMsg);
@@ -602,6 +610,7 @@
     saveLink: function() {
       const oThis = this;
       var newLink = $('#edit-video-description-link').val();
+      newLink = oThis.linkFormatting(newLink);
       var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/link';
       $.ajax({
         url: ajaxUrl,
