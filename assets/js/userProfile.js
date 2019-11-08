@@ -18,6 +18,8 @@
     oThis.loadVideos(oThis.userId);
     oThis.loadProfile(oThis.userId);
     oThis.autoCompleteInitialized = false;
+    oThis.saveDescCheck = false;
+    oThis.saveLinkCheck = false;
   };
 
   UserProfile.prototype = {
@@ -34,7 +36,7 @@
       });
     },
 
-    loadVideos: function(data) {
+    loadVideos: function(data, videoId) {
       const oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
@@ -46,6 +48,9 @@
         success: function(response) {
           $('#videos-load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
+          if (oThis.saveLinkCheck || oThis.saveDescCheck) {
+            oThis.updateVideoModal(response, videoId);
+          }
         },
         error: function(error) {
           console.error('===error', error);
@@ -139,7 +144,23 @@
         }
       }
     },
+    updateVideoModal: function(response, videoId) {
+      const oThis = this;
+      var videoData = response.data['video_details'];
+      if (oThis.saveDescCheck) {
+        var descriptionId = videoData[videoId].description_id;
+        var videoDescriptions = response.data['video_descriptions'];
+        var newDescription = videoDescriptions[descriptionId] && videoDescriptions[descriptionId].text;
+        oThis.onDescriptionSaveSuccess(newDescription);
+      }
 
+      if (oThis.saveLinkCheck) {
+        var linkId = videoData[videoId].link_ids[0];
+        var linksData = response.data['links'];
+        var newLink = linksData[linkId] && linksData[linkId].url;
+        oThis.onLinkSaveSuccess(newLink);
+      }
+    },
     bindVideoStateChangeEvents: function() {
       const oThis = this;
 
@@ -490,10 +511,12 @@
     },
     onVideoDescSave: function() {
       const oThis = this;
+      oThis.saveDescCheck = true;
       oThis.saveDescription();
     },
     onLinkSave: function() {
       const oThis = this;
+      oThis.saveLinkCheck = true;
       oThis.saveLink();
     },
     initializeAutoComplete: function() {
@@ -552,20 +575,24 @@
       const oThis = this;
       $('.video_desc_editable').hide();
       $('.video_desc').show();
-      $('#bio_text').text(newDescription);
-      oThis.loadVideos(oThis.userId);
+      $('#bio_text').empty();
+      $('#bio_text').html(newDescription);
+      // oThis.loadVideos(oThis.userId);
+      oThis.saveDescCheck = false;
     },
     onDescriptionSaveError: function(errorMsg) {
       $('.video_desc_editable .inline-error').text(errorMsg);
     },
     onLinkSaveSuccess: function(newLink) {
       const oThis = this;
+      // oThis.loadVideos(oThis.userId);
       $('.video_desc_link_editable').hide();
       $('.video_desc_link').show();
       newLink = oThis.linkFormatting(newLink);
-      $('#link_url').text(newLink);
+      $('#link_url').empty();
+      $('#link_url').html(newLink);
       $('#link_url').attr('href', newLink);
-      oThis.loadVideos(oThis.userId);
+      oThis.saveLinkCheck = false;
     },
     linkFormatting: function(url) {
       if (url && !(url.startsWith('http://', 0) || url.startsWith('https://', 0))) {
@@ -593,7 +620,7 @@
         },
         success: function(res) {
           if (res.success) {
-            oThis.onDescriptionSaveSuccess(newDescription);
+            oThis.loadVideos(oThis.userId, oThis.videoId);
           } else {
             console.log('====error====', res);
             var errorMsg = res.err.error_data[0].msg;
@@ -625,7 +652,7 @@
         },
         success: function(res) {
           if (res.success) {
-            oThis.onLinkSaveSuccess(newLink);
+            oThis.loadVideos(oThis.userId, oThis.videoId);
           } else {
             console.log('====error====', res);
             var errorMsg = res.err.error_data[0].msg;
