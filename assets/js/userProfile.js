@@ -573,6 +573,7 @@
     },
     onDescriptionSaveSuccess: function(newDescription) {
       const oThis = this;
+      $('.video_desc_editable .inline-error').empty();
       $('.video_desc_editable').hide();
       $('.video_desc').show();
       $('#bio_text').empty();
@@ -586,6 +587,7 @@
     onLinkSaveSuccess: function(newLink) {
       const oThis = this;
       // oThis.loadVideos(oThis.userId);
+      $('.video_desc_link_editable .inline-error').empty();
       $('.video_desc_link_editable').hide();
       $('.video_desc_link').show();
       newLink = oThis.linkFormatting(newLink);
@@ -595,7 +597,9 @@
       oThis.saveLinkCheck = false;
     },
     linkFormatting: function(url) {
-      url = url.toLowerCase();
+      if (url) {
+        url = url.toLowerCase();
+      }
       if (url && !(url.startsWith('http://', 0) || url.startsWith('https://', 0))) {
         url = 'http://' + url;
       }
