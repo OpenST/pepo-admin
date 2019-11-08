@@ -6,20 +6,20 @@
 
     $.extend(oThis.config);
     oThis.bindEvents();
-
     oThis.lastPaginationId = null;
     oThis.query = null;
     oThis.videoDescription = null;
+    oThis.videoId = null;
     oThis.videoDetails = {};
     oThis.linkDetails = {};
-
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
-
     oThis.userId = +window.location.pathname.split('user-profile/')[1];
-
     oThis.loadVideos(oThis.userId);
     oThis.loadProfile(oThis.userId);
+    oThis.autoCompleteInitialized = false;
+    oThis.saveDescCheck = false;
+    oThis.saveLinkCheck = false;
   };
 
   UserProfile.prototype = {
@@ -36,7 +36,7 @@
       });
     },
 
-    loadVideos: function(data) {
+    loadVideos: function(data, videoId) {
       const oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
@@ -48,6 +48,9 @@
         success: function(response) {
           $('#videos-load-btn').removeClass('hidden');
           oThis.userSearchSuccessCallback(response);
+          if (oThis.saveLinkCheck || oThis.saveDescCheck) {
+            oThis.updateVideoModal(response, videoId);
+          }
         },
         error: function(error) {
           console.error('===error', error);
@@ -93,7 +96,7 @@
         oThis.videoDescriptions = response.data['video_descriptions'];
         oThis.videoDetails = response.data['video_details'];
         oThis.linkDetails = response.data['links'];
-
+        var html;
         for (var ind = 0; ind < searchResults.length; ind++) {
           var videoId = searchResults[ind]['payload'].video_id;
           var video = response.data['videos'][videoId];
@@ -124,8 +127,10 @@
             descriptionId: descriptionId
           };
 
-          var html = videoRowTemplate(context);
-
+          html += videoRowTemplate(context);
+        }
+        if (html) {
+          $('#video-results').empty();
           $('#video-results').append(html);
         }
 
@@ -139,7 +144,23 @@
         }
       }
     },
+    updateVideoModal: function(response, videoId) {
+      const oThis = this;
+      var videoData = response.data['video_details'];
+      if (oThis.saveDescCheck) {
+        var descriptionId = videoData[videoId].description_id;
+        var videoDescriptions = response.data['video_descriptions'];
+        var newDescription = videoDescriptions[descriptionId] && videoDescriptions[descriptionId].text;
+        oThis.onDescriptionSaveSuccess(newDescription);
+      }
 
+      if (oThis.saveLinkCheck) {
+        var linkId = videoData[videoId].link_ids[0];
+        var linksData = response.data['links'];
+        var newLink = linksData[linkId] && linksData[linkId].url;
+        oThis.onLinkSaveSuccess(newLink);
+      }
+    },
     bindVideoStateChangeEvents: function() {
       const oThis = this;
 
@@ -174,6 +195,7 @@
         var videoId = +$(this).attr('data-video-id');
         var descriptionId = +$(this).attr('data-desc-id');
         var description = null;
+        oThis.videoId = videoId;
 
         if (descriptionId) {
           description = oThis.videoDescriptions[descriptionId].text;
@@ -183,6 +205,7 @@
 
         var descriptionLink = links && links.length > 0 ? oThis.linkDetails[links[0]].url : null;
 
+        descriptionLink = oThis.linkFormatting(descriptionLink);
         $('#modal-container').html(
           videoTemplate({
             videoLink: videoLink,
@@ -192,6 +215,24 @@
         );
 
         $('.modal').modal('show');
+        $('#edit-video-desc').on('click', function() {
+          oThis.onVideoDescEdit();
+        });
+        $('#edit-video-desc-link').on('click', function() {
+          oThis.onVideoDescLinkEdit();
+        });
+        $('#cancel-video-description').on('click', function() {
+          oThis.onVideoDescCancel();
+        });
+        $('#cancel-video-description-link').on('click', function() {
+          oThis.onVideoDescLinkCancel();
+        });
+        $('#save-video-description').on('click', function() {
+          oThis.onVideoDescSave();
+        });
+        $('#save-video-description-link').on('click', function() {
+          oThis.onLinkSave();
+        });
 
         // Remove the backdrop explicitly - seems to be a bootstrap bug
         $('button.close').click(function(event) {
@@ -441,6 +482,194 @@
       const oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/block';
+    },
+    onVideoDescEdit: function() {
+      const oThis = this;
+      var oldDesc = $('#bio_text').text();
+      $('#edit-video-description').val(oldDesc);
+      $('.video_desc').hide();
+      $('.video_desc_editable').show();
+      if (!oThis.autoCompleteInitialized) {
+        oThis.initializeAutoComplete();
+      }
+    },
+    onVideoDescLinkEdit: function() {
+      var oldDescLink = $('#link_url').text();
+      $('#edit-video-description-link').val(oldDescLink);
+      $('.video_desc_link').hide();
+      $('.video_desc_link_editable').show();
+    },
+    onVideoDescCancel: function() {
+      $('.video_desc_editable .inline-error').empty();
+      $('.video_desc_editable').hide();
+      $('.video_desc').show();
+    },
+    onVideoDescLinkCancel: function() {
+      $('.video_desc_link_editable .inline-error').empty();
+      $('.video_desc_link_editable').hide();
+      $('.video_desc_link').show();
+    },
+    onVideoDescSave: function() {
+      const oThis = this;
+      oThis.saveDescCheck = true;
+      oThis.saveDescription();
+    },
+    onLinkSave: function() {
+      const oThis = this;
+      oThis.saveLinkCheck = true;
+      oThis.saveLink();
+    },
+    initializeAutoComplete: function() {
+      const oThis = this;
+      oThis.autoCompleteInitialized = true;
+      $('#edit-video-description').jqueryautocompleteplus({
+        trigger2: '#',
+        outputTrigger2: true,
+        minLength2: 3,
+        onInputChange: oThis.onInputChange,
+        dataModifier: oThis.modifyData
+      });
+    },
+    modifyData: function(resData) {
+      var newData = [];
+      for (var i = 0; i < resData.length; i++) {
+        newData.push({
+          value: resData[i].text,
+          label: resData[i].text
+        });
+      }
+      return newData;
+    },
+    onInputChange: function(query, paginationIdTags, dataModifier, callBack) {
+      const oThis = this;
+      var ajaxUrl = null,
+        response;
+      if (paginationIdTags == null) {
+        ajaxUrl = '/api/admin/tags?q=' + query;
+      } else {
+        ajaxUrl = '/api/admin/tags?q=' + query + '&pagination_identifier=' + encodeURIComponent(paginationIdTags);
+      }
+
+      $.ajax({
+        url: ajaxUrl,
+        type: 'GET',
+        success: function(res) {
+          if (res.success) {
+            console.log('res', res);
+            var formatedData = dataModifier(res.data.tags);
+            var paginationIdTags =
+              res.data.meta.next_page_payload && res.data.meta.next_page_payload.pagination_identifier;
+            response = {
+              formatedData: formatedData,
+              paginationIdTags: paginationIdTags
+            };
+            callBack(response);
+          }
+        },
+        error: function(err) {
+          console.log('err', err);
+        }
+      });
+    },
+    onDescriptionSaveSuccess: function(newDescription) {
+      const oThis = this;
+      $('.video_desc_editable .inline-error').empty();
+      $('.video_desc_editable').hide();
+      $('.video_desc').show();
+      $('#bio_text').empty();
+      $('#bio_text').html(newDescription);
+      // oThis.loadVideos(oThis.userId);
+      oThis.saveDescCheck = false;
+    },
+    onDescriptionSaveError: function(errorMsg) {
+      $('.video_desc_editable .inline-error').text(errorMsg);
+    },
+    onLinkSaveSuccess: function(newLink) {
+      const oThis = this;
+      // oThis.loadVideos(oThis.userId);
+      $('.video_desc_link_editable .inline-error').empty();
+      $('.video_desc_link_editable').hide();
+      $('.video_desc_link').show();
+      newLink = oThis.linkFormatting(newLink);
+      $('#link_url').empty();
+      $('#link_url').html(newLink);
+      $('#link_url').attr('href', newLink);
+      oThis.saveLinkCheck = false;
+    },
+    linkFormatting: function(url) {
+      if (url) {
+        url = url.toLowerCase();
+      }
+      if (url && !(url.startsWith('http://', 0) || url.startsWith('https://', 0))) {
+        url = 'http://' + url;
+      }
+      return url;
+    },
+    onLinkSaveError: function(errorMsg) {
+      $('.video_desc_link_editable .inline-error').text(errorMsg);
+    },
+
+    saveDescription: function() {
+      const oThis = this;
+      var newDescription = $('#edit-video-description').val();
+      var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/description';
+      $.ajax({
+        url: ajaxUrl,
+        type: 'POST',
+        data: JSON.stringify({
+          video_description: newDescription
+        }),
+        contentType: 'application/json',
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        success: function(res) {
+          if (res.success) {
+            oThis.loadVideos(oThis.userId, oThis.videoId);
+          } else {
+            console.log('====error====', res);
+            var errorMsg = res.err.error_data[0].msg;
+            oThis.onDescriptionSaveError(errorMsg);
+          }
+        },
+        error: function(err) {
+          console.log('====error====', err);
+          var errorMsg = err.responseJSON.err.msg;
+          oThis.onDescriptionSaveError(errorMsg);
+        }
+      });
+    },
+
+    saveLink: function() {
+      const oThis = this;
+      var newLink = $('#edit-video-description-link').val();
+      newLink = oThis.linkFormatting(newLink);
+      var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/link';
+      $.ajax({
+        url: ajaxUrl,
+        type: 'POST',
+        data: JSON.stringify({
+          link: newLink
+        }),
+        contentType: 'application/json',
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        success: function(res) {
+          if (res.success) {
+            oThis.loadVideos(oThis.userId, oThis.videoId);
+          } else {
+            console.log('====error====', res);
+            var errorMsg = res.err.error_data[0].msg;
+            oThis.onLinkSaveError(errorMsg);
+          }
+        },
+        error: function(err) {
+          console.log('====error====', err);
+          var errorMsg = err.responseJSON.err.msg;
+          oThis.onLinkSaveError(errorMsg);
+        }
+      });
     }
   };
 

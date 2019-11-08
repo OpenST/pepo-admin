@@ -339,7 +339,7 @@
         $('#modal-container').html(videoTemplate({ videoLink: videoLink }));
 
         $('.modal').modal('show');
-
+        $('.description').hide();
         // Remove the backdrop explicitly - seems to be a bootstrap bug
         $('button.close').click(function(event) {
           $('.modal-backdrop').remove();

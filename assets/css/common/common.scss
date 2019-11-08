@@ -5,6 +5,14 @@ html, body {
 
 .modal {
   position: fixed;
+  .error{
+    color:red;
+    font-size: 0.8rem;
+  }
+}
+
+.ui-autocomplete{
+  z-index: 9999 !important;
 }
 
 .icon-border {

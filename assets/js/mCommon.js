@@ -1,5 +1,7 @@
 //= require plugins/handlebars/handlebars.js
 //= require plugins/bignumber.js
+//= require plugins/jQueryAutoCompletePlus.js
+//= require plugins/jquery-ui.js
 //= require common/common.js
 //= require login.js
 //= require userApproval.js
