@@ -568,7 +568,7 @@
       oThis.loadVideos(oThis.userId);
     },
     linkFormatting: function(url) {
-      if (!(url.startsWith('http://', 0) || url.startsWith('https://', 0))) {
+      if (url && !(url.startsWith('http://', 0) || url.startsWith('https://', 0))) {
         url = 'http://' + url;
       }
       return url;
