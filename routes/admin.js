@@ -6,11 +6,9 @@ const rootPrefix = '..',
   routeHelper = require(rootPrefix + '/routes/helper'),
   sanitizer = require(rootPrefix + '/helpers/sanitizer'),
   coreConstants = require(rootPrefix + '/config/coreConstants'),
-  basicHelper = require(rootPrefix + '/helpers/basic'),
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
   cookieHelper = require(rootPrefix + '/helpers/cookie'),
-  FetchCurrentAdmin = require(rootPrefix + '/lib/FetchCurrentAdmin'),
-  cookieConstants = require(rootPrefix + '/lib/globalConstant/cookie');
+  FetchCurrentAdmin = require(rootPrefix + '/lib/FetchCurrentAdmin');
 
 const validateLoggedInAdmin = async function(req, res, next) {
   let response = await new FetchCurrentAdmin({ headers: req.headers }).perform().catch(function(r) {
