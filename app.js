@@ -100,7 +100,7 @@ const appendRequestDebugInfo = function(req, res, next) {
 };
 
 const basicAuthentication = function(req, res, next) {
-  if (!coreConstants.USE_BASIC_AUTH) {
+  if (!coreConstants.USE_BASIC_AUTH || req.url == '/health-checker') {
     return next();
   }
 
