@@ -100,7 +100,7 @@ const appendRequestDebugInfo = function(req, res, next) {
 };
 
 const basicAuthentication = function(req, res, next) {
-  if (!coreConstants.USE_BASIC_AUTH) {
+  if (!coreConstants.USE_BASIC_AUTH || req.url == '/health-checker') {
     return next();
   }
 
@@ -209,6 +209,28 @@ app.use(appendRequestDebugInfo, startRequestLogLine);
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname + '/public/pepo.html'));
+});
+
+/* Elb health checker request */
+app.get('/health-checker', function(req, res, next) {
+  const performer = function() {
+    // 200 OK response needed for ELB Health checker
+    if (req.headers['user-agent'] === 'ELB-HealthChecker/2.0') {
+      return res.status(200).json(responseHelper.successWithData({}).toHash());
+    } else {
+      return res.status(404).json(
+        responseHelper
+          .error({
+            internal_error_identifier: 'r_a_h_c_1',
+            api_error_identifier: 'resource_not_found',
+            debug_options: {}
+          })
+          .toHash()
+      );
+    }
+  };
+
+  performer();
 });
 
 app.use('/admin', adminRoutes);
