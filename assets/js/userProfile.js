@@ -35,7 +35,45 @@
         oThis.loadVideos(query);
       });
     },
-
+    onMuteUnmuteBtnClick: function() {
+      const oThis = this;
+      oThis.jErrorBox = $('.mute-unmute-error');
+      oThis.jErrorBox.text('');
+      oThis.jMuteUnmuteBtn = $('#mute-unmute-btn');
+      var userStatus = oThis.jMuteUnmuteBtn.attr('status');
+      if (userStatus == 'mute') {
+        oThis.changeStatusApiUrl = oThis.apiUrl + '/admin/users/' + oThis.userId + '/unmute';
+        oThis.className = 'btn btn-outline-danger my-2 ml-2';
+        oThis.onSuccessUserStatus = 'unmute';
+        oThis.btnText = 'Mute';
+      } else {
+        oThis.changeStatusApiUrl = oThis.apiUrl + '/admin/users/' + oThis.userId + '/mute';
+        oThis.className = 'btn btn-danger my-2 ml-2';
+        oThis.onSuccessUserStatus = 'mute';
+        oThis.btnText = 'Unmute';
+      }
+      $.ajax({
+        url: oThis.changeStatusApiUrl,
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        type: 'POST',
+        success: function(res) {
+          if (res && res.success) {
+            oThis.jMuteUnmuteBtn.text(oThis.btnText);
+            oThis.jMuteUnmuteBtn.removeClass().addClass(oThis.className);
+            oThis.jMuteUnmuteBtn.attr('status', oThis.onSuccessUserStatus);
+          } else {
+            var errorMsg = res && res.err && res.err.error_data && res.err.error_data[0].msg;
+            oThis.jErrorBox.text(errorMsg);
+          }
+        },
+        error: function(err) {
+          var errorMsg = err && err.responseJSON && err.responseJSON.err && err.responseJSON.err.msg;
+          oThis.jErrorBox.text(errorMsg);
+        }
+      });
+    },
     loadVideos: function(data, videoId) {
       const oThis = this;
 
@@ -303,29 +341,35 @@
 
       var profileHeaderSource = document.getElementById('profile-header-template').innerHTML;
       var profileHeaderTemplate = Handlebars.compile(profileHeaderSource);
-
       var responseData = response.data;
-
       var userData = responseData['users'][oThis.userId];
       var imageData = responseData['images'];
-
       var profile_image_id = userData.profile_image_id;
-
       var imageLink = null;
-
       if (profile_image_id) {
         imageLink = imageData[profile_image_id].resolutions['144w']
           ? imageData[profile_image_id].resolutions['144w'].url
           : imageData[profile_image_id].resolutions['original'].url;
       }
-
       var isCreator = userData.approved_creator ? true : false;
       var status = userData.status;
-
       var balanceInUsd = oThis.convertWeiToNormal(responseData.user_balance.balance_usd);
       var totalBalanceInUsd = new BigNumber(balanceInUsd)
         .plus(new BigNumber(responseData.user_balance.balance_pepocorn))
         .toString();
+      var muteStatusInt = responseData.global_user_mute_details[oThis.userId].all,
+        className = null,
+        btnText = null,
+        muteStatus = null;
+      if (muteStatusInt) {
+        className = 'btn-danger';
+        btnText = 'Unmute';
+        muteStatus = 'mute';
+      } else {
+        className = 'btn-outline-danger';
+        btnText = 'Mute';
+        muteStatus = 'unmute';
+      }
 
       var headerContext = {
         name: userData.name,
@@ -337,12 +381,18 @@
         pepocornBalance: responseData.user_balance.balance_pepocorn,
         totalBalanceInUsd: totalBalanceInUsd,
         isCreator: isCreator,
-        status: status
+        status: status,
+        className: className,
+        muteStatus: muteStatus,
+        btnText: btnText
       };
 
       var profileHeaderHtml = profileHeaderTemplate(headerContext);
 
       $('#profile-header').html(profileHeaderHtml);
+      $('#mute-unmute-btn').on('click', function() {
+        oThis.onMuteUnmuteBtnClick();
+      });
     },
 
     bindUserStateChangeEvents: function() {
