@@ -34,6 +34,29 @@
         query = query + '&pagination_identifier=' + oThis.lastPaginationId;
         oThis.loadVideos(query);
       });
+
+      // Load next page
+      $('#reply-tab').click(function(event) {
+        event.preventDefault();
+
+        $('#profile-tab-list .nav-item span').removeClass('active');
+        $('#reply-tab span').addClass('active');
+        $('#video-list').css('display', 'none');
+        $('#reply-list').css('display', 'block');
+
+        // Init video replies list
+        new window.VideoReply();
+      });
+
+      // Load next page
+      $('#video-tab').click(function(event) {
+        event.preventDefault();
+
+        $('#profile-tab-list .nav-item span').removeClass('active');
+        $('#video-tab span').addClass('active');
+        $('#video-list').css('display', 'block');
+        $('#reply-list').css('display', 'none');
+      });
     },
 
     loadVideos: function(data, videoId) {
@@ -47,7 +70,7 @@
         contentType: 'application/json',
         success: function(response) {
           $('#videos-load-btn').removeClass('hidden');
-          oThis.userSearchSuccessCallback(response);
+          oThis.videoHistorySuccessCallback(response);
           if (oThis.saveLinkCheck || oThis.saveDescCheck) {
             oThis.updateVideoModal(response, videoId);
           }
@@ -63,7 +86,7 @@
       });
     },
 
-    userSearchSuccessCallback: function(response) {
+    videoHistorySuccessCallback: function(response) {
       const oThis = this;
 
       var source = document.getElementById('video-detail-row').innerHTML;
@@ -144,6 +167,7 @@
         }
       }
     },
+
     updateVideoModal: function(response, videoId) {
       const oThis = this;
       var videoData = response.data['video_details'];
@@ -161,6 +185,7 @@
         oThis.onLinkSaveSuccess(newLink);
       }
     },
+
     bindVideoStateChangeEvents: function() {
       const oThis = this;
 
@@ -483,6 +508,7 @@
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/block';
     },
+
     onVideoDescEdit: function() {
       const oThis = this;
       var oldDesc = $('#bio_text').text();
@@ -493,32 +519,38 @@
         oThis.initializeAutoComplete();
       }
     },
+
     onVideoDescLinkEdit: function() {
       var oldDescLink = $('#link_url').text();
       $('#edit-video-description-link').val(oldDescLink);
       $('.video_desc_link').hide();
       $('.video_desc_link_editable').show();
     },
+
     onVideoDescCancel: function() {
       $('.video_desc_editable .inline-error').empty();
       $('.video_desc_editable').hide();
       $('.video_desc').show();
     },
+
     onVideoDescLinkCancel: function() {
       $('.video_desc_link_editable .inline-error').empty();
       $('.video_desc_link_editable').hide();
       $('.video_desc_link').show();
     },
+
     onVideoDescSave: function() {
       const oThis = this;
       oThis.saveDescCheck = true;
       oThis.saveDescription();
     },
+
     onLinkSave: function() {
       const oThis = this;
       oThis.saveLinkCheck = true;
       oThis.saveLink();
     },
+
     initializeAutoComplete: function() {
       const oThis = this;
       oThis.autoCompleteInitialized = true;
@@ -530,6 +562,7 @@
         dataModifier: oThis.modifyData
       });
     },
+
     modifyData: function(resData) {
       var newData = [];
       for (var i = 0; i < resData.length; i++) {
@@ -540,6 +573,7 @@
       }
       return newData;
     },
+
     onInputChange: function(query, paginationIdTags, dataModifier, callBack) {
       const oThis = this;
       var ajaxUrl = null,
@@ -571,6 +605,7 @@
         }
       });
     },
+
     onDescriptionSaveSuccess: function(newDescription) {
       const oThis = this;
       $('.video_desc_editable .inline-error').empty();
@@ -581,9 +616,11 @@
       // oThis.loadVideos(oThis.userId);
       oThis.saveDescCheck = false;
     },
+
     onDescriptionSaveError: function(errorMsg) {
       $('.video_desc_editable .inline-error').text(errorMsg);
     },
+
     onLinkSaveSuccess: function(newLink) {
       const oThis = this;
       // oThis.loadVideos(oThis.userId);
@@ -596,6 +633,7 @@
       $('#link_url').attr('href', newLink);
       oThis.saveLinkCheck = false;
     },
+
     linkFormatting: function(url) {
       if (url) {
         url = url.toLowerCase();
@@ -605,6 +643,7 @@
       }
       return url;
     },
+
     onLinkSaveError: function(errorMsg) {
       $('.video_desc_link_editable .inline-error').text(errorMsg);
     },
