@@ -40,15 +40,16 @@
       oThis.jErrorBox = $('.mute-unmute-error');
       oThis.jErrorBox.text('');
       oThis.jMuteUnmuteBtn = $('#mute-unmute-btn');
-      if (oThis.onSuccessUserStatus == 'mute') {
+      oThis.jMuteUnmuteBtn.attr('disabled', true);
+      if (oThis.onSuccessUserStatus == 1) {
         oThis.changeStatusApiUrl = oThis.apiUrl + '/admin/users/' + oThis.userId + '/unmute';
         oThis.className = 'btn-outline-danger';
-        oThis.onSuccessUserStatus = 'unmute';
+        oThis.onSuccessUserStatus = 0;
         oThis.btnText = 'Mute';
       } else {
         oThis.changeStatusApiUrl = oThis.apiUrl + '/admin/users/' + oThis.userId + '/mute';
         oThis.className = 'btn-danger';
-        oThis.onSuccessUserStatus = 'mute';
+        oThis.onSuccessUserStatus = 1;
         oThis.btnText = 'Unmute';
       }
       $.ajax({
@@ -58,6 +59,7 @@
         },
         type: 'POST',
         success: function(res) {
+          oThis.jMuteUnmuteBtn.attr('disabled', false);
           if (res && res.success) {
             oThis.jMuteUnmuteBtn.text(oThis.btnText);
             oThis.jMuteUnmuteBtn.removeClass('btn-outline-danger btn-danger').addClass(oThis.className);
@@ -67,6 +69,7 @@
           }
         },
         error: function(err) {
+          oThis.jMuteUnmuteBtn.attr('disabled', false);
           var errorMsg = err && err.responseJSON && err.responseJSON.err && err.responseJSON.err.msg;
           oThis.jErrorBox.text(errorMsg);
         }
