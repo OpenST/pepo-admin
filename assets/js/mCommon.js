@@ -8,3 +8,4 @@
 //= require whitelistUser.js
 //= require userProfile.js
 //= require usageReports.js
+//= require discover.js

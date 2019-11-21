@@ -1,0 +1,22 @@
+
+.search-tab{
+
+    color:black;
+}
+.search-nav{
+    border: 1px solid #ced4da;
+    width:100%;
+}
+li>.active{
+    background-color:#dc3545;
+    color:white;
+}
+.error-text{
+    color:red;
+}
+.item-wrapper{
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    color: #495057;
+    background-color: white;
+}

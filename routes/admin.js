@@ -75,4 +75,9 @@ router.get('/usage-reports', sanitizer.sanitizeDynamicUrlParams, validateLoggedI
   Promise.resolve(routeHelper.perform(req, res, next, 'usageReports', 'r_a_ad_5'));
 });
 
+/* Discover */
+router.get('/discover', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  Promise.resolve(routeHelper.perform(req, res, next, 'discover', 'r_a_ad_6'));
+});
+
 module.exports = router;
