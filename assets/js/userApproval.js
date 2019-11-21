@@ -1,6 +1,6 @@
 (function(window, $) {
-  const UserApproval = function(config) {
-    const oThis = this;
+  var UserApproval = function(config) {
+    var oThis = this;
 
     oThis.config = {};
 
@@ -20,7 +20,7 @@
 
   UserApproval.prototype = {
     bindEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       // Trigger search
       $('#search-btn').click(function(event) {
@@ -75,7 +75,7 @@
     },
 
     toggleLoaderVisibility: function() {
-      const oThis = this;
+      var oThis = this;
 
       if ($('.loader').css('visibility') == 'hidden') {
         $('.loader').css('visibility', 'visible');
@@ -85,7 +85,7 @@
     },
 
     bindSortAndFilterEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       // Apply sort
       $('#signed-up-user-sort').change(function(event) {
@@ -103,7 +103,7 @@
     },
 
     prepareQuery: function() {
-      const oThis = this;
+      var oThis = this;
 
       var sortBy = $('#signed-up-user-sort')
         .children('option:selected')
@@ -127,7 +127,7 @@
     },
 
     applyFilterOrSort: function() {
-      const oThis = this;
+      var oThis = this;
 
       var query = oThis.prepareQuery();
 
@@ -144,7 +144,7 @@
     },
 
     loadUsers: function(data) {
-      const oThis = this;
+      var oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
@@ -170,7 +170,7 @@
     },
 
     userSearchSuccessCallback: function(response) {
-      const oThis = this;
+      var oThis = this;
 
       var source = document.getElementById('user-row').innerHTML;
       var userRowTemplate = Handlebars.compile(source);
@@ -325,7 +325,7 @@
     },
 
     bindVideoModalEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       var videoSource = document.getElementById('video-tray').innerHTML;
       var videoTemplate = Handlebars.compile(videoSource);
@@ -354,7 +354,7 @@
     },
 
     bindUserStateChangeEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       var lastValue = null;
 
@@ -366,7 +366,7 @@
         .change(function(event) {
           event.preventDefault();
 
-          const dropdown = $(this);
+          var dropdown = $(this);
 
           var user_id = $(this).attr('data-user-id');
 
@@ -429,7 +429,7 @@
     },
 
     bindPostRenderEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       $('div#user-profile-img').click(function(event) {
         var userId = $(this).attr('data-user-id');
@@ -455,7 +455,7 @@
     },
 
     approveUserAsCreator: function(user_id, successCallback, failureCallBack) {
-      const oThis = this;
+      var oThis = this;
 
       $.ajax({
         url: oThis.approveUserAsCreatorUrl(user_id),
@@ -485,7 +485,7 @@
     },
 
     blockUser: function(user_id, successCallback, failureCallBack) {
-      const oThis = this;
+      var oThis = this;
 
       $.ajax({
         url: oThis.blockUserUrl(user_id),
@@ -515,7 +515,7 @@
     },
 
     denyUser: function(user_id, successCallback, failureCallBack) {
-      const oThis = this;
+      var oThis = this;
 
       $.ajax({
         url: oThis.denyUserUrl(user_id),
@@ -563,25 +563,25 @@
     },
 
     adminUserSearchUrl: function() {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/users';
     },
 
     approveUserAsCreatorUrl: function(user_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/approve';
     },
 
     blockUserUrl: function(user_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/block';
     },
 
     denyUserUrl: function(user_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/deny';
     }
