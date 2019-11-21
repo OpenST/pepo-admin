@@ -9,7 +9,6 @@
     oThis.lastPaginationId = null;
     oThis.query = null;
     oThis.videoDescription = null;
-    oThis.videoId = null;
     oThis.videoDetails = {};
     oThis.linkDetails = {};
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
@@ -36,7 +35,7 @@
       });
     },
 
-    loadReplies: function(data, videoId) {
+    loadReplies: function(data, replyDetailId) {
       const oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
@@ -49,7 +48,7 @@
           $('#replies-load-btn').removeClass('hidden');
           oThis.videoHistorySuccessCallback(response);
           if (oThis.saveLinkCheck || oThis.saveDescCheck) {
-            oThis.updateVideoModal(response, videoId);
+            oThis.updateVideoModal(response, replyDetailId);
           }
         },
         error: function(error) {
@@ -149,18 +148,19 @@
       }
     },
 
-    updateVideoModal: function(response, videoId) {
+    updateVideoModal: function(response, replyDetailId) {
       const oThis = this;
-      var videoData = response.data['video_details'];
+      var replyData = response.data['reply_details'];
+
       if (oThis.saveDescCheck) {
-        var descriptionId = videoData[videoId].description_id;
+        var descriptionId = replyData[replyDetailId].description_id;
         var videoDescriptions = response.data['video_descriptions'];
         var newDescription = videoDescriptions[descriptionId] && videoDescriptions[descriptionId].text;
         oThis.onDescriptionSaveSuccess(newDescription);
       }
 
       if (oThis.saveLinkCheck) {
-        var linkId = videoData[videoId].link_ids[0];
+        var linkId = replyData[replyDetailId].link_ids[0];
         var linksData = response.data['links'];
         var newLink = linksData[linkId] && linksData[linkId].url;
         oThis.onLinkSaveSuccess(newLink);
@@ -198,11 +198,11 @@
         event.preventDefault();
 
         var videoLink = $(this).attr('data-video-link');
-        var videoId = +$(this).attr('data-video-id');
         var replyDetailId = +$(this).attr('data-reply-detail-id');
         var descriptionId = +$(this).attr('data-desc-id');
         var description = null;
-        oThis.videoId = videoId;
+
+        oThis.replyDetailId = replyDetailId;
 
         if (descriptionId) {
           description = oThis.videoDescriptions[descriptionId].text;
@@ -484,7 +484,7 @@
     saveDescription: function() {
       const oThis = this;
       var newDescription = $('#edit-video-description').val();
-      var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/description';
+      var ajaxUrl = oThis.apiUrl + '/admin/update-reply-video/' + oThis.replyDetailId + '/description';
       $.ajax({
         url: ajaxUrl,
         type: 'POST',
@@ -497,7 +497,7 @@
         },
         success: function(res) {
           if (res.success) {
-            oThis.loadReplies(oThis.userId, oThis.videoId);
+            oThis.loadReplies(oThis.userId, oThis.replyDetailId);
           } else {
             console.log('====error====', res);
             var errorMsg = res.err.error_data[0].msg;
@@ -516,7 +516,7 @@
       const oThis = this;
       var newLink = $('#edit-video-description-link').val();
       newLink = oThis.linkFormatting(newLink);
-      var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/link';
+      var ajaxUrl = oThis.apiUrl + '/admin/update-reply-video/' + oThis.replyDetailId + '/link';
       $.ajax({
         url: ajaxUrl,
         type: 'POST',
@@ -529,7 +529,7 @@
         },
         success: function(res) {
           if (res.success) {
-            oThis.loadReplies(oThis.userId, oThis.videoId);
+            oThis.loadReplies(oThis.userId, oThis.replyDetailId);
           } else {
             console.log('====error====', res);
             var errorMsg = res.err.error_data[0].msg;
