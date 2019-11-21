@@ -1,6 +1,6 @@
 (function(window, $) {
-  const WhitelistUser = function() {
-    const oThis = this;
+  var WhitelistUser = function() {
+    var oThis = this;
 
     oThis.config = {};
 
@@ -17,7 +17,7 @@
 
   WhitelistUser.prototype = {
     bindEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       // Trigger search
       $('#whitelist-search-btn').click(function(event) {
@@ -71,7 +71,7 @@
     },
 
     loadUsers: function(data) {
-      const oThis = this;
+      var oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
@@ -95,7 +95,7 @@
     },
 
     userSearchSuccessCallback: function(response) {
-      const oThis = this;
+      var oThis = this;
 
       var source = document.getElementById('whitelist-user-row').innerHTML;
       var userRowTemplate = Handlebars.compile(source);
@@ -170,10 +170,10 @@
     },
 
     bindUserStateChangeEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       $('button#whitelist-user-save-btn').click(function(event) {
-        const button = this;
+        var button = this;
 
         event.preventDefault();
 
@@ -194,7 +194,7 @@
       });
 
       $('button#creator-approve-save-btn').click(function(event) {
-        const button = this;
+        var button = this;
 
         event.preventDefault();
 
@@ -214,7 +214,7 @@
     },
 
     approveUser: function(invite_id, successCallback) {
-      const oThis = this;
+      var oThis = this;
 
       var resp = confirm('Are you sure you want to approve user as creator?');
 
@@ -248,7 +248,7 @@
     },
 
     whitelistUser: function(invite_id, successCallback) {
-      const oThis = this;
+      var oThis = this;
 
       var resp = confirm('Are you sure you want to whitelist the user?');
 
@@ -282,19 +282,19 @@
     },
 
     adminWhitelistUserSearchUrl: function() {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/pre-launch/users/search';
     },
 
     whitelistUserUrl: function(invite_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/pre-launch/whitelist/' + invite_id;
     },
 
     approveUserUrl: function(invite_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/pre-launch/approve/' + invite_id;
     }
