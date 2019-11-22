@@ -20,3 +20,10 @@ li>.active{
     color: #495057;
     background-color: white;
 }
+.ui-autocomplete {
+    max-height: 500px;
+    /* allow vertical scrollbar */
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+}

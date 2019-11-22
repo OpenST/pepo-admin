@@ -12,6 +12,7 @@
     oThis.TagListData = null;
     oThis.jErrorBox = $('#error-box');
     oThis.jAddTagsBtn = $('#add-tags-btn');
+    oThis.peopleSearchInput = $('#searchPeopleInput');
     oThis.bindEvents();
     oThis.getinitialPeopleData();
     oThis.getinitialTagsData();
@@ -23,12 +24,21 @@
     bindEvents: function() {
       const oThis = this;
       oThis.jAddBtn.on('click', function() {
-        oThis.onAddBtnClick('users', entityId, oThis.getinitialPeopleData);
+        oThis.onAddBtnClick('users', oThis.user_id, oThis.getinitialPeopleData);
       });
       oThis.jAddTagsBtn.on('click', function() {
         oThis.onAddBtnClick('tags', entityId, oThis.getinitialTagsData);
       });
-
+      oThis.peopleSearchInput.autocomplete({
+        source: function(request, response) {
+          oThis.onInputChange(request, response);
+        },
+        select: function(event, ui) {
+          console.log('Selected:value ' + ui.item.value + ' id: ' + ui.item.id);
+          oThis.entity_id = ui.item.id;
+          oThis.userName = ui.item.value;
+        }
+      });
       /*
       initialize sortable list with required callbacks
        */
@@ -50,6 +60,35 @@
             entityIds = order;
           console.log({ id: changedList, positions: order });
           oThis.onListOrderChanged(entityKind, entityIds);
+        }
+      });
+    },
+    onInputChange: function(request, response) {
+      var oThis = this;
+      $.ajax({
+        url: oThis.apiUrl + '/admin/users?q=' + request.term,
+        type: 'GET',
+        success: function(res) {
+          console.log('res success');
+
+          var usersData = res.data.users,
+            formattedUsersData = [];
+          oThis.userIds = Object.keys(usersData);
+          for (var i = 0; i < oThis.userIds.length; i++) {
+            var userId = usersData[oThis.userIds[i]].id,
+              label = usersData[oThis.userIds[i]].user_name,
+              value = usersData[oThis.userIds[i]].user_name;
+            formattedUsersData[i] = {
+              id: usersData[oThis.userIds[i]].id,
+              label: usersData[oThis.userIds[i]].user_name,
+              value: usersData[oThis.userIds[i]].user_name
+            };
+          }
+
+          response(formattedUsersData);
+        },
+        error: function(err) {
+          console.log('res error');
         }
       });
     },
@@ -220,7 +259,7 @@
     },
     onAddBtnClick: function(entityKind, entityId, callback) {
       const oThis = this;
-
+      oThis.determinePosition(true);
       $.ajax({
         url: oThis.apiUrl + '/admin/curated-entities/insert',
         type: 'POST',
@@ -248,6 +287,10 @@
         }
       });
     },
+    determinePosition: function(isNewEntry) {
+      var oThis = this;
+    },
+    getBeforeAndAfterPosition: function(isNewEntry) {},
     bindDeleteBtnClickEvent: function(entityKind) {
       const oThis = this;
       oThis.deleteBtn.on('click', function() {
