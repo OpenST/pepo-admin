@@ -73,4 +73,12 @@ router.get('/usage-reports', sanitizer.sanitizeDynamicUrlParams, validateLoggedI
   Promise.resolve(routeHelper.perform(req, res, next, 'usageReports', 'r_a_ad_5'));
 });
 
+/* Replies */
+router.get('/video-replies/', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  req.decodedParams.video_id = req.params.video_id;
+  req.decodedParams.video_id = req.params.user_id;
+
+  Promise.resolve(routeHelper.perform(req, res, next, 'videoReplies', 'r_a_ad_6'));
+});
+
 module.exports = router;

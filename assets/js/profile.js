@@ -43,9 +43,6 @@
         $('#reply-tab span').addClass('active');
         $('#video-list').css('display', 'none');
         $('#reply-list').css('display', 'block');
-
-        // Init video replies list
-        new window.VideoReply();
       });
 
       // Load next page
@@ -129,8 +126,12 @@
 
           var videoData = response.data['video_details'][videoId];
 
-          var imageLink = null;
-          var descriptionId = null;
+          var imageLink = null,
+            descriptionId = null,
+            description = '',
+            replyCount = 0,
+            replyCountStyle = '',
+            repliesUrl = '';
 
           if (posterImageId) {
             imageLink = response.data['images'][posterImageId].resolutions['144w']
@@ -139,6 +140,12 @@
           }
 
           descriptionId = videoData.description_id;
+          if (descriptionId) {
+            description = oThis.videoDescriptions[descriptionId].text;
+          }
+          replyCount = videoData.total_replies ? videoData.total_replies : 'No';
+          replyCountStyle = videoData.total_replies ? 'reply-col-style' : null;
+          repliesUrl = '/admin/video-replies/?videoId=' + videoId + '&userId=' + oThis.userId;
 
           var context = {
             videoId: videoId,
@@ -147,7 +154,11 @@
             fanCount: videoData.total_contributed_by,
             pepoReceived: oThis.convertWeiToNormal(videoData.total_amount_raised_in_wei),
             videoLink: videoLink,
-            descriptionId: descriptionId
+            descriptionId: descriptionId,
+            description: description,
+            replyCount: replyCount,
+            replyCountStyle: replyCountStyle,
+            repliesUrl: repliesUrl
           };
 
           html += videoRowTemplate(context);
@@ -156,7 +167,6 @@
           $('#video-results').empty();
           $('#video-results').append(html);
         }
-
         oThis.bindVideoModalEvents();
         oThis.bindVideoStateChangeEvents();
       } else {
@@ -343,7 +353,6 @@
           ? imageData[profile_image_id].resolutions['144w'].url
           : imageData[profile_image_id].resolutions['original'].url;
       }
-
       var isCreator = userData.approved_creator ? true : false;
       var status = userData.status;
 

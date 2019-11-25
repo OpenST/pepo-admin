@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="row mt-4 mb-3">
+        <div class="col-4" id="profile-header-replies"></div>
+        <div class="col-5 my-auto" id="original-video"></div>
+    </div>
+
+    <div id="reply-list" >
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">REPLY</th>
+                <th scope="col">REPLY BY</th>
+                <th scope="col">DESCRIPTION</th>
+                <th scope="col">UPDATED</th>
+                <th scope="col">PEPO RECEIVED</th>
+                <th scope="col">ACTION</th>
+            </tr>
+            </thead>
+            <tbody id="reply-results"></tbody>
+        </table>
+
+        <br/>
+
+        <div class="text-center">
+            <button class="btn btn-outline-danger my-2 my-sm-0 justify-content-center" type="submit" id="replies-load-btn">Load more</button>
+        </div>
+    </div>
+    <div id="modal-container-replies"></div>
+</div>
+
+{{#contentFor "pageScripts"}}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            new window.VideoReply();
+        });
+    </script>
+{{/contentFor}}
+{{>videoRepliesContent/videoReplyTable}}
+{{>videoRepliesContent/videoReplyProfileHeader}}
+{{>videoRepliesContent/originalVideoTemplate}}
+{{>videoModal}}
