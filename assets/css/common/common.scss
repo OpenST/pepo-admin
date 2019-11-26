@@ -80,6 +80,9 @@ html, body {
 }
 .reply-count{
   pointer-events: none;
+  a{
+    color: black;
+  }
 }
 .reply-col-style{
   color:#dc3545 !important;
