@@ -36,7 +36,7 @@ $.fn.jqueryautocompleteplus = function(data) {
       if (query.length < minLength1) {
         return;
       }
-      response(data1);
+      response(formatedData);
     } else if (leTrigger === trigger2) {
       if (query.length < minLength2) {
         return;

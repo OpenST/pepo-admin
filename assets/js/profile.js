@@ -565,7 +565,10 @@
       oThis.autoCompleteInitialized = true;
       $('#edit-video-description').jqueryautocompleteplus({
         trigger2: '#',
+        trigger1: '#',
         outputTrigger2: true,
+        outputTrigger1: true,
+        minLength1: 3,
         minLength2: 3,
         onInputChange: oThis.onInputChange,
         dataModifier: oThis.modifyData
