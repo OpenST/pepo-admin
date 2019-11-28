@@ -228,7 +228,7 @@
       }
 
       if (oThis.saveLinkCheck) {
-        var linkId = videoData[videoId].link_ids[0];
+        var linkId = videoData[videoId] && videoData[videoId].link_ids && videoData[videoId].link_ids[0];
         var linksData = response.data['links'];
         var newLink = linksData[linkId] && linksData[linkId].url;
         oThis.onLinkSaveSuccess(newLink);
