@@ -14,7 +14,10 @@ html, body {
 .ui-autocomplete{
   z-index: 9999 !important;
 }
-
+.error-text{
+  color:red;
+  font-size: 0.8rem;
+}
 .icon-border {
 	color: white;
 	background: black;

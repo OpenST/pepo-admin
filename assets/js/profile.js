@@ -1,6 +1,6 @@
 (function(window, $) {
-  const UserProfile = function() {
-    const oThis = this;
+  var UserProfile = function() {
+    var oThis = this;
 
     oThis.config = {};
 
@@ -24,7 +24,7 @@
 
   UserProfile.prototype = {
     bindEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       // Load next page
       $('#videos-load-btn').click(function(event) {
@@ -55,9 +55,48 @@
         $('#reply-list').css('display', 'none');
       });
     },
-
+    onMuteUnmuteBtnClick: function() {
+      var oThis = this;
+      oThis.jErrorBox = $('.mute-unmute-error');
+      oThis.jErrorBox.text('');
+      oThis.jMuteUnmuteBtn = $('#mute-unmute-btn');
+      oThis.jMuteUnmuteBtn.attr('disabled', true);
+      if (oThis.onSuccessUserStatus == 1) {
+        oThis.changeStatusApiUrl = oThis.apiUrl + '/admin/users/' + oThis.userId + '/unmute';
+        oThis.className = 'btn-outline-danger';
+        oThis.onSuccessUserStatus = 0;
+        oThis.btnText = 'Mute';
+      } else {
+        oThis.changeStatusApiUrl = oThis.apiUrl + '/admin/users/' + oThis.userId + '/mute';
+        oThis.className = 'btn-danger';
+        oThis.onSuccessUserStatus = 1;
+        oThis.btnText = 'Unmute';
+      }
+      $.ajax({
+        url: oThis.changeStatusApiUrl,
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        type: 'POST',
+        success: function(res) {
+          oThis.jMuteUnmuteBtn.attr('disabled', false);
+          if (res && res.success) {
+            oThis.jMuteUnmuteBtn.text(oThis.btnText);
+            oThis.jMuteUnmuteBtn.removeClass('btn-outline-danger btn-danger').addClass(oThis.className);
+          } else {
+            var errorMsg = res && res.err && res.err.error_data && res.err.error_data[0].msg;
+            oThis.jErrorBox.text(errorMsg);
+          }
+        },
+        error: function(err) {
+          oThis.jMuteUnmuteBtn.attr('disabled', false);
+          var errorMsg = err && err.responseJSON && err.responseJSON.err && err.responseJSON.err.msg;
+          oThis.jErrorBox.text(errorMsg);
+        }
+      });
+    },
     loadVideos: function(data, videoId) {
-      const oThis = this;
+      var oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
@@ -84,7 +123,7 @@
     },
 
     videoHistorySuccessCallback: function(response) {
-      const oThis = this;
+      var oThis = this;
 
       var source = document.getElementById('video-detail-row').innerHTML;
       var videoRowTemplate = Handlebars.compile(source);
@@ -179,7 +218,7 @@
     },
 
     updateVideoModal: function(response, videoId) {
-      const oThis = this;
+      var oThis = this;
       var videoData = response.data['video_details'];
       if (oThis.saveDescCheck) {
         var descriptionId = videoData[videoId].description_id;
@@ -197,10 +236,10 @@
     },
 
     bindVideoStateChangeEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       $('button#video-delete-btn').click(function(event) {
-        const button = this;
+        var button = this;
 
         event.preventDefault();
 
@@ -217,7 +256,7 @@
     },
 
     bindVideoModalEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       var videoSource = document.getElementById('video-tray').innerHTML;
       var videoTemplate = Handlebars.compile(videoSource);
@@ -283,7 +322,7 @@
     },
 
     deleteVideo: function(video_id, successCallback) {
-      const oThis = this;
+      var oThis = this;
 
       $.ajax({
         url: oThis.deleteVideoUrl(video_id),
@@ -311,7 +350,7 @@
     },
 
     loadProfile: function(data) {
-      const oThis = this;
+      var oThis = this;
 
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
@@ -334,20 +373,15 @@
     },
 
     updateProfile: function(response) {
-      const oThis = this;
+      var oThis = this;
 
       var profileHeaderSource = document.getElementById('profile-header-template').innerHTML;
       var profileHeaderTemplate = Handlebars.compile(profileHeaderSource);
-
       var responseData = response.data;
-
       var userData = responseData['users'][oThis.userId];
       var imageData = responseData['images'];
-
       var profile_image_id = userData.profile_image_id;
-
       var imageLink = null;
-
       if (profile_image_id) {
         imageLink = imageData[profile_image_id].resolutions['144w']
           ? imageData[profile_image_id].resolutions['144w'].url
@@ -355,11 +389,21 @@
       }
       var isCreator = userData.approved_creator ? true : false;
       var status = userData.status;
-
       var balanceInUsd = oThis.convertWeiToNormal(responseData.user_balance.balance_usd);
       var totalBalanceInUsd = new BigNumber(balanceInUsd)
         .plus(new BigNumber(responseData.user_balance.balance_pepocorn))
         .toString();
+      var muteStatusInt = responseData.global_user_mute_details[oThis.userId].all,
+        className = null,
+        btnText = null;
+      oThis.onSuccessUserStatus = muteStatusInt;
+      if (muteStatusInt) {
+        className = 'btn-danger';
+        btnText = 'Unmute';
+      } else {
+        className = 'btn-outline-danger';
+        btnText = 'Mute';
+      }
 
       var headerContext = {
         name: userData.name,
@@ -371,22 +415,27 @@
         pepocornBalance: responseData.user_balance.balance_pepocorn,
         totalBalanceInUsd: totalBalanceInUsd,
         isCreator: isCreator,
-        status: status
+        status: status,
+        className: className,
+        btnText: btnText
       };
 
       var profileHeaderHtml = profileHeaderTemplate(headerContext);
 
       $('#profile-header').html(profileHeaderHtml);
+      $('#mute-unmute-btn').on('click', function() {
+        oThis.onMuteUnmuteBtnClick();
+      });
     },
 
     bindUserStateChangeEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       // Invoke admin action
       $('#admin-action').change(function(event) {
         event.preventDefault();
 
-        const dropdown = $(this);
+        var dropdown = $(this);
 
         var user_id = $(this).attr('data-user-id');
 
@@ -408,7 +457,7 @@
     },
 
     approveUserAsCreator: function(user_id, successCallback) {
-      const oThis = this;
+      var oThis = this;
 
       var resp = confirm('Are you sure you want to approve user as creator?');
 
@@ -442,7 +491,7 @@
     },
 
     blockUser: function(user_id, successCallback) {
-      const oThis = this;
+      var oThis = this;
 
       var resp = confirm('Are you sure you want to block the user?');
 
@@ -489,37 +538,37 @@
     },
 
     profileUrl: function(user_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/profile';
     },
 
     videoHistoryUrl: function(user_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/video-history/' + user_id;
     },
 
     deleteVideoUrl: function(video_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/delete-video/' + video_id;
     },
 
     approveUserAsCreatorUrl: function(user_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/approve';
     },
 
     blockUserUrl: function(user_id) {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/users/' + user_id + '/block';
     },
 
     onVideoDescEdit: function() {
-      const oThis = this;
+      var oThis = this;
       var oldDesc = $('#bio_text').text();
       $('#edit-video-description').val(oldDesc);
       $('.video_desc').hide();
@@ -549,19 +598,19 @@
     },
 
     onVideoDescSave: function() {
-      const oThis = this;
+      var oThis = this;
       oThis.saveDescCheck = true;
       oThis.saveDescription();
     },
 
     onLinkSave: function() {
-      const oThis = this;
+      var oThis = this;
       oThis.saveLinkCheck = true;
       oThis.saveLink();
     },
 
     initializeAutoComplete: function() {
-      const oThis = this;
+      var oThis = this;
       oThis.autoCompleteInitialized = true;
       $('#edit-video-description').jqueryautocompleteplus({
         trigger2: '#',
@@ -587,7 +636,7 @@
     },
 
     onInputChange: function(query, paginationIdTags, dataModifier, callBack) {
-      const oThis = this;
+      var oThis = this;
       var ajaxUrl = null,
         response;
       if (paginationIdTags == null) {
@@ -619,7 +668,7 @@
     },
 
     onDescriptionSaveSuccess: function(newDescription) {
-      const oThis = this;
+      var oThis = this;
       $('.video_desc_editable .inline-error').empty();
       $('.video_desc_editable').hide();
       $('.video_desc').show();
@@ -634,7 +683,7 @@
     },
 
     onLinkSaveSuccess: function(newLink) {
-      const oThis = this;
+      var oThis = this;
       // oThis.loadVideos(oThis.userId);
       $('.video_desc_link_editable .inline-error').empty();
       $('.video_desc_link_editable').hide();
@@ -661,7 +710,7 @@
     },
 
     saveDescription: function() {
-      const oThis = this;
+      var oThis = this;
       var newDescription = $('#edit-video-description').val();
       var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/description';
       $.ajax({
@@ -692,7 +741,7 @@
     },
 
     saveLink: function() {
-      const oThis = this;
+      var oThis = this;
       var newLink = $('#edit-video-description-link').val();
       newLink = oThis.linkFormatting(newLink);
       var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/link';
