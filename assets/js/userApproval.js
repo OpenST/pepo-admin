@@ -387,8 +387,8 @@
               case 'approve':
                 dropdownText = 'Approved';
                 break;
-              case 'block':
-                dropdownText = 'Blocked';
+              case 'delete':
+                dropdownText = 'Deleted';
                 break;
               case 'deny':
                 dropdownText = 'Not Eligible';
@@ -415,8 +415,8 @@
 
           if (action == 'approve') {
             oThis.approveUserAsCreator(user_id, successCallback, failureCallBack);
-          } else if (action == 'block') {
-            oThis.blockUser(user_id, successCallback, failureCallBack);
+          } else if (action == 'delete') {
+            oThis.deleteUser(user_id, successCallback, failureCallBack);
           } else if (action == 'deny') {
             oThis.denyUser(user_id, successCallback, failureCallBack);
           } else {
@@ -484,11 +484,11 @@
       });
     },
 
-    blockUser: function(user_id, successCallback, failureCallBack) {
+    deleteUser: function(user_id, successCallback, failureCallBack) {
       const oThis = this;
 
       $.ajax({
-        url: oThis.blockUserUrl(user_id),
+        url: oThis.deleteUserUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
@@ -574,10 +574,10 @@
       return oThis.apiUrl + '/admin/users/' + user_id + '/approve';
     },
 
-    blockUserUrl: function(user_id) {
+    deleteUserUrl: function(user_id) {
       const oThis = this;
 
-      return oThis.apiUrl + '/admin/users/' + user_id + '/block';
+      return oThis.apiUrl + '/admin/users/' + user_id + '/delete';
     },
 
     denyUserUrl: function(user_id) {

@@ -361,14 +361,14 @@
           .val();
 
         var successCallback = function() {
-          var dropdownText = action == 'approve' ? 'Approved' : 'Blocked';
+          var dropdownText = action == 'approve' ? 'Approved' : 'Deleted';
           dropdown.children('option:selected').text(dropdownText);
         };
 
         if (action == 'approve') {
           oThis.approveUserAsCreator(user_id, successCallback);
-        } else if (action == 'block') {
-          oThis.blockUser(user_id, successCallback);
+        } else if (action == 'delete') {
+          oThis.deleteUser(user_id, successCallback);
         }
       });
     },
@@ -407,17 +407,17 @@
       });
     },
 
-    blockUser: function(user_id, successCallback) {
+    deleteUser: function(user_id, successCallback) {
       const oThis = this;
 
-      var resp = confirm('Are you sure you want to block the user?');
+      var resp = confirm('Are you sure you want to delete the user?');
 
       if (!resp) {
         return;
       }
 
       $.ajax({
-        url: oThis.blockUserUrl(user_id),
+        url: oThis.deleteUserUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
@@ -478,10 +478,10 @@
       return oThis.apiUrl + '/admin/users/' + user_id + '/approve';
     },
 
-    blockUserUrl: function(user_id) {
+    deleteUserUrl: function(user_id) {
       const oThis = this;
 
-      return oThis.apiUrl + '/admin/users/' + user_id + '/block';
+      return oThis.apiUrl + '/admin/users/' + user_id + '/delete';
     },
     onVideoDescEdit: function() {
       const oThis = this;

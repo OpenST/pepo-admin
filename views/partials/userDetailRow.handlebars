@@ -111,11 +111,11 @@
                 <option value="approve">Approve</option>
               \{{/if}}
 
-              <option value="block">Block</option>
+              <option value="delete">Delete</option>
             \{{/ifCond}}
 
             \{{#ifCond status '===' "INACTIVE"}}
-              <option value="blocked" selected>Blocked</option>
+              <option value="deleted" selected>Deleted</option>
             \{{/ifCond}}
 
           </select>
