@@ -5,12 +5,7 @@
  */
 
 const rootPrefix = '..',
-  basicHelper = require(rootPrefix + '/helpers/basic'),
-  logger = require(rootPrefix + '/lib/logger/customConsoleLogger'),
-  handlebarHelper = require(rootPrefix + '/helpers/handlebar'),
-  coreConstants = require(rootPrefix + '/config/coreConstants'),
-  HttpRequest = require(rootPrefix + '/lib/http/Request'),
-  responseHelper = require(rootPrefix + '/lib/formatter/response');
+  coreConstants = require(rootPrefix + '/config/coreConstants');
 
 /**
  * Class for routes helper.

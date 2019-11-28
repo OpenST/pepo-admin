@@ -1,6 +1,6 @@
 (function(window, $) {
-  const Login = function() {
-    const oThis = this;
+  var Login = function() {
+    var oThis = this;
     oThis.bindEvents();
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
@@ -9,7 +9,7 @@
 
   Login.prototype = {
     bindEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       $('#login-btn').click(function(event) {
         event.preventDefault();
@@ -46,7 +46,7 @@
     },
 
     loginPostUrl: function() {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/login';
     }

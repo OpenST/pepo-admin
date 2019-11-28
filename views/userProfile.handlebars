@@ -5,28 +5,33 @@
 
   <br/>
 
-  <div id="toast-div"></div>
 
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th scope="col">VIDEO</th>
-      <th scope="col">UPDATED</th>
-      <th scope="col">FANS</th>
-      <th scope="col">PEPO RECEIVED</th>
-      <th scope="col">ACTION</th>
-    </tr>
-    </thead>
-    <tbody id="video-results"></tbody>
-  </table>
+	<div id="video-list">
+	  <table class="table table-striped">
+	    <thead>
+	    <tr>
+	      <th scope="col">VIDEO</th>
+          <th scope="col">DESCRIPTION</th>
+          <th scope="col">REPLIES</th>
+	      <th scope="col">UPDATED</th>
+	      <th scope="col">FANS</th>
+	      <th scope="col">PEPO RECEIVED</th>
+	      <th scope="col">ACTION</th>
+	    </tr>
+	    </thead>
+	    <tbody id="video-results"></tbody>
+	  </table>
+
+	  <br/>
+
+	  <div class="text-center">
+	    <button class="btn btn-outline-danger my-2 my-sm-0 justify-content-center" type="submit" id="videos-load-btn">Load more</button>
+	  </div>
+  </div>
+
+
 
   <div id="modal-container"></div>
-
-  <br/>
-
-  <div class="text-center">
-    <button class="btn btn-outline-danger my-2 my-sm-0 justify-content-center" type="submit" id="videos-load-btn">Load more</button>
-  </div>
 
   <br/>
 </div>
@@ -39,5 +44,7 @@
   </script>
   {{>profileHeaderRow}}
   {{>videoDetailRow}}
+  {{>replyDetailRow}}
   {{>videoModal}}
+  {{{js 'mUserProfile.js' }}}
 {{/contentFor}}

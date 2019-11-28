@@ -1,0 +1,19 @@
+<script id="reply-detail-row" type="text/x-handlebars-template">
+  <tr>
+    <td scope="col">
+      <div class="video-thumbnail-reply" data-video-link=\{{replyLink}} data-video-id=\{{videoId}}  data-reply-detail-id=\{{replyDetailId}} data-desc-id=\{{descriptionId}}>
+        <img src="\{{posterImageLink}}" style="height: 50px; width: 50px;">
+        <i class="fa fa-play-circle text-danger"></i>
+      </div>
+    </td>
+    <td  scope="col">
+        <a class="reply-col-style reply-by" href="\{{userProfileLink}}">@\{{replyBy}}</a>
+    </td>
+    <td scope="col">\{{description}}</td>
+    <td scope="col">\{{updatedAt}}</td>
+    <td scope="col">\{{pepoReceived}}</td>
+    <td scope="col">
+      <button class="btn btn-outline-danger" id="reply-delete-btn" data-reply-detail-id=\{{replyDetailId}}>Delete</button>
+    </td>
+  </tr>
+</script>

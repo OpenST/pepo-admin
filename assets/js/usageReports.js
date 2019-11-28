@@ -1,6 +1,6 @@
 (function(window, $) {
-  const UsageReports = function() {
-    const oThis = this;
+  var UsageReports = function() {
+    var oThis = this;
 
     oThis.config = {};
 
@@ -15,7 +15,7 @@
 
   UsageReports.prototype = {
     bindEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       // Hide success message
       $('#usage-report').change(function(event) {
@@ -56,7 +56,7 @@
     },
 
     generateReport: function(reportType, successCallback) {
-      const oThis = this;
+      var oThis = this;
 
       var url = null;
 
@@ -106,17 +106,17 @@
     },
 
     userDataReportUrl: function() {
-      const oThis = this;
+      var oThis = this;
       return oThis.apiUrl + '/admin/update-usage-data/user-data';
     },
 
     videoPerformanceReportUrl: function() {
-      const oThis = this;
+      var oThis = this;
       return oThis.apiUrl + '/admin/update-usage-data/videos-performance';
     },
 
     tagUsageReportUrl: function() {
-      const oThis = this;
+      var oThis = this;
       return oThis.apiUrl + '/admin/update-usage-data/tags-used';
     }
   };

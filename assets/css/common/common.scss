@@ -14,7 +14,10 @@ html, body {
 .ui-autocomplete{
   z-index: 9999 !important;
 }
-
+.error-text{
+  color:red;
+  font-size: 0.8rem;
+}
 .icon-border {
 	color: white;
 	background: black;
@@ -31,7 +34,7 @@ html, body {
   cursor: pointer;
 }
 
-.video-thumbnail {
+.video-thumbnail,.video-thumbnail-reply {
   position: relative;
   display: inline-block;
 
@@ -41,6 +44,12 @@ html, body {
 }
 
 .video-thumbnail i.fa.fa-play-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.video-thumbnail-reply i.fa.fa-play-circle{
   position: absolute;
   top: 50%;
   left: 50%;
@@ -71,4 +80,15 @@ html, body {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+.reply-count{
+  pointer-events: none;
+  a{
+    color: black;
+  }
+}
+.reply-col-style{
+  color:#dc3545 !important;
+  pointer-events: auto !important;
+  cursor: pointer;
 }

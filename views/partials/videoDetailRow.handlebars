@@ -6,7 +6,10 @@
         <i class="fa fa-play-circle text-danger"></i>
       </div>
     </td>
-
+    <td scope="col">\{{description}}</td>
+    <td class="reply-count" data-video-id="\{{videoId}}" scope="col">
+        <a class="\{{replyCountStyle}}" href="\{{repliesUrl}}">\{{#if replyCount}}\{{replyCount}}\{{else}}-\{{/if}}</a>
+    </td>
     <td scope="col">\{{updatedAt}}</td>
 
     <td scope="col">\{{fanCount}}</td>
