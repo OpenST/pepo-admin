@@ -34,6 +34,26 @@
         query = query + '&pagination_identifier=' + oThis.lastPaginationId;
         oThis.loadVideos(query);
       });
+
+      // Load next page
+      $('#reply-tab').click(function(event) {
+        event.preventDefault();
+
+        $('#profile-tab-list .nav-item span').removeClass('active');
+        $('#reply-tab span').addClass('active');
+        $('#video-list').css('display', 'none');
+        $('#reply-list').css('display', 'block');
+      });
+
+      // Load next page
+      $('#video-tab').click(function(event) {
+        event.preventDefault();
+
+        $('#profile-tab-list .nav-item span').removeClass('active');
+        $('#video-tab span').addClass('active');
+        $('#video-list').css('display', 'block');
+        $('#reply-list').css('display', 'none');
+      });
     },
     onMuteUnmuteBtnClick: function() {
       var oThis = this;
@@ -86,7 +106,7 @@
         contentType: 'application/json',
         success: function(response) {
           $('#videos-load-btn').removeClass('hidden');
-          oThis.userSearchSuccessCallback(response);
+          oThis.videoHistorySuccessCallback(response);
           if (oThis.saveLinkCheck || oThis.saveDescCheck) {
             oThis.updateVideoModal(response, videoId);
           }
@@ -102,7 +122,7 @@
       });
     },
 
-    userSearchSuccessCallback: function(response) {
+    videoHistorySuccessCallback: function(response) {
       var oThis = this;
 
       var source = document.getElementById('video-detail-row').innerHTML;
@@ -145,8 +165,12 @@
 
           var videoData = response.data['video_details'][videoId];
 
-          var imageLink = null;
-          var descriptionId = null;
+          var imageLink = null,
+            descriptionId = null,
+            description = '',
+            replyCount = 0,
+            replyCountStyle = '',
+            repliesUrl = '';
 
           if (posterImageId) {
             imageLink = response.data['images'][posterImageId].resolutions['144w']
@@ -155,6 +179,12 @@
           }
 
           descriptionId = videoData.description_id;
+          if (descriptionId) {
+            description = oThis.videoDescriptions[descriptionId].text;
+          }
+          replyCount = videoData.total_replies ? videoData.total_replies : 'No';
+          replyCountStyle = videoData.total_replies ? 'reply-col-style' : null;
+          repliesUrl = '/admin/video-replies/?videoId=' + videoId + '&userId=' + oThis.userId;
 
           var context = {
             videoId: videoId,
@@ -163,7 +193,11 @@
             fanCount: videoData.total_contributed_by,
             pepoReceived: oThis.convertWeiToNormal(videoData.total_amount_raised_in_wei),
             videoLink: videoLink,
-            descriptionId: descriptionId
+            descriptionId: descriptionId,
+            description: description,
+            replyCount: replyCount,
+            replyCountStyle: replyCountStyle,
+            repliesUrl: repliesUrl
           };
 
           html += videoRowTemplate(context);
@@ -172,7 +206,6 @@
           $('#video-results').empty();
           $('#video-results').append(html);
         }
-
         oThis.bindVideoModalEvents();
         oThis.bindVideoStateChangeEvents();
       } else {
@@ -183,6 +216,7 @@
         }
       }
     },
+
     updateVideoModal: function(response, videoId) {
       var oThis = this;
       var videoData = response.data['video_details'];
@@ -194,12 +228,13 @@
       }
 
       if (oThis.saveLinkCheck) {
-        var linkId = videoData[videoId].link_ids[0];
+        var linkId = videoData[videoId] && videoData[videoId].link_ids && videoData[videoId].link_ids[0];
         var linksData = response.data['links'];
         var newLink = linksData[linkId] && linksData[linkId].url;
         oThis.onLinkSaveSuccess(newLink);
       }
     },
+
     bindVideoStateChangeEvents: function() {
       var oThis = this;
 
@@ -409,14 +444,14 @@
           .val();
 
         var successCallback = function() {
-          var dropdownText = action == 'approve' ? 'Approved' : 'Blocked';
+          var dropdownText = action == 'approve' ? 'Approved' : 'Deleted';
           dropdown.children('option:selected').text(dropdownText);
         };
 
         if (action == 'approve') {
           oThis.approveUserAsCreator(user_id, successCallback);
-        } else if (action == 'block') {
-          oThis.blockUser(user_id, successCallback);
+        } else if (action == 'delete') {
+          oThis.deleteUser(user_id, successCallback);
         }
       });
     },
@@ -455,17 +490,17 @@
       });
     },
 
-    blockUser: function(user_id, successCallback) {
+    deleteUser: function(user_id, successCallback) {
       var oThis = this;
 
-      var resp = confirm('Are you sure you want to block the user?');
+      var resp = confirm('Are you sure you want to delete the user?');
 
       if (!resp) {
         return;
       }
 
       $.ajax({
-        url: oThis.blockUserUrl(user_id),
+        url: oThis.deleteUserUrl(user_id),
         type: 'POST',
         data: {},
         contentType: 'application/json',
@@ -526,11 +561,12 @@
       return oThis.apiUrl + '/admin/users/' + user_id + '/approve';
     },
 
-    blockUserUrl: function(user_id) {
+    deleteUserUrl: function(user_id) {
       var oThis = this;
 
-      return oThis.apiUrl + '/admin/users/' + user_id + '/block';
+      return oThis.apiUrl + '/admin/users/' + user_id + '/delete';
     },
+
     onVideoDescEdit: function() {
       var oThis = this;
       var oldDesc = $('#bio_text').text();
@@ -541,43 +577,53 @@
         oThis.initializeAutoComplete();
       }
     },
+
     onVideoDescLinkEdit: function() {
       var oldDescLink = $('#link_url').text();
       $('#edit-video-description-link').val(oldDescLink);
       $('.video_desc_link').hide();
       $('.video_desc_link_editable').show();
     },
+
     onVideoDescCancel: function() {
       $('.video_desc_editable .inline-error').empty();
       $('.video_desc_editable').hide();
       $('.video_desc').show();
     },
+
     onVideoDescLinkCancel: function() {
       $('.video_desc_link_editable .inline-error').empty();
       $('.video_desc_link_editable').hide();
       $('.video_desc_link').show();
     },
+
     onVideoDescSave: function() {
       var oThis = this;
       oThis.saveDescCheck = true;
       oThis.saveDescription();
     },
+
     onLinkSave: function() {
       var oThis = this;
       oThis.saveLinkCheck = true;
       oThis.saveLink();
     },
+
     initializeAutoComplete: function() {
       var oThis = this;
       oThis.autoCompleteInitialized = true;
       $('#edit-video-description').jqueryautocompleteplus({
         trigger2: '#',
+        trigger1: '#',
         outputTrigger2: true,
+        outputTrigger1: true,
+        minLength1: 3,
         minLength2: 3,
         onInputChange: oThis.onInputChange,
         dataModifier: oThis.modifyData
       });
     },
+
     modifyData: function(resData) {
       var newData = [];
       for (var i = 0; i < resData.length; i++) {
@@ -588,6 +634,7 @@
       }
       return newData;
     },
+
     onInputChange: function(query, paginationIdTags, dataModifier, callBack) {
       var oThis = this;
       var ajaxUrl = null,
@@ -619,6 +666,7 @@
         }
       });
     },
+
     onDescriptionSaveSuccess: function(newDescription) {
       var oThis = this;
       $('.video_desc_editable .inline-error').empty();
@@ -629,9 +677,11 @@
       // oThis.loadVideos(oThis.userId);
       oThis.saveDescCheck = false;
     },
+
     onDescriptionSaveError: function(errorMsg) {
       $('.video_desc_editable .inline-error').text(errorMsg);
     },
+
     onLinkSaveSuccess: function(newLink) {
       var oThis = this;
       // oThis.loadVideos(oThis.userId);
@@ -644,6 +694,7 @@
       $('#link_url').attr('href', newLink);
       oThis.saveLinkCheck = false;
     },
+
     linkFormatting: function(url) {
       if (url) {
         url = url.toLowerCase();
@@ -653,6 +704,7 @@
       }
       return url;
     },
+
     onLinkSaveError: function(errorMsg) {
       $('.video_desc_link_editable .inline-error').text(errorMsg);
     },
