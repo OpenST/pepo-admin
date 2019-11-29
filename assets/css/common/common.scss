@@ -92,3 +92,8 @@ html, body {
   pointer-events: auto !important;
   cursor: pointer;
 }
+.table-text-col-dimensions{
+  max-width:200px;
+  word-break: break-all;
+
+}
