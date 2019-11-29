@@ -21,8 +21,7 @@
     oThis.userId = params.get('userId');
     oThis.videoId = params.get('videoId');
     var replyParams = {
-      video_id: oThis.videoId,
-      pagination_identifier: null
+      video_id: oThis.videoId
     };
     oThis.loadReplies(replyParams); // get replies data
     oThis.loadProfile();
