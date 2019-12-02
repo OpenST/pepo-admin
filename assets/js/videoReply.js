@@ -209,8 +209,7 @@
           : null;
 
         if (searchResults.length == 0) {
-          $('#reply-results').html('');
-          $('#reply-results').append('<br/><p class="text-danger">No result found.</p>');
+          $('#reply-results').append('<br/><p class="text-danger">No results.</p>');
         }
 
         oThis.lastPaginationId = nextPageId;
