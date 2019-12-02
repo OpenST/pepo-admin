@@ -7,7 +7,6 @@
     $.extend(oThis.config);
     oThis.bindEvents();
     oThis.lastPaginationId = null;
-    oThis.query = null;
     oThis.videoDescription = null;
     oThis.videoDetails = {};
     oThis.linkDetails = {};
@@ -20,6 +19,7 @@
     var params = new URL(document.location).searchParams;
     oThis.userId = params.get('userId');
     oThis.videoId = params.get('videoId');
+    oThis.query = oThis.videoId;
     var replyParams = {
       video_id: oThis.videoId
     };
@@ -33,8 +33,12 @@
       // Load next page
       $('#replies-load-btn').click(function(event) {
         event.preventDefault();
-        var query = oThis.query;
-        query = query + '&pagination_identifier=' + oThis.lastPaginationId;
+        var query = null;
+        // query = query + '&pagination_identifier=' + oThis.lastPaginationId;
+        query = {
+          video_id: oThis.query,
+          pagination_identifier: oThis.lastPaginationId
+        };
         oThis.loadReplies(query);
       });
     },
@@ -205,8 +209,7 @@
           : null;
 
         if (searchResults.length == 0) {
-          $('#reply-results').html('');
-          $('#reply-results').append('<br/><p class="text-danger">No result found.</p>');
+          $('#reply-results').append('<br/><p class="text-danger">No results.</p>');
         }
 
         oThis.lastPaginationId = nextPageId;
@@ -273,7 +276,7 @@
           html += videoRowTemplate(context);
         }
         if (html) {
-          $('#reply-results').empty();
+          // $('#reply-results').empty();
           $('#reply-results').append(html);
         }
 
@@ -281,7 +284,6 @@
         oThis.bindVideoStateChangeEvents();
       } else {
         console.log('===error');
-
         if (error.responseJSON.err.code == 'UNAUTHORIZED') {
           window.location = '/admin/unauthorized';
         }
