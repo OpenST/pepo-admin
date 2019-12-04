@@ -5,25 +5,28 @@
                 <a class="search-tab p-3 active" id="people-tab" data-toggle="tab" href="#people-list-tab" role="tab" aria-controls="people-list" aria-selected="true">People</a>
             </li>
             <li class="nav-item">
-                <a class="search-tab p-3" id="tags-tab" data-toggle="tab" href="#tags-list" role="tab" aria-controls="tags-list" aria-selected="false">Tags</a>
+                <a class="search-tab p-3" id="tags-tab" data-toggle="tab" href="#tags-list-tab" role="tab" aria-controls="tags-list" aria-selected="false">Tags</a>
             </li>
         </ul>
 
     </div>
     <div class="tab-content " id="searchTabContent">
         <div class="tab-pane fade show active" id="people-list-tab" role="tabpanel" aria-labelledby="people-list-tab">
-            <div class="row">
-                <div class="col-6 form-group">
+            <div class="row mb-3">
+                <div class="col-6 form-group mb-0 ml-3">
                     <input type="text" class="form-control" id="searchPeopleInput" placeholder="Search">
-                    <small id="error-box"  class="form-text error-text">&nbsp;</small>
+                    <small id="error-box"  class="form-text error-text">&nbsp;&nbsp;</small>
                 </div>
-                <button id="add-people-btn" class="btn btn-secondary my-auto">
-                    Add
-                </button>
+
+                    <button id="add-people-btn" class="btn btn-outline-success px-4">
+                        Add
+                    </button>
+
+
             </div>
             <div class="row">
                 <div class="col-6">
-                    <ul id="people-list" class="w-100 pl-0" style="list-style: none"></ul>
+                    <ul id="people-list"  style="list-style: none"></ul>
                 </div>
 
 
@@ -32,18 +35,18 @@
 
         </div>
         <div class="tab-pane fade" id="tags-list-tab" role="tabpanel" aria-labelledby="tags-tab">
-            <div class="row">
-                <div class="col-6 form-group">
+            <div class="row mb-3">
+                <div class="col-6 form-group mb-0 ml-3">
                     <input type="text" class="form-control" id="searchTagInput" placeholder="Search">
-                    <small id="error-box"  class="form-text error-text">&nbsp;</small>
+                    <small id="error-box"  class="form-text error-text">&nbsp;&nbsp;</small>
                 </div>
-                <button id="add-tags-btn" class="btn btn-secondary my-auto">
-                    Add
+                <button id="add-tags-btn" class="btn btn-outline-success px-4">
+                    Add Tag
                 </button>
             </div>
             <div class="row">
                 <div class="col-6">
-                    <ul id="tags-list" class="w-100 pl-0" style="list-style: none"></ul>
+                    <ul id="tags-list"  style="list-style: none"></ul>
                 </div>
 
 
@@ -51,22 +54,14 @@
         </div>
     </div>
 </div>
-<!--<div>-->
-    <!--<ul id="sortable">-->
-        <!--<li id="1" class="ui-state-default">Item 1</li>-->
-        <!--<li id="2" class="ui-state-default">Item 2</li>-->
-        <!--<li id="3" class="ui-state-default">Item 3</li>-->
-        <!--<li id="4" class="ui-state-default">Item 4</li>-->
-        <!--<li id="5" class="ui-state-default">Item 5</li>-->
-    <!--</ul>-->
-<!--</div>-->
-
 {{#contentFor "pageScripts"}}
+
     <script type="text/javascript">
         $(document).ready(function() {
             var discover = new window.Discover();
         });
     </script>
-    {{>discover/discover}}
+    {{{css 'mDiscover.css'}}}
+    {{>discover/peopleSearch}}
     {{>discover/tagSearch}}
 {{/contentFor}}
