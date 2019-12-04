@@ -4,8 +4,8 @@
 //= require plugins/jquery-ui.js
 //= require common/common.js
 //= require login.js
-//= require userApproval.js
 //= require whitelistUser.js
-//= require userProfile.js
+//= require userApproval.js
+//= require mUserProfile.js
 //= require usageReports.js
 //= require discover.js

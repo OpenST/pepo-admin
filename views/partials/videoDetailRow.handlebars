@@ -2,11 +2,14 @@
   <tr>
     <td scope="col">
       <div class="video-thumbnail" data-video-link=\{{videoLink}} data-video-id=\{{videoId}} data-desc-id=\{{descriptionId}}>
-        <img src=\{{posterImageLink}} style="height: 50px; width: 50px;">
+        <img src="\{{posterImageLink}}" style="height: 50px; width: 50px;">
         <i class="fa fa-play-circle text-danger"></i>
       </div>
     </td>
-
+    <td class="table-text-col-dimensions" scope="col">\{{description}}</td>
+    <td class="reply-count" data-video-id="\{{videoId}}" scope="col">
+        <a class="\{{replyCountStyle}}" href="\{{repliesUrl}}">\{{#if replyCount}}\{{replyCount}}\{{else}}-\{{/if}}</a>
+    </td>
     <td scope="col">\{{updatedAt}}</td>
 
     <td scope="col">\{{fanCount}}</td>

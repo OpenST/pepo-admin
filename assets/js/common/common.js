@@ -1,9 +1,9 @@
 (function(window, $) {
-  const Common = function(config) {};
+  var Common = function(config) {};
 
   Common.prototype = {
     init: function() {
-      const oThis = this;
+      var oThis = this;
 
       oThis.apiUrl = $('meta[name="api-url"]').attr('content');
 
@@ -13,7 +13,7 @@
     },
 
     registerHandlebarHelpers: function() {
-      const oThis = this;
+      var oThis = this;
 
       Handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
         switch (operator) {
@@ -44,7 +44,7 @@
     },
 
     bindEvents: function() {
-      const oThis = this;
+      var oThis = this;
 
       var token = $('meta[name="csrf-token"]').attr('content');
 
@@ -71,13 +71,13 @@
     },
 
     logoutUrl: function() {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/logout';
     },
 
     currentAdminUrl: function() {
-      const oThis = this;
+      var oThis = this;
 
       return oThis.apiUrl + '/admin/current';
     }

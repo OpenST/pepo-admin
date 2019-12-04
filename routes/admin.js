@@ -6,11 +6,9 @@ const rootPrefix = '..',
   routeHelper = require(rootPrefix + '/routes/helper'),
   sanitizer = require(rootPrefix + '/helpers/sanitizer'),
   coreConstants = require(rootPrefix + '/config/coreConstants'),
-  basicHelper = require(rootPrefix + '/helpers/basic'),
   responseHelper = require(rootPrefix + '/lib/formatter/response'),
   cookieHelper = require(rootPrefix + '/helpers/cookie'),
-  FetchCurrentAdmin = require(rootPrefix + '/lib/FetchCurrentAdmin'),
-  cookieConstants = require(rootPrefix + '/lib/globalConstant/cookie');
+  FetchCurrentAdmin = require(rootPrefix + '/lib/FetchCurrentAdmin');
 
 const validateLoggedInAdmin = async function(req, res, next) {
   let response = await new FetchCurrentAdmin({ headers: req.headers }).perform().catch(function(r) {
@@ -73,6 +71,14 @@ router.get('/user-profile/:user_id', sanitizer.sanitizeDynamicUrlParams, validat
 router.get('/usage-reports', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
   req.decodedParams.usageDataUrl = coreConstants.PAD_USAGE_DATA_URL;
   Promise.resolve(routeHelper.perform(req, res, next, 'usageReports', 'r_a_ad_5'));
+});
+
+/* Replies */
+router.get('/video-replies/', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  req.decodedParams.video_id = req.params.video_id;
+  req.decodedParams.video_id = req.params.user_id;
+
+  Promise.resolve(routeHelper.perform(req, res, next, 'videoReplies', 'r_a_ad_6'));
 });
 
 /* Discover */

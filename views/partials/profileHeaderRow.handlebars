@@ -37,14 +37,18 @@
             <option value="approve">Approve</option>
           \{{/if}}
 
-          <option value="block">Block</option>
+          <option value="delete">Delete</option>
         \{{/ifCond}}
 
         \{{#ifCond status '===' "INACTIVE"}}
-          <option value="blocked" selected>Blocked</option>
+          <option value="deleted" selected>Deleted</option>
         \{{/ifCond}}
 
       </select>
     </div>
   </div>
+    <div class="row">
+        <button class=" btn \{{className}} my-2 ml-2" id="mute-unmute-btn">\{{btnText}}</button>
+        <div class="mute-unmute-error error-text my-auto ml-2"></div>
+    </div>
 </script>
