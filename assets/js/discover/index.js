@@ -17,7 +17,11 @@
     oThis.peopleSearchInput = $('#searchPeopleInput');
     oThis.tagSearchInput = $('#searchTagInput');
     oThis.maxLimitMsg = 'Can only add upto 20 people.';
+    oThis.totalEntriesTags = null;
+    oThis.totalEntriesPeople = null;
     oThis.bindEvents();
+    oThis.initAutocompletePeople();
+    oThis.initAutocompleteTags();
     oThis.getinitialPeopleData = oThis.getinitialPeopleData.bind(oThis);
     oThis.initializeUsersTemplate = oThis.initializeUsersTemplate.bind(oThis);
     oThis.getinitialTagsData = oThis.getinitialTagsData.bind(oThis);
@@ -63,9 +67,12 @@
           oThis.userName = ui.item.value;
         }
       });
+    },
+    initAutocompletePeople: function() {
       /*
       initialize sortable list with required callbacks
        */
+      var oThis = this;
       oThis.jPeopleListWrapper.sortable({
         update: function(event, ui) {
           var changedList = this.id,
@@ -77,6 +84,12 @@
           oThis.onListOrderChanged(entityKind, ui.item[0].id);
         }
       });
+    },
+    initAutocompleteTags: function() {
+      /*
+      initialize sortable list with required callbacks
+       */
+      var oThis = this;
       oThis.jTagsListWrapper.sortable({
         update: function(event, ui) {
           var changedList = this.id,
@@ -89,6 +102,42 @@
         }
       });
     },
+    formatTagsData: function(tagsData) {
+      var oThis = this,
+        formattedTagsData = [];
+
+      oThis.tagsIds = Object.keys(tagsData);
+      for (var i = 0; i < oThis.tagsIds.length; i++) {
+        var userId = tagsData[oThis.tagsIds[i]].id,
+          label = tagsData[oThis.tagsIds[i]].text,
+          value = tagsData[oThis.tagsIds[i]].text;
+        formattedTagsData[i] = {
+          id: tagsData[oThis.tagsIds[i]].id,
+          label: tagsData[oThis.tagsIds[i]].text,
+          value: tagsData[oThis.tagsIds[i]].text
+        };
+      }
+      return formattedTagsData;
+    },
+
+    formatPeopledata: function(usersData) {
+      var oThis = this,
+        formattedUsersData = [];
+      oThis.userIds = Object.keys(usersData);
+      for (var i = 0; i < oThis.userIds.length; i++) {
+        var userId = usersData[oThis.userIds[i]].id,
+          label = usersData[oThis.userIds[i]].user_name,
+          value = usersData[oThis.userIds[i]].user_name;
+        formattedUsersData[i] = {
+          id: usersData[oThis.userIds[i]].id,
+          label: usersData[oThis.userIds[i]].user_name,
+          value: usersData[oThis.userIds[i]].user_name
+        };
+      }
+
+      return formattedUsersData;
+    },
+
     onInputChangeTags: function(request, response) {
       var oThis = this;
       $.ajax({
@@ -99,19 +148,10 @@
 
           var tagsData = res.data.tags,
             formattedTagsData = [];
+
           if (tagsData && tagsData.length > 0) {
             oThis.jErrorBoxTags.text('');
-            oThis.tagsIds = Object.keys(tagsData);
-            for (var i = 0; i < oThis.tagsIds.length; i++) {
-              var userId = tagsData[oThis.tagsIds[i]].id,
-                label = tagsData[oThis.tagsIds[i]].text,
-                value = tagsData[oThis.tagsIds[i]].text;
-              formattedTagsData[i] = {
-                id: tagsData[oThis.tagsIds[i]].id,
-                label: tagsData[oThis.tagsIds[i]].text,
-                value: tagsData[oThis.tagsIds[i]].text
-              };
-            }
+            formattedTagsData = oThis.formatTagsData(tagsData);
           } else {
             oThis.jErrorBoxTags.text('No results');
           }
@@ -135,17 +175,7 @@
             formattedUsersData = [];
           if (usersData) {
             oThis.jErrorBox.text('');
-            oThis.userIds = Object.keys(usersData);
-            for (var i = 0; i < oThis.userIds.length; i++) {
-              var userId = usersData[oThis.userIds[i]].id,
-                label = usersData[oThis.userIds[i]].user_name,
-                value = usersData[oThis.userIds[i]].user_name;
-              formattedUsersData[i] = {
-                id: usersData[oThis.userIds[i]].id,
-                label: usersData[oThis.userIds[i]].user_name,
-                value: usersData[oThis.userIds[i]].user_name
-              };
-            }
+            formattedUsersData = oThis.formatPeopledata(usersData);
           } else {
             oThis.jErrorBox.text('No results');
           }
@@ -203,8 +233,6 @@
       var oThis = this;
       var resultType = data.result_type,
         searchResult = data[resultType];
-      oThis.totalEntriesTags = null;
-      oThis.totalEntriesPeople = null;
 
       if (searchResult) {
         if (entityKind == 'users') {
@@ -218,7 +246,7 @@
       var oThis = this;
 
       $.ajax({
-        url: 'http://pepodev.com:8080/api/admin/curated-entities/users',
+        url: oThis.apiUrl + '/admin/curated-entities/users',
         type: 'GET',
         headers: {
           'csrf-token': oThis.csrfToken
