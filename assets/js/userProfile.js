@@ -165,19 +165,22 @@
       const oThis = this;
 
       $('button#video-delete-btn').click(function(event) {
-        const button = this;
+        var button = this,
+          deleteEntry = window.confirm('Do you want to delete this entry ? ');
 
-        event.preventDefault();
+        if (deleteEntry) {
+          event.preventDefault();
 
-        var videoId = +$(this).attr('data-video-id');
+          var videoId = +$(this).attr('data-video-id');
 
-        var updateButtonStatus = function() {
-          $(button).html('Saved');
-          $(button).addClass('disabled');
-          $(button).css('pointer-events', 'none');
-        };
+          var updateButtonStatus = function() {
+            $(button).html('Saved');
+            $(button).addClass('disabled');
+            $(button).css('pointer-events', 'none');
+          };
 
-        oThis.deleteVideo(videoId, updateButtonStatus);
+          oThis.deleteVideo(videoId, updateButtonStatus);
+        }
       });
     },
 

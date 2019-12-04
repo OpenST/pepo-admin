@@ -26,3 +26,9 @@ li>.active{
   /* prevent horizontal scrollbar */
   overflow-x: hidden;
 }
+.delete-entry{
+  cursor: pointer;
+}
+.drag-entry{
+  cursor: pointer;
+}

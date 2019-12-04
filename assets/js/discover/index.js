@@ -452,7 +452,10 @@
     bindDeleteBtnClickEvent: function(entityKind) {
       const oThis = this;
       oThis.deleteBtn.on('click', function() {
-        oThis.deleteEntryClick($(this), entityKind);
+        var deleteConsent = window.confirm('Do you want to delete this entry ? ');
+        if (deleteConsent) {
+          oThis.deleteEntryClick($(this), entityKind);
+        }
       });
     },
     deleteEntryClick: function(jDeleteBtn, entityKind) {
