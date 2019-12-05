@@ -318,10 +318,10 @@
       var source = document.getElementById('discover-list-item-template').innerHTML,
         listRowTemplate = Handlebars.compile(source),
         resultType = res.result_type,
-        searchResultType = res[resultType],
+        searchResultType = res[resultType] || [],
         listRowTemplateHtml = '',
         listData = null;
-      oThis.PeopleListData = res.users;
+      oThis.PeopleListData = res.users || {};
       oThis.searchResultType = searchResultType;
 
       for (var i = 0; i < searchResultType.length; i++) {
@@ -336,10 +336,10 @@
       var source = document.getElementById('discover-tag-list-item-template').innerHTML,
         tagListRowTemplate = Handlebars.compile(source),
         resultType = res.result_type,
-        searchResultTagsList = res[resultType],
+        searchResultTagsList = res[resultType] || [],
         tagListRowTemplateHtml = '',
         listData = null;
-      oThis.tagsListData = res.tags;
+      oThis.tagsListData = res.tags || {};
       oThis.searchResultTagsList = searchResultTagsList;
 
       for (var i = 0; i < searchResultTagsList.length; i++) {
@@ -418,7 +418,7 @@
       console.log('oThis.peopleListData', oThis.PeopleListData);
       if (isNewEntry) {
         beforeDataElement = 0;
-        afterDataElement = searchResultType[0].position;
+        afterDataElement = searchResultType && searchResultType[0].position;
       } else {
         for (var i = 0; i < oThis.newOrder.length; i++) {
           if (oThis.newOrder[i] == entityId) {
