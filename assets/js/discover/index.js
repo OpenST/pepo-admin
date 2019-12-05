@@ -418,7 +418,7 @@
       console.log('oThis.peopleListData', oThis.PeopleListData);
       if (isNewEntry) {
         beforeDataElement = 0;
-        afterDataElement = searchResultType && searchResultType[0].position;
+        afterDataElement = searchResultType[0].position;
       } else {
         for (var i = 0; i < oThis.newOrder.length; i++) {
           if (oThis.newOrder[i] == entityId) {
