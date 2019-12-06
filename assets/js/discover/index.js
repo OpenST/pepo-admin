@@ -16,7 +16,9 @@
     oThis.jAddTagsBtn = $('#add-tags-btn');
     oThis.peopleSearchInput = $('#searchPeopleInput');
     oThis.tagSearchInput = $('#searchTagInput');
-    oThis.maxLimitMsg = 'Can only add upto 20 people.';
+    oThis.maxLimitMsgPeople = 'Can only add upto 20 people.';
+    oThis.maxLimitMsgTag = 'Can only add upto 20 tags.';
+    oThis.emptyInputBox = 'Please enter valid input.';
     oThis.totalEntriesTags = null;
     oThis.totalEntriesPeople = null;
     oThis.bindEvents();
@@ -35,14 +37,18 @@
       const oThis = this;
       oThis.jPeopleAddBtn.on('click', function() {
         if (oThis.totalEntriesPeople >= oThis.MaxAllowedEntries) {
-          oThis.jErrorBox.text(oThis.maxLimitMsg);
+          oThis.jErrorBox.text(oThis.maxLimitMsgPeople);
+        } else if (!oThis.entity_id_people) {
+          oThis.jErrorBox.text(oThis.emptyInputBox);
         } else {
           oThis.onAddBtnClick('users', oThis.entity_id_people, oThis.getinitialPeopleData);
         }
       });
       oThis.jAddTagsBtn.on('click', function() {
         if (oThis.totalEntriesTags >= oThis.MaxAllowedEntries) {
-          oThis.jErrorBoxTags.text(oThis.maxLimitMsg);
+          oThis.jErrorBoxTags.text(oThis.maxLimitMsgTag);
+        } else if (!oThis.entity_id_tags) {
+          oThis.jErrorBoxTags.text(oThis.emptyInputBox);
         } else {
           oThis.onAddBtnClick('tags', oThis.entity_id_tags, oThis.getinitialTagsData);
         }
@@ -365,6 +371,8 @@
           'csrf-token': oThis.csrfToken
         },
         success: function(res) {
+          oThis.entity_id_tags = null;
+          oThis.entity_id_people = null;
           if (res && res.success) {
             console.log('** success **');
             if (entityKind == 'users') {
@@ -385,6 +393,8 @@
           }
         },
         error: function(err) {
+          oThis.entity_id_tags = null;
+          oThis.entity_id_people = null;
           console.log('** error **');
           var errMsg = oThis.getGeneralError(err);
           if (entityKind == 'users') {
@@ -418,7 +428,11 @@
       console.log('oThis.peopleListData', oThis.PeopleListData);
       if (isNewEntry) {
         beforeDataElement = 0;
-        afterDataElement = searchResultType[0].position;
+        if (searchResultType.length === 0) {
+          afterDataElement = 100000000;
+        } else {
+          afterDataElement = searchResultType[0].position;
+        }
       } else {
         for (var i = 0; i < oThis.newOrder.length; i++) {
           if (oThis.newOrder[i] == entityId) {
@@ -449,11 +463,14 @@
       return positionsData;
     },
     getBeforeAndAfterPosition: function(isNewEntry) {},
-    bindDeleteBtnClickEvent: function(entityKind) {
-      const oThis = this;
-      oThis.deleteBtn.on('click', function() {
+    bindDeleteBtnClickEvent: function() {
+      var oThis = this,
+        entityKind = '';
+
+      oThis.deleteBtn.off().on('click', function() {
         var deleteConsent = window.confirm('Do you want to delete this entry ? ');
         if (deleteConsent) {
+          $('.nav-item .active').text() == 'Tags' ? (entityKind = 'tags') : (entityKind = 'users');
           oThis.deleteEntryClick($(this), entityKind);
         }
       });
