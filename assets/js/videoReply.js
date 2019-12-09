@@ -626,8 +626,8 @@
         if (checkerUrl && !(checkerUrl.startsWith('http://', 0) || checkerUrl.startsWith('https://', 0))) {
           url = 'http://' + url;
         }
-        return url;
       }
+      return url;
     },
     onLinkSaveError: function(errorMsg) {
       $('.video_desc_link_editable .inline-error').text(errorMsg);
