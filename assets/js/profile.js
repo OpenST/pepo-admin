@@ -146,7 +146,7 @@
         }
 
         //Caching it to get data for exisiting page
-        if (oThis.nextPaginationId) {
+        if (oThis.nextPaginationId && oThis.nextPaginationId != nextPageId) {
           oThis.currentPaginationId = oThis.nextPaginationId;
         }
         oThis.nextPaginationId = nextPageId;

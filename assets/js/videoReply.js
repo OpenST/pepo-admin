@@ -219,7 +219,7 @@
         }
 
         //Caching it to get data for exisiting page
-        if (oThis.nextPaginationId) {
+        if (oThis.nextPaginationId && oThis.nextPaginationId != nextPageId) {
           oThis.currentPaginationId = oThis.nextPaginationId;
         }
 
@@ -642,7 +642,7 @@
       $('.video_desc_link_editable .inline-error').text(errorMsg);
     },
 
-    isReplyVideo() {
+    isReplyVideo: function() {
       var videoType = $('#video-tray-modal').data('video-type');
       return videoType == 'reply';
     },
