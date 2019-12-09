@@ -699,9 +699,9 @@
     },
 
     linkFormatting: function(url) {
-      if (url) {
-        url = url.toLowerCase();
-      }
+      // if (url) {
+      //   url = url.toLowerCase();
+      // }
       if (url && !(url.startsWith('http://', 0) || url.startsWith('https://', 0))) {
         url = 'http://' + url;
       }
