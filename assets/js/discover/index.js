@@ -16,6 +16,7 @@
     oThis.jAddTagsBtn = $('#add-tags-btn');
     oThis.peopleSearchInput = $('#searchPeopleInput');
     oThis.tagSearchInput = $('#searchTagInput');
+    oThis.sRowWrapper = 'item-wrapper';
     oThis.maxLimitMsgPeople = 'Can only add upto 20 people.';
     oThis.maxLimitMsgTag = 'Can only add upto 20 tags.';
     oThis.emptyInputBox = 'Please enter valid input.';
@@ -87,6 +88,7 @@
             entityIds = order;
           console.log({ id: changedList, positions: order, item: ui.item });
           oThis.newOrder = order;
+          $('.dragable-element').addClass('disable-events');
           oThis.onListOrderChanged(entityKind, ui.item[0].id);
         }
       });
@@ -104,6 +106,7 @@
             entityIds = order;
           console.log({ id: changedList, positions: order });
           oThis.newOrder = order;
+          $('.dragable-element').addClass('disable-events');
           oThis.onListOrderChanged(entityKind, ui.item[0].id);
         }
       });
@@ -210,6 +213,12 @@
         success: function(res) {
           if (res && res.success) {
             console.log('success');
+            if (entityKind == 'users') {
+              oThis.getinitialPeopleData();
+            } else {
+              oThis.getinitialTagsData();
+            }
+            $('.dragable-element').removeClass('disable-events');
           } else {
             console.log('api returned error');
             var errorMsg = oThis.getSpecificError(res);
