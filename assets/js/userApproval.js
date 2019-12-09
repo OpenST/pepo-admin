@@ -431,7 +431,7 @@
     bindPostRenderEvents: function() {
       var oThis = this;
 
-      $('div#user-profile-img').click(function(event) {
+      $('.j-user-profile-navigate').click(function(event) {
         var userId = $(this).attr('data-user-id');
         window.location = '/admin/user-profile/' + userId;
       });

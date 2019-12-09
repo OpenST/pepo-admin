@@ -2,7 +2,7 @@
   <tr>
     <td scope="col">
       <div class="row">
-        <div class='col-3' id="user-profile-img" data-user-id=\{{userId}} data-name=\{{name}} data-user-name=\{{userName}} data-creator-status=\{{isCreator}} data-user-status=\{{status}} data-image-link=\{{imageLink}}>
+        <div class='col-3 j-user-profile-navigate' id="user-profile-img" data-user-id=\{{userId}} data-name=\{{name}} data-user-name=\{{userName}} data-creator-status=\{{isCreator}} data-user-status=\{{status}} data-image-link=\{{imageLink}}>
           \{{#if imageLink}}
             <img src=\{{imageLink}} style="height: 45px; width: 45px; border-radius: 50%;">
           \{{else}}
@@ -10,7 +10,7 @@
           \{{/if}}
         </div>
 
-        <div class='col-9'>
+        <div class='col-9 j-user-profile-navigate' data-user-id=\{{userId}} >
           <div style="max-width:200px;word-break: break-all;" class="d-inline-block" data-user-id=\{{userId}}>\{{{name}}}</div>
           <br/>
           <div  class="d-inline-block">@\{{userName}}</div>

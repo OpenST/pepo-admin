@@ -6,7 +6,8 @@
 
     $.extend(oThis.config);
     oThis.bindEvents();
-    oThis.lastPaginationId = null;
+    oThis.nextPaginationId = null;
+    oThis.currentPaginationId = null;
     oThis.videoDescription = null;
     oThis.videoDetails = {};
     oThis.linkDetails = {};
@@ -15,31 +16,36 @@
     oThis.autoCompleteInitialized = false;
     oThis.saveDescCheck = false;
     oThis.saveLinkCheck = false;
-    oThis.originalVideoUpdated = false;
     var params = new URL(document.location).searchParams;
     oThis.userId = params.get('userId');
     oThis.videoId = params.get('videoId');
-    oThis.query = oThis.videoId;
-    var replyParams = {
-      video_id: oThis.videoId
-    };
-    oThis.loadReplies(replyParams); // get replies data
+    oThis.loadReplies(oThis.getReplyQuereyParams()); // get replies data
     oThis.loadProfile();
   };
 
   VideoReply.prototype = {
+    getReplyQuereyParams: function(pageIdentifier) {
+      const oThis = this;
+      var query = {
+        video_id: oThis.videoId
+      };
+      if (pageIdentifier) {
+        query['pagination_identifier'] = pageIdentifier;
+      }
+      return query;
+    },
+
     bindEvents: function() {
       const oThis = this;
       // Load next page
       $('#replies-load-btn').click(function(event) {
         event.preventDefault();
-        var query = null;
-        // query = query + '&pagination_identifier=' + oThis.lastPaginationId;
-        query = {
-          video_id: oThis.query,
-          pagination_identifier: oThis.lastPaginationId
-        };
-        oThis.loadReplies(query);
+        oThis.loadReplies(oThis.getReplyQuereyParams(oThis.nextPaginationId));
+      });
+
+      $('#profile-header-replies').on('click', '.j-user-profile-navigate', function(event) {
+        var userId = $(this).attr('data-user-id');
+        window.location = '/admin/user-profile/' + userId;
       });
     },
     loadParentVideoDetails: function(parentId) {
@@ -212,7 +218,12 @@
           $('#reply-results').append('<br/><p class="text-danger">No results.</p>');
         }
 
-        oThis.lastPaginationId = nextPageId;
+        //Caching it to get data for exisiting page
+        if (oThis.nextPaginationId) {
+          oThis.currentPaginationId = oThis.nextPaginationId;
+        }
+
+        oThis.nextPaginationId = nextPageId;
 
         if (!nextPageId) {
           $('#replies-load-btn').css('pointer-events', 'none');
@@ -276,7 +287,7 @@
           html += videoRowTemplate(context);
         }
         if (html) {
-          // $('#reply-results').empty();
+          $('#reply-results').empty();
           $('#reply-results').append(html);
         }
 
@@ -293,10 +304,10 @@
     updateVideoModal: function(response, id) {
       const oThis = this;
       var replyData = null;
-      if (oThis.originalVideoUpdated) {
-        replyData = response.data['video_details'];
-      } else {
+      if (oThis.isReplyVideo()) {
         replyData = response.data['reply_details'];
+      } else {
+        replyData = response.data['video_details'];
       }
       if (oThis.saveDescCheck) {
         var descriptionId = replyData && replyData[id] && replyData[id].description_id;
@@ -340,7 +351,6 @@
       // Add listner for video thumbnail click
       $('div.video-thumbnail').click(function(event) {
         event.preventDefault();
-        oThis.originalVideoUpdated = true;
         var videoLink = $(this).attr('data-video-link');
         var videoId = +$(this).attr('data-video-id');
         var descriptionId = +$(this).attr('data-desc-id');
@@ -360,7 +370,8 @@
           videoTemplate({
             videoLink: videoLink,
             description: description,
-            descriptionLink: descriptionLink
+            descriptionLink: descriptionLink,
+            videoType: 'video'
           })
         );
 
@@ -404,7 +415,6 @@
 
     bindVideoModalEvents: function() {
       const oThis = this;
-      oThis.originalVideoUpdated = false;
       var videoSource = document.getElementById('video-tray').innerHTML;
       var videoTemplate = Handlebars.compile(videoSource);
 
@@ -432,7 +442,8 @@
           videoTemplate({
             videoLink: videoLink,
             description: description,
-            descriptionLink: descriptionLink
+            descriptionLink: descriptionLink,
+            videoType: 'reply'
           })
         );
         oThis.bindModalEvents();
@@ -601,7 +612,6 @@
       $('.video_desc').show();
       $('#bio_text').empty();
       $('#bio_text').html(newDescription);
-      // oThis.loadReplies(oThis.userId);
       oThis.saveDescCheck = false;
     },
     onDescriptionSaveError: function(errorMsg) {
@@ -609,7 +619,6 @@
     },
     onLinkSaveSuccess: function(newLink) {
       const oThis = this;
-      // oThis.loadReplies(oThis.userId);
       $('.video_desc_link_editable .inline-error').empty();
       $('.video_desc_link_editable').hide();
       $('.video_desc_link').show();
@@ -633,14 +642,19 @@
       $('.video_desc_link_editable .inline-error').text(errorMsg);
     },
 
+    isReplyVideo() {
+      var videoType = $('#video-tray-modal').data('video-type');
+      return videoType == 'reply';
+    },
+
     saveDescription: function() {
       const oThis = this;
       var newDescription = $('#edit-video-description').val(),
         ajaxUrl = null;
-      if (oThis.originalVideoUpdated) {
-        var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoIdToSave + '/description';
-      } else {
+      if (oThis.isReplyVideo()) {
         ajaxUrl = oThis.apiUrl + '/admin/update-reply-video/' + oThis.videoIdToSave + '/description';
+      } else {
+        ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoIdToSave + '/description';
       }
 
       $.ajax({
@@ -655,11 +669,10 @@
         },
         success: function(res) {
           if (res.success) {
-            if (!oThis.originalVideoUpdated) {
-              oThis.loadReplies(oThis.userId, oThis.videoIdToSave);
+            if (oThis.isReplyVideo()) {
+              oThis.loadReplies(oThis.getReplyQuereyParams(oThis.currentPaginationId), oThis.videoIdToSave);
             } else {
               oThis.onDescriptionSaveSuccess(newDescription);
-              oThis.originalVideoUpdated = false;
             }
           } else {
             console.log('====error====', res);
@@ -680,10 +693,10 @@
       var newLink = $('#edit-video-description-link').val();
       var ajaxUrl = null;
       newLink = oThis.linkFormatting(newLink);
-      if (oThis.originalVideoUpdated) {
-        ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoIdToSave + '/link';
-      } else {
+      if (oThis.isReplyVideo()) {
         ajaxUrl = oThis.apiUrl + '/admin/update-reply-video/' + oThis.videoIdToSave + '/link';
+      } else {
+        ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoIdToSave + '/link';
       }
 
       $.ajax({
@@ -698,11 +711,10 @@
         },
         success: function(res) {
           if (res.success) {
-            if (!oThis.originalVideoUpdated) {
-              oThis.loadReplies(oThis.userId, oThis.videoIdToSave);
+            if (oThis.isReplyVideo()) {
+              oThis.loadReplies(oThis.getReplyQuereyParams(oThis.currentPaginationId), oThis.videoIdToSave);
             } else {
               oThis.onLinkSaveSuccess(newLink);
-              oThis.originalVideoUpdated = false;
             }
           } else {
             console.log('====error====', res);

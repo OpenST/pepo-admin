@@ -6,8 +6,8 @@
 
     $.extend(oThis.config);
     oThis.bindEvents();
-    oThis.lastPaginationId = null;
-    oThis.query = null;
+    oThis.nextPaginationId = null;
+    oThis.currentPaginationId = null;
     oThis.videoDescription = null;
     oThis.videoId = null;
     oThis.videoDetails = {};
@@ -15,7 +15,7 @@
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
     oThis.userId = +window.location.pathname.split('user-profile/')[1];
-    oThis.loadVideos(oThis.userId);
+    oThis.loadVideos();
     oThis.loadProfile(oThis.userId);
     oThis.autoCompleteInitialized = false;
     oThis.saveDescCheck = false;
@@ -23,16 +23,21 @@
   };
 
   UserProfile.prototype = {
+    getVideoQuereyParam: function(pageIdentifier) {
+      var query = {};
+      if (pageIdentifier) {
+        query['pagination_identifier'] = pageIdentifier;
+      }
+      return query;
+    },
+
     bindEvents: function() {
       var oThis = this;
 
       // Load next page
       $('#videos-load-btn').click(function(event) {
         event.preventDefault();
-
-        var query = oThis.query;
-        query = query + '&pagination_identifier=' + oThis.lastPaginationId;
-        oThis.loadVideos(query);
+        oThis.loadVideos(oThis.getVideoQuereyParam(oThis.nextPaginationId));
       });
 
       // Load next page
@@ -100,7 +105,7 @@
 
       // Don't use success callback function directly. Think of oThis.
       $.ajax({
-        url: oThis.videoHistoryUrl(oThis.userId),
+        url: oThis.videoHistoryUrl(),
         type: 'GET',
         data: data,
         contentType: 'application/json',
@@ -140,7 +145,11 @@
           $('#video-results').append('<br/><p class="text-danger">No result found.</p>');
         }
 
-        oThis.lastPaginationId = nextPageId;
+        //Caching it to get data for exisiting page
+        if (oThis.nextPaginationId) {
+          oThis.currentPaginationId = oThis.nextPaginationId;
+        }
+        oThis.nextPaginationId = nextPageId;
 
         if (!nextPageId) {
           $('#videos-load-btn').css('pointer-events', 'none');
@@ -546,10 +555,10 @@
       return oThis.apiUrl + '/admin/users/' + user_id + '/profile';
     },
 
-    videoHistoryUrl: function(user_id) {
+    videoHistoryUrl: function() {
       var oThis = this;
 
-      return oThis.apiUrl + '/admin/video-history/' + user_id;
+      return oThis.apiUrl + '/admin/video-history/' + oThis.userId;
     },
 
     deleteVideoUrl: function(video_id) {
@@ -677,7 +686,6 @@
       $('.video_desc').show();
       $('#bio_text').empty();
       $('#bio_text').html(newDescription);
-      // oThis.loadVideos(oThis.userId);
       oThis.saveDescCheck = false;
     },
 
@@ -687,7 +695,6 @@
 
     onLinkSaveSuccess: function(newLink) {
       var oThis = this;
-      // oThis.loadVideos(oThis.userId);
       $('.video_desc_link_editable .inline-error').empty();
       $('.video_desc_link_editable').hide();
       $('.video_desc_link').show();
@@ -728,7 +735,7 @@
         },
         success: function(res) {
           if (res.success) {
-            oThis.loadVideos(oThis.userId, oThis.videoId);
+            oThis.loadVideos(oThis.getVideoQuereyParam(oThis.currentPaginationId), oThis.videoId);
           } else {
             console.log('====error====', res);
             var errorMsg = res.err.error_data[0].msg;
@@ -760,7 +767,7 @@
         },
         success: function(res) {
           if (res.success) {
-            oThis.loadVideos(oThis.userId, oThis.videoId);
+            oThis.loadVideos(oThis.getVideoQuereyParam(oThis.currentPaginationId), oThis.videoId);
           } else {
             console.log('====error====', res);
             var errorMsg = res.err.error_data[0].msg;
