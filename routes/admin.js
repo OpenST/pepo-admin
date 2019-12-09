@@ -81,4 +81,9 @@ router.get('/video-replies/', sanitizer.sanitizeDynamicUrlParams, validateLogged
   Promise.resolve(routeHelper.perform(req, res, next, 'videoReplies', 'r_a_ad_6'));
 });
 
+/* Discover */
+router.get('/discover', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  Promise.resolve(routeHelper.perform(req, res, next, 'discover', 'r_a_ad_6'));
+});
+
 module.exports = router;
