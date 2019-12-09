@@ -35,3 +35,6 @@ li>.active{
 .content-wrap{
   word-break: break-all;
 }
+.disable-events{
+  pointer-events: none;
+}
