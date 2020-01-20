@@ -250,10 +250,13 @@
           var pepoCoins = response.data['user_pepo_coins_map'][userId];
           var inviteCodes = response.data['invite_codes'][userId];
 
-          var twitterUser = response.data['twitter_users'][userId],
-            handle = twitterUser['handle'],
-            email = userData['email'],
-            viewLink = null;
+          var twitterUser = response.data['twitter_users'][userId];
+
+          if (twitterUser) {
+            var handle = twitterUser['handle'],
+              email = userData['email'],
+              viewLink = null;
+          }
 
           if (!email) {
             email = twitterUser['email'];
