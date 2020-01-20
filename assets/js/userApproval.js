@@ -250,16 +250,15 @@
           var pepoCoins = response.data['user_pepo_coins_map'][userId];
           var inviteCodes = response.data['invite_codes'][userId];
 
-          var twitterUser = response.data['twitter_users'][userId];
+          var twitterUser = response.data['twitter_users'][userId],
+            email = userData['email'];
 
           if (twitterUser) {
             var handle = twitterUser['handle'],
-              email = userData['email'],
               viewLink = null;
-          }
-
-          if (!email) {
-            email = twitterUser['email'];
+            if (!email) {
+              email = twitterUser['email'];
+            }
           }
 
           if (ubtAddress && chainId && userData.ost_token_holder_address) {
