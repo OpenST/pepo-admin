@@ -251,12 +251,14 @@
           var inviteCodes = response.data['invite_codes'][userId];
 
           var twitterUser = response.data['twitter_users'][userId],
-            handle = twitterUser['handle'],
-            email = userData['email'],
-            viewLink = null;
+            email = userData['email'];
 
-          if (!email) {
-            email = twitterUser['email'];
+          if (twitterUser) {
+            var handle = twitterUser['handle'],
+              viewLink = null;
+            if (!email) {
+              email = twitterUser['email'];
+            }
           }
 
           if (ubtAddress && chainId && userData.ost_token_holder_address) {
