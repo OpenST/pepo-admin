@@ -274,7 +274,7 @@
             videoId: videoId,
             replyDetailId: replyDetailId,
             posterImageLink: imageLink,
-            updatedAt: new Date(video.uts * 1000).toLocaleString(),
+            updatedAt: new Date(replyDetail.uts * 1000).toLocaleString(),
             fanCount: replyDetail.total_contributed_by,
             pepoReceived: oThis.convertWeiToNormal(replyDetail.total_amount_raised_in_wei),
             replyLink: videoLink,
