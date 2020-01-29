@@ -198,7 +198,7 @@
           var context = {
             videoId: videoId,
             posterImageLink: imageLink,
-            updatedAt: new Date(video.uts * 1000).toLocaleString(),
+            updatedAt: new Date(videoData.uts * 1000).toLocaleString(),
             fanCount: videoData.total_contributed_by,
             pepoReceived: oThis.convertWeiToNormal(videoData.total_amount_raised_in_wei),
             videoLink: videoLink,
