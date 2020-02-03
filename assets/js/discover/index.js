@@ -5,32 +5,53 @@
     oThis.MaxAllowedEntries = 20;
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
+    // add buttons
     oThis.jPeopleAddBtn = $('#add-people-btn');
+    oThis.jAddTagsBtn = $('#add-tags-btn');
+    oThis.jAddChannelBtn = $('#add-channel-btn');
+    //Templates
     oThis.jListTemplate = $('#discover-list-item-template');
+    oThis.jChannelListTemplate = $('discover-channel-list-item-template');
+    // List Wrappers
     oThis.jPeopleListWrapper = $('#people-list');
     oThis.jTagsListWrapper = $('#tags-list');
+    oThis.jChannelListWrapper = $('#channels-list');
+    //Data variables declaration
     oThis.PeopleListData = null;
     oThis.TagListData = null;
+    oThis.ChannelsListData = null;
+    //error containers
     oThis.jErrorBox = $('#people-list-tab #error-box');
     oThis.jErrorBoxTags = $('#tags-list-tab #error-box');
-    oThis.jAddTagsBtn = $('#add-tags-btn');
+    oThis.jErrorBoxChannels = $('#channels-list-tab #error-box');
+    //search input box
     oThis.peopleSearchInput = $('#searchPeopleInput');
     oThis.tagSearchInput = $('#searchTagInput');
+    oThis.channelSearchInput = $('#searchChannelInput');
+
     oThis.sRowWrapper = 'item-wrapper';
+
+    //default messages
     oThis.maxLimitMsgPeople = 'Can only add upto 20 people.';
     oThis.maxLimitMsgTag = 'Can only add upto 20 tags.';
     oThis.emptyInputBox = 'Please enter valid input.';
+    oThis.maxLimitMsgChannel = 'Can only add upto 20 tags.';
+
     oThis.totalEntriesTags = null;
     oThis.totalEntriesPeople = null;
     oThis.bindEvents();
     oThis.initAutocompletePeople();
     oThis.initAutocompleteTags();
+    oThis.initAutocompleteChannels();
     oThis.getinitialPeopleData = oThis.getinitialPeopleData.bind(oThis);
     oThis.initializeUsersTemplate = oThis.initializeUsersTemplate.bind(oThis);
     oThis.getinitialTagsData = oThis.getinitialTagsData.bind(oThis);
     oThis.initializeTagsTemplate = oThis.initializeTagsTemplate.bind(oThis);
+    oThis.getinitialChannelData = oThis.getinitialChannelData.bind(oThis);
+    oThis.initializeChannelsTemplate = oThis.initializeChannelsTemplate.bind(oThis);
     oThis.getinitialPeopleData();
     oThis.getinitialTagsData();
+    oThis.getinitialChannelData();
   };
 
   Discover.prototype = {
@@ -54,6 +75,15 @@
           oThis.onAddBtnClick('tags', oThis.entity_id_tags, oThis.getinitialTagsData);
         }
       });
+      oThis.jAddChannelBtn.on('click', function() {
+        if (oThis.totalEntriesChannels >= oThis.MaxAllowedEntries) {
+          oThis.jErrorBoxChannels.text(oThis.maxLimitMsgChannel);
+        } else if (!oThis.entity_id_channels) {
+          oThis.jErrorBoxChannels.text(oThis.emptyInputBox);
+        } else {
+          oThis.onAddBtnClick('channels', oThis.entity_id_tags, oThis.getinitialTagsData);
+        }
+      });
       oThis.peopleSearchInput.autocomplete({
         source: function(request, response) {
           oThis.onInputChangePeople(request, response);
@@ -71,6 +101,16 @@
         select: function(event, ui) {
           console.log('Selected:value ' + ui.item.value + ' id: ' + ui.item.id);
           oThis.entity_id_tags = ui.item.id;
+          oThis.userName = ui.item.value;
+        }
+      });
+      oThis.channelSearchInput.autocomplete({
+        source: function(request, response) {
+          oThis.onInputChangeChannel(request, response);
+        },
+        select: function(event, ui) {
+          console.log('Selected:value ' + ui.item.value + ' id: ' + ui.item.id);
+          oThis.entity_id_channels = ui.item.id;
           oThis.userName = ui.item.value;
         }
       });
@@ -103,6 +143,24 @@
           var changedList = this.id,
             order = $(this).sortable('toArray'),
             entityKind = 'tags',
+            entityIds = order;
+          console.log({ id: changedList, positions: order });
+          oThis.newOrder = order;
+          $('.dragable-element').addClass('disable-events');
+          oThis.onListOrderChanged(entityKind, ui.item[0].id);
+        }
+      });
+    },
+    initAutocompleteChannels: function() {
+      /*
+      initialize sortable list with required callbacks
+       */
+      var oThis = this;
+      oThis.jChannelListWrapper.sortable({
+        update: function(event, ui) {
+          var changedList = this.id,
+            order = $(this).sortable('toArray'),
+            entityKind = 'channels',
             entityIds = order;
           console.log({ id: changedList, positions: order });
           oThis.newOrder = order;
@@ -145,6 +203,23 @@
       }
 
       return formattedUsersData;
+    },
+    formatChannelsdata: function(channelsData) {
+      var oThis = this,
+        formattedChannelsData = [];
+      oThis.channelIds = Object.keys(channelsData);
+      for (var i = 0; i < oThis.channelIds.length; i++) {
+        var userId = channelsData[oThis.channelIds[i]].id,
+          label = channelsData[oThis.channelIds[i]].name,
+          value = channelsData[oThis.channelIds[i]].name;
+        formattedChannelsData[i] = {
+          id: channelsData[oThis.channelIds[i]].id,
+          label: channelsData[oThis.channelIds[i]].name,
+          value: channelsData[oThis.channelIds[i]].name
+        };
+      }
+
+      return formattedChannelsData;
     },
 
     onInputChangeTags: function(request, response) {
@@ -195,6 +270,29 @@
         }
       });
     },
+    onInputChangeChannel: function(request, response) {
+      var oThis = this;
+      $.ajax({
+        url: oThis.apiUrl + '/admin/channels?q=' + request.term,
+        type: 'GET',
+        success: function(res) {
+          console.log('res success');
+
+          var channelsData = res.data.channels,
+            formattedChannelsData = [];
+          if (channelsData) {
+            oThis.jErrorBox.text('');
+            formattedChannelsData = oThis.formatChannelsdata(channelsData);
+          } else {
+            oThis.jErrorBox.text('No results');
+          }
+          response(formattedChannelsData);
+        },
+        error: function(err) {
+          console.log('res error');
+        }
+      });
+    },
     onListOrderChanged: function(entityKind, entityId) {
       var oThis = this,
         position = oThis.determinePosition(false, entityKind, entityId);
@@ -215,8 +313,10 @@
             console.log('success');
             if (entityKind == 'users') {
               oThis.getinitialPeopleData();
-            } else {
+            } else if (entityKind == 'tags') {
               oThis.getinitialTagsData();
+            } else {
+              oThis.getinitialChannelData();
             }
             $('.dragable-element').removeClass('disable-events');
           } else {
@@ -252,8 +352,10 @@
       if (searchResult) {
         if (entityKind == 'users') {
           oThis.totalEntriesPeople = searchResult.length;
-        } else {
+        } else if (entityKind == 'tags') {
           oThis.totalEntriesTags = searchResult.length;
+        } else {
+          oThis.totalEntriesChannels = searchResult.length;
         }
       }
     },
@@ -312,6 +414,34 @@
         }
       });
     },
+    getinitialChannelData: function() {
+      var oThis = this;
+
+      $.ajax({
+        url: oThis.apiUrl + '/admin/curated-entities/channels',
+        type: 'GET',
+        headers: {
+          'csrf-token': oThis.csrfToken
+        },
+        success: function(res) {
+          if (res && res.success) {
+            oThis.jErrorBox.text('');
+            oThis.countEntries(res.data, 'channels');
+            oThis.initializeChannelsTemplate(res.data);
+            oThis.deleteBtn = $('.delete-entry');
+            oThis.bindDeleteBtnClickEvent('channels');
+          } else {
+            console.log('api returned error');
+            oThis.jErrorBox.text(oThis.getSpecificError(res));
+          }
+        },
+        error: function(err) {
+          console.log('error');
+          var errMsg = oThis.getGeneralError(err);
+          oThis.jErrorBox.text(errMsg);
+        }
+      });
+    },
     getPeopleRowData: function(ListItemId, data) {
       const oThis = this;
       var templateData = {
@@ -325,6 +455,14 @@
       var templateData = {
         id: ListItemId,
         entryLabel: data[ListItemId].text
+      };
+      return templateData;
+    },
+    getChannelRowData: function(ListItemId, data) {
+      const oThis = this;
+      var templateData = {
+        id: ListItemId,
+        entryLabel: data[ListItemId].permalink
       };
       return templateData;
     },
@@ -345,6 +483,25 @@
       }
       oThis.jPeopleListWrapper.empty();
       oThis.jPeopleListWrapper.html(listRowTemplateHtml);
+    },
+
+    initializeChannelsTemplate: function(res) {
+      const oThis = this;
+      var source = document.getElementById('discover-channel-list-item-template').innerHTML,
+        listRowTemplate = Handlebars.compile(source),
+        resultType = res.result_type,
+        searchResultChannelsList = res[resultType] || [],
+        listRowTemplateHtml = '',
+        listData = null;
+      oThis.ChannelsListData = res.channels || {};
+      oThis.searchResultChannelsList = searchResultChannelsList;
+
+      for (var i = 0; i < searchResultChannelsList.length; i++) {
+        listData = oThis.getChannelRowData(searchResultChannelsList[i].entityId, oThis.ChannelsListData);
+        listRowTemplateHtml += listRowTemplate(listData);
+      }
+      oThis.jChannelListWrapper.empty();
+      oThis.jChannelListWrapper.html(listRowTemplateHtml);
     },
     initializeTagsTemplate: function(res) {
       const oThis = this;
@@ -386,8 +543,10 @@
             console.log('** success **');
             if (entityKind == 'users') {
               oThis.peopleSearchInput.val('');
-            } else {
+            } else if (entityKind == 'tags') {
               oThis.tagSearchInput.val('');
+            } else {
+              oThis.channelSearchInput.val('');
             }
 
             callback();
@@ -430,8 +589,10 @@
         beforeDataElementId = null;
       if (entityKind == 'users') {
         searchResultType = oThis.searchResultType;
-      } else {
+      } else if (entityKind == 'tags') {
         searchResultType = oThis.searchResultTagsList;
+      } else {
+        searchResultType = oThis.searchResultChannelsList;
       }
       console.log('oThis.searchResultType', searchResultType);
       console.log('oThis.peopleListData', oThis.PeopleListData);
@@ -479,7 +640,14 @@
       oThis.deleteBtn.off().on('click', function() {
         var deleteConsent = window.confirm('Do you want to delete this entry ? ');
         if (deleteConsent) {
-          $('.nav-item .active').text() == 'Tags' ? (entityKind = 'tags') : (entityKind = 'users');
+          var activeTab = $('.nav-item .active').text();
+          if (activeTab == 'Tags') {
+            entityKind = 'tags';
+          } else if (activeTab == 'People') {
+            entityKind = 'users';
+          } else {
+            entityKind = 'channels';
+          }
           oThis.deleteEntryClick($(this), entityKind);
         }
       });
@@ -504,8 +672,10 @@
               console.log('** success **');
               if (entityKind === 'users') {
                 oThis.getinitialPeopleData();
-              } else {
+              } else if (entityKind === 'tags') {
                 oThis.getinitialTagsData();
+              } else {
+                oThis.getinitialChannelData();
               }
             } else {
               console.log('** error **');
