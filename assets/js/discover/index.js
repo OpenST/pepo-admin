@@ -35,7 +35,7 @@
     oThis.maxLimitMsgPeople = 'Can only add upto 20 people.';
     oThis.maxLimitMsgTag = 'Can only add upto 20 tags.';
     oThis.emptyInputBox = 'Please enter valid input.';
-    oThis.maxLimitMsgChannel = 'Can only add upto 20 tags.';
+    oThis.maxLimitMsgChannel = 'Can only add upto 20 channels.';
 
     oThis.totalEntriesTags = null;
     oThis.totalEntriesPeople = null;
@@ -81,7 +81,7 @@
         } else if (!oThis.entity_id_channels) {
           oThis.jErrorBoxChannels.text(oThis.emptyInputBox);
         } else {
-          oThis.onAddBtnClick('channels', oThis.entity_id_tags, oThis.getinitialTagsData);
+          oThis.onAddBtnClick('channels', oThis.entity_id_channels, oThis.getinitialChannelData);
         }
       });
       oThis.peopleSearchInput.autocomplete({
@@ -91,7 +91,6 @@
         select: function(event, ui) {
           console.log('Selected:value ' + ui.item.value + ' id: ' + ui.item.id);
           oThis.entity_id_people = ui.item.id;
-          oThis.userName = ui.item.value;
         }
       });
       oThis.tagSearchInput.autocomplete({
@@ -101,7 +100,6 @@
         select: function(event, ui) {
           console.log('Selected:value ' + ui.item.value + ' id: ' + ui.item.id);
           oThis.entity_id_tags = ui.item.id;
-          oThis.userName = ui.item.value;
         }
       });
       oThis.channelSearchInput.autocomplete({
@@ -111,7 +109,6 @@
         select: function(event, ui) {
           console.log('Selected:value ' + ui.item.value + ' id: ' + ui.item.id);
           oThis.entity_id_channels = ui.item.id;
-          oThis.userName = ui.item.value;
         }
       });
     },
@@ -324,8 +321,10 @@
             var errorMsg = oThis.getSpecificError(res);
             if (entityKind == 'users') {
               oThis.jErrorBox.text(errorMsg);
-            } else {
+            } else if (entityKind == 'tags') {
               oThis.jErrorBoxTags.text(errorMsg);
+            } else {
+              oThis.jErrorBoxChannels.text(errorMsg);
             }
           }
         },
@@ -338,8 +337,10 @@
           }
           if (entityKind === 'users') {
             oThis.getinitialPeopleData();
-          } else {
+          } else if (entityKind === 'tags') {
             oThis.getinitialTagsData();
+          } else {
+            oThis.getinitialChannelData();
           }
         }
       });
@@ -462,7 +463,7 @@
       const oThis = this;
       var templateData = {
         id: ListItemId,
-        entryLabel: data[ListItemId].permalink
+        entryLabel: data[ListItemId].name
       };
       return templateData;
     },
@@ -555,8 +556,10 @@
             var errorMsg = oThis.getSpecificError(res);
             if (entityKind == 'users') {
               oThis.jErrorBox.text(errorMsg);
-            } else {
+            } else if (entityKind == 'tags') {
               oThis.jErrorBoxTags.text(errorMsg);
+            } else {
+              oThis.jErrorBoxChannels.text(errorMsg);
             }
           }
         },
@@ -567,8 +570,10 @@
           var errMsg = oThis.getGeneralError(err);
           if (entityKind == 'users') {
             oThis.jErrorBox.text(errMsg);
-          } else {
+          } else if (entityKind == 'tags') {
             oThis.jErrorBoxTags.text(errMsg);
+          } else {
+            oThis.jErrorBoxChannels.text(errMsg);
           }
         }
       });
@@ -669,7 +674,6 @@
         success: function(res) {
           if (res) {
             if (res.success) {
-              console.log('** success **');
               if (entityKind === 'users') {
                 oThis.getinitialPeopleData();
               } else if (entityKind === 'tags') {
@@ -681,8 +685,10 @@
               console.log('** error **');
               if (entityKind == 'users') {
                 oThis.jErrorBox.text(oThis.getSpecificError(res));
-              } else {
+              } else if (entityKind == 'tags') {
                 oThis.jErrorBoxTags.text(oThis.getSpecificError(res));
+              } else {
+                oThis.jErrorBoxChannels.text(oThis.getGeneralError(err));
               }
             }
           }
@@ -691,8 +697,10 @@
           console.log('** error **');
           if (entityKind == 'users') {
             oThis.jErrorBox.text(oThis.getGeneralError(err));
-          } else {
+          } else if (entityKind == 'tags') {
             oThis.jErrorBoxTags.text(oThis.getGeneralError(err));
+          } else {
+            oThis.jErrorBoxChannels.text(oThis.getGeneralError(err));
           }
         }
       });
