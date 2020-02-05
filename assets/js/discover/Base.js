@@ -7,6 +7,10 @@
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
   };
   Base.prototype = {
+    getInitialData: function() {
+      var oThis = this;
+      oThis.getData();
+    },
     bindEventsParent: function() {
       var oThis = this;
       oThis.searchInput.autocomplete({
@@ -52,8 +56,20 @@
         }
       });
     },
-    onDeleteSuccess: function() {},
-    onDeleteError: function() {},
+    onDeleteSuccess: function(res) {
+      var oThis = this;
+      if (res && res.success) {
+        oThis.getData();
+      } else {
+        console.log('** Error :: onDeleteSuccess **');
+        oThis.jErrorBox.text(oThis.getSpecificError(res));
+      }
+    },
+    onDeleteError: function(err) {
+      var oThis = this;
+      console.log('** Error :: onDeleteError **');
+      oThis.jErrorBox.text(oThis.getGeneralError(err));
+    },
     addEntry: function() {
       var oThis = this;
       if (oThis.totalEntries >= oThis.MAX_ALLOWED_ENTRIES) {
@@ -83,14 +99,19 @@
         }
       });
     },
-    onGetDataSuccess: function(res) {
+    onSuccess: function(res) {
       var oThis = this;
       if (res && res.success) {
         oThis.emptyErrorBox();
+        oThis.initializeTemplateData(res.data);
+      } else {
+        oThis.jErrorBox.text(oThis.getSpecificError(res));
       }
     },
     onError: function(err) {
-      return err;
+      var oThis = this;
+      var errMsg = oThis.getGeneralError(err);
+      oThis.jErrorBox.text(errMsg);
     },
     initSortable: function() {
       var oThis = this;

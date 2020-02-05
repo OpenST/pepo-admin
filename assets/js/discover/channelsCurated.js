@@ -23,20 +23,7 @@
   };
 
   ChannelsCurated.prototype = {
-    onDeleteSuccess: function(res) {
-      var oThis = this;
-      if (res && res.success) {
-        oThis.getData();
-      } else {
-        console.log('** Error :: onDeleteSuccess **');
-        oThis.jErrorBox.text(oThis.getSpecificError(res));
-      }
-    },
-    onDeleteError: function(err) {
-      var oThis = this;
-      console.log('** Error :: onDeleteError **');
-      oThis.jErrorBox.text(oThis.getGeneralError(err));
-    },
+    /* fetches input string from backend and passes */
     onInputChange: function(request, response) {
       var oThis = this;
       $.ajax({
@@ -73,17 +60,6 @@
       }
 
       return formattedChannelsData;
-    },
-    getInitialData: function() {
-      var oThis = this;
-      oThis.getData();
-    },
-    onSuccess: function(res) {
-      var oThis = this;
-      if (res && res.success) {
-        oThis.emptyErrorBox();
-        oThis.initializeTemplateData(res.data);
-      }
     },
     initializeTemplateData: function(res) {
       var oThis = this;
