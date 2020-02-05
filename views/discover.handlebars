@@ -82,13 +82,9 @@
     </div>
 </div>
 {{#contentFor "pageScripts"}}
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var discover = new window.Discover();
-        });
-    </script>
     {{{css 'mDiscover.css'}}}
+    {{{js  'mDiscover.js'}}}
+
     {{>discover/peopleSearch}}
     {{>discover/tagSearch}}
     {{>discover/channelSearch}}

@@ -1,57 +1,56 @@
 (function(window, $) {
   const Discover = function() {
     const oThis = this;
-    oThis.config = {};
     oThis.MaxAllowedEntries = 20;
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
     oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
     // add buttons
-    oThis.jPeopleAddBtn = $('#add-people-btn');
-    oThis.jAddTagsBtn = $('#add-tags-btn');
-    oThis.jAddChannelBtn = $('#add-channel-btn');
+    // oThis.jPeopleAddBtn = $('#add-people-btn');
+    // oThis.jAddTagsBtn = $('#add-tags-btn');
+    // oThis.jAddChannelBtn = $('#add-channel-btn');
     //Templates
-    oThis.jListTemplate = $('#discover-list-item-template');
-    oThis.jChannelListTemplate = $('discover-channel-list-item-template');
+    // oThis.jPeopleListTemplate = $('#discover-people-list-item-template');
+    // oThis.jChannelListTemplate = $('discover-channel-list-item-template');
     // List Wrappers
-    oThis.jPeopleListWrapper = $('#people-list');
-    oThis.jTagsListWrapper = $('#tags-list');
-    oThis.jChannelListWrapper = $('#channels-list');
+    // oThis.jPeopleListWrapper = $('#people-list');
+    // oThis.jTagsListWrapper = $('#tags-list');
+    // oThis.jChannelListWrapper = $('#channels-list');
     //Data variables declaration
-    oThis.PeopleListData = null;
-    oThis.TagListData = null;
-    oThis.ChannelsListData = null;
+    // oThis.PeopleListData = null;
+    // oThis.TagListData = null;
+    // oThis.ChannelsListData = null;
     //error containers
-    oThis.jErrorBox = $('#people-list-tab #error-box');
-    oThis.jErrorBoxTags = $('#tags-list-tab #error-box');
-    oThis.jErrorBoxChannels = $('#channels-list-tab #error-box');
+    // oThis.jErrorBox = $('#people-list-tab #error-box');
+    // oThis.jErrorBoxTags = $('#tags-list-tab #error-box');
+    // oThis.jErrorBoxChannels = $('#channels-list-tab #error-box');
     //search input box
-    oThis.peopleSearchInput = $('#searchPeopleInput');
-    oThis.tagSearchInput = $('#searchTagInput');
-    oThis.channelSearchInput = $('#searchChannelInput');
+    // oThis.peopleSearchInput = $('#searchPeopleInput');
+    // oThis.tagSearchInput = $('#searchTagInput');
+    // oThis.channelSearchInput = $('#searchChannelInput');
 
     oThis.sRowWrapper = 'item-wrapper';
 
     //default messages
-    oThis.maxLimitMsgPeople = 'Can only add upto 20 people.';
-    oThis.maxLimitMsgTag = 'Can only add upto 20 tags.';
+    // oThis.maxLimitMsgPeople = 'Can only add upto 20 people.';
+    // oThis.maxLimitMsgTag = 'Can only add upto 20 tags.';
     oThis.emptyInputBox = 'Please enter valid input.';
-    oThis.maxLimitMsgChannel = 'Can only add upto 20 channels.';
+    // oThis.maxLimitMsgChannel = 'Can only add upto 20 channels.';
 
-    oThis.totalEntriesTags = null;
-    oThis.totalEntriesPeople = null;
-    oThis.bindEvents();
-    oThis.initAutocompletePeople();
-    oThis.initAutocompleteTags();
-    oThis.initAutocompleteChannels();
-    oThis.getinitialPeopleData = oThis.getinitialPeopleData.bind(oThis);
-    oThis.initializeUsersTemplate = oThis.initializeUsersTemplate.bind(oThis);
-    oThis.getinitialTagsData = oThis.getinitialTagsData.bind(oThis);
-    oThis.initializeTagsTemplate = oThis.initializeTagsTemplate.bind(oThis);
-    oThis.getinitialChannelData = oThis.getinitialChannelData.bind(oThis);
-    oThis.initializeChannelsTemplate = oThis.initializeChannelsTemplate.bind(oThis);
-    oThis.getinitialPeopleData();
-    oThis.getinitialTagsData();
-    oThis.getinitialChannelData();
+    // oThis.totalEntriesTags = null;
+    // oThis.totalEntriesPeople = null;
+    // oThis.bindEvents();
+    // oThis.initAutocompletePeople();
+    // oThis.initAutocompleteTags();
+    // oThis.initAutocompleteChannels();
+    // oThis.getinitialPeopleData = oThis.getinitialPeopleData.bind(oThis);
+    // oThis.initializeUsersTemplate = oThis.initializeUsersTemplate.bind(oThis);
+    // oThis.getinitialTagsData = oThis.getinitialTagsData.bind(oThis);
+    // oThis.initializeTagsTemplate = oThis.initializeTagsTemplate.bind(oThis);
+    // oThis.getinitialChannelData = oThis.getinitialChannelData.bind(oThis);
+    // oThis.initializeChannelsTemplate = oThis.initializeChannelsTemplate.bind(oThis);
+    // oThis.getinitialPeopleData();
+    // oThis.getinitialTagsData();
+    // oThis.getinitialChannelData();
   };
 
   Discover.prototype = {
@@ -469,7 +468,7 @@
     },
     initializeUsersTemplate: function(res) {
       const oThis = this;
-      var source = document.getElementById('discover-list-item-template').innerHTML,
+      var source = document.getElementById('discover-people-list-item-template').innerHTML,
         listRowTemplate = Handlebars.compile(source),
         resultType = res.result_type,
         searchResultType = res[resultType] || [],
