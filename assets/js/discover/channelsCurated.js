@@ -30,17 +30,17 @@
         url: oThis.apiUrl + '/admin/channels?q=' + request.term,
         type: 'GET',
         success: function(res) {
-          console.log('res success');
-
-          var channelsData = res.data.channels,
-            formattedChannelsData = [];
-          if (channelsData) {
-            oThis.jErrorBox.text('');
-            formattedChannelsData = oThis.formatChannelsdata(channelsData);
-          } else {
-            oThis.jErrorBox.text('No results');
+          if (res && res.success) {
+            var channelsData = res.data.channels,
+              formattedChannelsData = [];
+            if (channelsData) {
+              oThis.jErrorBox.text('');
+              formattedChannelsData = oThis.formatChannelsdata(channelsData);
+            } else {
+              oThis.jErrorBox.text('No results');
+            }
+            response(formattedChannelsData);
           }
-          response(formattedChannelsData);
         },
         error: function(err) {
           console.log('res error');

@@ -5,7 +5,6 @@
     oThis.config = {};
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
-    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
     $('#reports-link').addClass('active');
     $('#report-success').css('visibility', 'hidden');
@@ -77,9 +76,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(response) {
           if (response.data) {
             successCallback();

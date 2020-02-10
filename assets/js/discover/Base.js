@@ -4,7 +4,6 @@
     oThis.MAX_ALLOWED_ENTRIES = 20;
     oThis.INVALID_INPUT_MSG = 'Please enter valid input.';
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
-    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
   };
   Base.prototype = {
     getInitialData: function() {
@@ -22,7 +21,6 @@
           oThis.entity_id = ui.item.id;
         }
       });
-      console.log('oThis.entityKind===', oThis.entityKind);
       oThis.jListWrapper
         .off('click.' + oThis.entityKind)
         .on('click.' + oThis.entityKind, oThis.deleteSelector, function() {
@@ -44,9 +42,6 @@
         data: {
           entity_kind: entityKind,
           entity_id: entityID
-        },
-        headers: {
-          'csrf-token': oThis.csrfToken
         },
         success: function(res) {
           oThis.onDeleteSuccess(res);
@@ -88,9 +83,6 @@
       $.ajax({
         url: oThis.apiUrl + oThis.config.url,
         type: 'GET',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           oThis.onSuccess(res);
         },
@@ -138,9 +130,6 @@
           entity_kind: entityKind,
           entity_id: entityId,
           position: position
-        },
-        headers: {
-          'csrf-token': oThis.csrfToken
         },
         success: function(res) {
           oThis.onListOrderChangedSuccess(res);
@@ -236,9 +225,6 @@
           entity_id: oThis.entity_id,
           entity_kind: oThis.entityKind,
           position: position
-        },
-        headers: {
-          'csrf-token': oThis.csrfToken
         },
         success: function(res) {
           oThis.onAddBtnClickSuccess(res);

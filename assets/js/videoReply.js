@@ -12,7 +12,6 @@
     oThis.videoDetails = {};
     oThis.linkDetails = {};
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
-    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
     oThis.autoCompleteInitialized = false;
     oThis.saveDescCheck = false;
     oThis.saveLinkCheck = false;
@@ -53,9 +52,6 @@
       $.ajax({
         url: oThis.getVideoDetails(parentId),
         type: 'GET',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res) {
             if (res.success) {
@@ -172,9 +168,6 @@
         type: 'GET',
         data: data,
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(response) {
           $('#replies-load-btn').removeClass('hidden');
           oThis.listRepliesSuccessCallback(response);
@@ -458,9 +451,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -664,9 +654,6 @@
           video_description: newDescription
         }),
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res.success) {
             if (oThis.isReplyVideo()) {
@@ -706,9 +693,6 @@
           link: newLink
         }),
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res.success) {
             if (oThis.isReplyVideo()) {

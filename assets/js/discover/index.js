@@ -3,7 +3,6 @@
     const oThis = this;
     oThis.MaxAllowedEntries = 20;
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
-    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
     // add buttons
     // oThis.jPeopleAddBtn = $('#add-people-btn');
     // oThis.jAddTagsBtn = $('#add-tags-btn');
@@ -301,9 +300,6 @@
           entity_id: entityId,
           position: position
         },
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res && res.success) {
             console.log('success');
@@ -365,9 +361,6 @@
       $.ajax({
         url: oThis.apiUrl + '/admin/curated-entities/users',
         type: 'GET',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res && res.success) {
             oThis.jErrorBox.text('');
@@ -393,9 +386,6 @@
       $.ajax({
         url: oThis.apiUrl + '/admin/curated-entities/tags',
         type: 'GET',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res && res.success) {
             oThis.jErrorBoxTags.text('');
@@ -420,9 +410,6 @@
       $.ajax({
         url: oThis.apiUrl + '/admin/curated-entities/channels',
         type: 'GET',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res && res.success) {
             oThis.jErrorBox.text('');
@@ -532,9 +519,6 @@
           entity_id: entityId,
           entity_kind: entityKind,
           position: position
-        },
-        headers: {
-          'csrf-token': oThis.csrfToken
         },
         success: function(res) {
           oThis.entity_id_tags = null;
@@ -666,9 +650,6 @@
         data: {
           entity_kind: entityKind,
           entity_id: entityID
-        },
-        headers: {
-          'csrf-token': oThis.csrfToken
         },
         success: function(res) {
           if (res) {
