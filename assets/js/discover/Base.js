@@ -259,7 +259,7 @@
       return errorMsg;
     },
     getGeneralError: function(err) {
-      var errorMsg = _.get(res, 'err.responseJSON.err.msg', 'Something went wrong');
+      var errorMsg = _.get(err, 'err.responseJSON.err.msg', 'Something went wrong');
       return errorMsg;
     }
   };

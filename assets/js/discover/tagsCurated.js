@@ -34,7 +34,7 @@
 
           var tagsdata = res.data.tags,
             formattedTagsData = [];
-          if (tagsdata) {
+          if (tagsdata && Object.keys(tagsdata).length !== 0) {
             oThis.jErrorBox.text('');
             formattedTagsData = oThis.formatTagsdata(tagsdata);
           } else {

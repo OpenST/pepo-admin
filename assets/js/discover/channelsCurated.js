@@ -33,7 +33,7 @@
           if (res && res.success) {
             var channelsData = res.data.channels,
               formattedChannelsData = [];
-            if (channelsData) {
+            if (channelsData && Object.keys(channelsData).length !== 0) {
               oThis.jErrorBox.text('');
               formattedChannelsData = oThis.formatChannelsdata(channelsData);
             } else {
