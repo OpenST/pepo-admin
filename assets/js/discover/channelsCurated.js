@@ -6,7 +6,7 @@
     oThis.jChannelAddBtn = $('#add-channel-btn');
     oThis.jListWrapper = $('#channels-list');
     oThis.jListTemplate = $('#discover-channel-list-item-template');
-    oThis.jErrorBox = $('#tags-list-tab #error-box');
+    oThis.jErrorBox = $('#channels-list-tab #error-box');
     oThis.searchInput = $('#searchChannelInput');
     oThis.deleteSelector = '.delete-entry';
     oThis.MAX_LIMIT_MSG = 'Can only add upto 20 Channel.';
