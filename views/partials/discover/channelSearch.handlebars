@@ -1,4 +1,4 @@
-<script id="discover-people-list-item-template" type="text/x-handlebars-template">
+<script id="discover-channel-list-item-template" type="text/x-handlebars-template">
     <li id="\{{id}}" class="mb-2 dragable-element">
         <div class="row item-wrapper p-2">
             <div class="d-inline content-wrap">
@@ -12,11 +12,8 @@
         </div>
     </li>
 </script>
-{{#contentFor "pageScripts"}}
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-          new window.PeopleCurated();
-        });
-    </script>
-{{/contentFor}}
+<script type="text/javascript">
+    $(document).ready(function() {
+        new window.ChannelsCurated();
+    });
+</script>

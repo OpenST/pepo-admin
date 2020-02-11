@@ -12,7 +12,6 @@
     oThis.query = null;
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
-    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
     oThis.toggleLoadMoreVisibility();
     $('#user-approval-link').addClass('active');
@@ -464,9 +463,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -494,9 +490,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -524,9 +517,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(response) {
           if (response.data) {
             successCallback();

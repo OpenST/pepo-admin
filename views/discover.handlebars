@@ -7,6 +7,9 @@
             <li class="nav-item">
                 <a class="search-tab p-3" id="tags-tab" data-toggle="tab" href="#tags-list-tab" role="tab" aria-controls="tags-list" aria-selected="false">Tags</a>
             </li>
+            <li class="nav-item">
+                <a class="search-tab p-3" id="channels-tab" data-toggle="tab" href="#channels-list-tab" role="tab" aria-controls="channels-list" aria-selected="false">Channel</a>
+            </li>
         </ul>
 
     </div>
@@ -19,7 +22,7 @@
                 </div>
 
                     <button id="add-people-btn" class="btn btn-outline-success px-4">
-                        Add
+                        Add People
                     </button>
 
 
@@ -52,16 +55,37 @@
 
             </div>
         </div>
+
+        <div class="tab-pane fade show" id="channels-list-tab" role="tabpanel" aria-labelledby="channel-list-tab">
+            <div class="row mb-3">
+                <div class="col-6 form-group mb-0 ml-3">
+                    <input type="text" class="form-control" id="searchChannelInput" placeholder="Search">
+                    <small id="error-box"  class="form-text error-text">&nbsp;&nbsp;</small>
+                </div>
+
+                <button id="add-channel-btn" class="btn btn-outline-success px-4">
+                    Add Channel
+                </button>
+
+
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <ul id="channels-list"  style="list-style: none"></ul>
+                </div>
+
+
+            </div>
+
+
+        </div>
     </div>
 </div>
 {{#contentFor "pageScripts"}}
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var discover = new window.Discover();
-        });
-    </script>
     {{{css 'mDiscover.css'}}}
+    {{{js  'mDiscover.js'}}}
+
     {{>discover/peopleSearch}}
     {{>discover/tagSearch}}
+    {{>discover/channelSearch}}
 {{/contentFor}}

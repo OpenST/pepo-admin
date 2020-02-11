@@ -13,7 +13,6 @@
     oThis.videoDetails = {};
     oThis.linkDetails = {};
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
-    oThis.csrfToken = $('meta[name="csrf-token"]').attr('content');
     oThis.userId = +window.location.pathname.split('user-profile/')[1];
     oThis.loadVideos();
     oThis.loadProfile(oThis.userId);
@@ -79,9 +78,6 @@
       }
       $.ajax({
         url: oThis.changeStatusApiUrl,
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         type: 'POST',
         success: function(res) {
           oThis.jMuteUnmuteBtn.attr('disabled', false);
@@ -341,9 +337,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -482,9 +475,6 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -516,9 +506,7 @@
         type: 'POST',
         data: {},
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
+
         success: function(response) {
           if (response.data) {
             successCallback();
@@ -730,9 +718,6 @@
           video_description: newDescription
         }),
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res.success) {
             oThis.loadVideos(oThis.getVideoQuereyParam(oThis.currentPaginationId), oThis.videoId);
@@ -762,9 +747,6 @@
           link: newLink
         }),
         contentType: 'application/json',
-        headers: {
-          'csrf-token': oThis.csrfToken
-        },
         success: function(res) {
           if (res.success) {
             oThis.loadVideos(oThis.getVideoQuereyParam(oThis.currentPaginationId), oThis.videoId);

@@ -2,10 +2,11 @@
 //= require plugins/bignumber.js
 //= require plugins/jQueryAutoCompletePlus.js
 //= require plugins/jquery-ui.js
+//= require plugins/lodash.js
+//= require plugins/helpers/ajaxHooks.js
 //= require common/common.js
 //= require login.js
 //= require whitelistUser.js
 //= require userApproval.js
 //= require mUserProfile.js
 //= require usageReports.js
-//= require discover.js
