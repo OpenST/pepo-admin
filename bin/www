@@ -3,7 +3,9 @@
 /**
  * Module dependencies.
  */
-var app = require('../app');
+var rootPrefix = '..',
+ app = require(rootPrefix + '/app'),
+ logger = require(rootPrefix + '/lib/logger/customConsoleLogger');
 
 var debug = require('debug')('pepo-admin:server');
 var http = require('http');
@@ -89,4 +91,27 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   console.log('Listening on ' + bind);
+}
+
+process.on('SIGTERM', function(){
+  onTerminationSignal();
+});
+
+process.on('SIGINT', function(){
+  onTerminationSignal();
+});
+
+function onTerminationSignal() {
+  logger.info('SIGINT signal received.');
+  logger.log('Closing http server.');
+  server.close(() => {
+    logger.log('Current concurrent connections:', server.connections);
+    logger.log('Http server closing. Bye.');
+    process.exit(0);
+  });
+
+  setTimeout(function() {
+      logger.log('Timeout occurred for server.close(). Current concurrent connections:', server.connections);
+      process.exit(1);
+  }, 60000);
 }
