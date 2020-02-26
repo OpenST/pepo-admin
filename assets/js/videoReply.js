@@ -641,6 +641,9 @@
       const oThis = this;
       var newDescription = $('#edit-video-description').val(),
         ajaxUrl = null;
+      var tempElem = $('<div>');
+      newDescription = tempElem.text(newDescription).html();
+      tempElem.remove();
       if (oThis.isReplyVideo()) {
         ajaxUrl = oThis.apiUrl + '/admin/update-reply-video/' + oThis.videoIdToSave + '/description';
       } else {
