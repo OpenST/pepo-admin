@@ -710,6 +710,9 @@
     saveDescription: function() {
       var oThis = this;
       var newDescription = $('#edit-video-description').val();
+      var tempElem = $('<div>');
+      newDescription = tempElem.text(newDescription).html();
+      tempElem.remove();
       var ajaxUrl = oThis.apiUrl + '/admin/update-video/' + oThis.videoId + '/description';
       $.ajax({
         url: ajaxUrl,
