@@ -81,6 +81,9 @@ function onError(error) {
   }
 }
 
+// eslint-disable-next-line no-empty-function
+process.send = process.send || function () {};
+
 /**
  * Event listener for HTTP server "listening" event.
  */
@@ -91,6 +94,7 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   console.log('Listening on ' + bind);
+  process.send('ready');
 }
 
 process.on('SIGTERM', function(){
