@@ -81,7 +81,6 @@ function onError(error) {
   }
 }
 
-// eslint-disable-next-line no-empty-function
 process.send = process.send || function () {};
 
 /**
