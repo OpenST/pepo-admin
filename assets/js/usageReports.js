@@ -69,6 +69,9 @@
         case 'tag':
           url = oThis.tagUsageReportUrl();
           break;
+        case 'community':
+          url = oThis.communityDataReportUrl();
+          break;
       }
 
       $.ajax({
@@ -114,6 +117,11 @@
     tagUsageReportUrl: function() {
       var oThis = this;
       return oThis.apiUrl + '/admin/update-usage-data/tags-used';
+    },
+
+    communityDataReportUrl: function() {
+      var oThis = this;
+      return oThis.apiUrl + '/admin/update-usage-data/community-data';
     }
   };
 
