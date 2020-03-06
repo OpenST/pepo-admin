@@ -6,7 +6,6 @@
 //= require plugins/helpers/ajaxHooks.js
 //= require common/common.js
 //= require login.js
-//= require whitelistUser.js
 //= require userApproval.js
 //= require mUserProfile.js
 //= require usageReports.js
