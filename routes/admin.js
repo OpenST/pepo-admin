@@ -83,7 +83,12 @@ router.get('/video-replies/', sanitizer.sanitizeDynamicUrlParams, validateLogged
 
 /* Discover */
 router.get('/discover', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
-  Promise.resolve(routeHelper.perform(req, res, next, 'discover', 'r_a_ad_6'));
+  Promise.resolve(routeHelper.perform(req, res, next, 'discover', 'r_a_ad_7'));
+});
+
+/* Discover */
+router.get('/channel', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
+  Promise.resolve(routeHelper.perform(req, res, next, 'channel', 'r_a_ad_8'));
 });
 
 module.exports = router;

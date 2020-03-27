@@ -1,0 +1,20 @@
+<div class="container">
+	<br/>
+	<div class="row">
+		<div class="col-3">
+			hello
+		</div>
+		<div class="col-3">
+			<button class="btn btn-outline-danger" id="create-edit-channel">Create / Edit</button>
+		</div>
+	</div>
+
+</div>
+
+{{#contentFor "pageScripts"}}
+	<script type="text/javascript">
+	  $(document).ready(function() {
+	    var Community = new window.Channel();
+	  });
+	</script>
+{{/contentFor}}
