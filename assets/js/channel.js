@@ -97,7 +97,7 @@
 
         imageUploadParams['file'] = originalFile;
         imageUploadParams['enctype'] = 'multipart/form-data';
-        imageUploadParams['success_action_status'] = 200;
+        imageUploadParams['success_action_status'] = '200';
         console.log('--------------------------------------------', imageUploadParams);
 
         // send ajax to api to create edit channel.
