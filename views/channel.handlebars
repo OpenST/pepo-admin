@@ -90,6 +90,16 @@
 	<script type="text/javascript">
 
 	  $(document).ready(function() {
+
+        var getFormData = function(paramsList) {
+          var formData = new FormData();
+          for (var key in paramsList) {
+            formData.append(key, paramsList[key]);
+          }
+          return formData;
+        };
+
+
 	    var Channel = new window.Channel();
 	  });
 	</script>

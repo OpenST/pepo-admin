@@ -61,7 +61,7 @@
             if (response.data.channel_upload_params && response.data.channel_upload_params.images) {
               const imagesToUpload = response.data.channel_upload_params.images;
 
-              for (let imageName in imagesToUpload) {
+              for (var imageName in imagesToUpload) {
                 if (imageName.indexOf('share') >= 0) {
                   oThis.imageNames['share'] = imageName;
                 } else {
@@ -73,7 +73,7 @@
                 oThis.imageUploadParams[imageName]['s3_url'] = imagesToUpload[imageName].s3_url.replace('.jpeg', '');
                 const post_fields = imagesToUpload[imageName].post_fields;
 
-                for (let imu = 0; imu < post_fields.length; imu++) {
+                for (var imu = 0; imu < post_fields.length; imu++) {
                   oThis.imageUploadParams[imageName]['post_fields'] =
                     oThis.imageUploadParams[imageName]['post_fields'] || {};
                   oThis.imageUploadParams[imageName]['post_fields'][post_fields[imu].key] = post_fields[imu].value;
@@ -160,7 +160,7 @@
         $.ajax({
           url: imagePostUrl,
           type: 'POST',
-          data: oThis.getFormData(imageUploadParams),
+          data: getFormData(imageUploadParams),
           processData: false,
           contentType: false,
           cache: false,
@@ -173,14 +173,6 @@
           }
         });
       }
-    },
-
-    getFormData(paramsList) {
-      let formData = new FormData();
-      for (let key in paramsList) {
-        formData.append(key, paramsList[key]);
-      }
-      return formData;
     },
 
     createEditChannel: function(successCallback, failureCallback) {
