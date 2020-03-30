@@ -8,7 +8,7 @@
 
     oThis.createEditBtn = $('#create-edit-channel');
     oThis.imageUploadParams = {};
-    oThis.imageNames = [];
+    oThis.imageNames = { original: '', share: '' };
 
     oThis.getPresignedPostUrl();
 
@@ -64,10 +64,15 @@
               const imagesToUpload = response.data.channel_upload_params.images;
 
               for (let imageName in imagesToUpload) {
-                oThis.imageNames.push(imageName);
+                if (imageName.indexOf('share') >= 0) {
+                  oThis.imageNames['share'] = imageName;
+                } else {
+                  oThis.imageNames['original'] = imageName;
+                }
+
                 oThis.imageUploadParams[imageName] = oThis.imageUploadParams[imageName] || {};
                 oThis.imageUploadParams[imageName]['post_url'] = imagesToUpload[imageName].post_url;
-                oThis.imageUploadParams[imageName]['s3_url'] = imagesToUpload[imageName].s3_url;
+                oThis.imageUploadParams[imageName]['s3_url'] = imagesToUpload[imageName].s3_url.replace('.jpeg', '');
                 const post_fields = imagesToUpload[imageName].post_fields;
 
                 for (let imu = 0; imu < post_fields.length; imu++) {
@@ -95,7 +100,7 @@
       if (originalFiles.length > 0) {
         const originalFile = originalFiles[0];
         const originalFileSize = originalFile.size;
-        const uploadImageName = oThis.imageNames[0];
+        const uploadImageName = oThis.imageNames['original'];
         originalFile.name = uploadImageName;
 
         $('#original_image_file_size').val(originalFileSize);
@@ -116,7 +121,6 @@
           url: imagePostUrl,
           type: 'POST',
           data: oThis.getFormData(imageUploadParams),
-          encType: 'multipart/form-data',
           processData: false,
           contentType: false,
           cache: false,
@@ -138,7 +142,7 @@
 
       if (shareImageFiles.length > 0) {
         const shareImageFile = shareImageFiles[0];
-        const uploadImageName = oThis.imageNames[1];
+        const uploadImageName = oThis.imageNames['share'];
         shareImageFile.name = uploadImageName;
 
         $('#share_image_file_size').val(shareImageFile.size);
@@ -159,7 +163,6 @@
           url: imagePostUrl,
           type: 'POST',
           data: oThis.getFormData(imageUploadParams),
-          encType: 'multipart/form-data',
           processData: false,
           contentType: false,
           cache: false,
