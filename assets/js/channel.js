@@ -17,7 +17,7 @@
 
   Channel.prototype = {
     bindEvents: function() {
-      var oThis = this;
+      const oThis = this;
 
       // Generate report
       $(oThis.createEditBtn).click(function(event) {
@@ -29,14 +29,24 @@
         $(oThis.createEditBtn).html('Processing!...');
         $(oThis.createEditBtn).addClass('disabled');
 
-        var successCallback = function() {
-          $(oThis.createEditBtn).css('pointer-events', 'auto');
-          $(oThis.createEditBtn).html('Create / Edit');
-          $(oThis.createEditBtn).removeClass('disabled');
-        };
-
-        oThis.uploadImages(successCallback, successCallback);
+        oThis.uploadImages();
       });
+    },
+
+    requestSuccessCallback: function() {
+      const oThis = this;
+
+      $(oThis.createEditBtn).css('pointer-events', 'auto');
+      $(oThis.createEditBtn).html('Create / Edit');
+      $(oThis.createEditBtn).removeClass('disabled');
+    },
+
+    requestFailureCallback: function() {
+      const oThis = this;
+
+      $(oThis.createEditBtn).css('pointer-events', 'auto');
+      $(oThis.createEditBtn).html('Create / Edit');
+      $(oThis.createEditBtn).removeClass('disabled');
     },
 
     getPresignedPostUrl: function() {
@@ -59,6 +69,7 @@
                 oThis.imageNames.push(imageName);
                 oThis.imageUploadParams[imageName] = oThis.imageUploadParams[imageName] || {};
                 oThis.imageUploadParams[imageName]['post_url'] = imagesToUpload[imageName].post_url;
+                oThis.imageUploadParams[imageName]['s3_url'] = imagesToUpload[imageName].s3_url;
                 const post_fields = imagesToUpload[imageName].post_fields;
 
                 for (let imu = 0; imu < post_fields.length; imu++) {
@@ -81,7 +92,7 @@
       });
     },
 
-    uploadImages: function(successCallback, successCallback) {
+    uploadImages: function() {
       const oThis = this;
 
       const originalFiles = document.getElementById('originalImage').files;
@@ -92,13 +103,15 @@
         const uploadImageName = oThis.imageNames[0];
         originalFile.name = uploadImageName;
 
+        $('#original_image_file_size').val(originalFileSize);
+        $('#original_image_url').val(oThis.imageUploadParams[uploadImageName]['s3_url']);
+
         const imagePostUrl = oThis.imageUploadParams[uploadImageName]['post_url'];
         const imageUploadParams = oThis.imageUploadParams[uploadImageName]['post_fields'];
 
         imageUploadParams['file'] = originalFile;
         imageUploadParams['enctype'] = 'multipart/form-data';
         imageUploadParams['success_action_status'] = '200';
-        console.log('--------------------------------------------', imageUploadParams);
 
         // send ajax to api to create edit channel.
         $.ajax({
@@ -111,21 +124,58 @@
           cache: false,
           success: function(response) {
             console.log(response);
+            oThis.uploadShareImage();
           },
           error: function(error) {
             console.error('===error', error);
           }
         });
       }
+    },
 
-      oThis.createEditChannel(successCallback, successCallback);
+    uploadShareImage: function() {
+      const oThis = this;
+
+      const shareImageFiles = document.getElementById('originalImage').files;
+
+      if (shareImageFiles.length > 0) {
+        const shareImageFile = shareImageFiles[0];
+        const uploadImageName = oThis.imageNames[1];
+        shareImageFile.name = uploadImageName;
+
+        $('#share_image_file_size').val(shareImageFile.size);
+        $('#share_image_url').val(oThis.imageUploadParams[uploadImageName]['s3_url']);
+
+        const imagePostUrl = oThis.imageUploadParams[uploadImageName]['post_url'];
+        const imageUploadParams = oThis.imageUploadParams[uploadImageName]['post_fields'];
+
+        imageUploadParams['file'] = shareImageFile;
+        imageUploadParams['enctype'] = 'multipart/form-data';
+        imageUploadParams['success_action_status'] = '200';
+
+        // send ajax to api to create edit channel.
+        $.ajax({
+          url: imagePostUrl,
+          type: 'POST',
+          data: oThis.getFormData(imageUploadParams),
+          encType: 'multipart/form-data',
+          processData: false,
+          contentType: false,
+          cache: false,
+          success: function(response) {
+            console.log(response);
+            oThis.createEditChannel();
+          },
+          error: function(error) {
+            console.error('===error', error);
+          }
+        });
+      }
     },
 
     getFormData(paramsList) {
       let formData = new FormData();
-      console.log('------------------------formData--------------------', formData);
       for (let key in paramsList) {
-        console.log('--------------------', key, paramsList[key]);
         formData.append(key, paramsList[key]);
       }
       return formData;
@@ -154,10 +204,11 @@
           if (response.data) {
             $('#requestSuccess').html('Request Successful.');
             $('#requestSuccess').show();
-            successCallback();
+            oThis.requestSuccessCallback();
           } else {
             $('#requestError').html(JSON.stringify(response.err));
             $('#requestError').show();
+            oThis.requestFailureCallback();
             console.error('=======Unknown response====', response);
           }
         },
@@ -166,7 +217,7 @@
           $('#requestError').html('Request Failed.');
           $('#requestError').show();
 
-          failureCallback();
+          oThis.requestFailureCallback();
           if (error.responseJSON.err.code == 'UNAUTHORIZED') {
             window.location = '/admin/unauthorized';
           }
