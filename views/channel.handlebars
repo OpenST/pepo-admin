@@ -91,7 +91,7 @@
 
 	  $(document).ready(function() {
 
-        var getFormData = function(paramsList) {
+        window.getFormData = function(paramsList) {
           var formData = new FormData();
           for (var key in paramsList) {
             formData.append(key, paramsList[key]);

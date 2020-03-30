@@ -160,7 +160,7 @@
         $.ajax({
           url: imagePostUrl,
           type: 'POST',
-          data: getFormData(imageUploadParams),
+          data: window.getFormData(imageUploadParams),
           processData: false,
           contentType: false,
           cache: false,
