@@ -95,10 +95,39 @@
         const imagePostUrl = oThis.imageUploadParams[uploadImageName]['post_url'];
         const imageUploadParams = oThis.imageUploadParams[uploadImageName]['post_fields'];
 
+        imageUploadParams['file'] = originalFile;
+        imageUploadParams['enctype'] = 'multipart/form-data';
         console.log('--------------------------------------------', imageUploadParams);
+
+        // send ajax to api to create edit channel.
+        $.ajax({
+          url: imagePostUrl,
+          type: 'POST',
+          data: oThis.getFormData(imageUploadParams),
+          encType: 'multipart/form-data',
+          processData: false,
+          contentType: false,
+          cache: false,
+          success: function(response) {
+            console.log(response);
+          },
+          error: function(error) {
+            console.error('===error', error);
+          }
+        });
       }
 
       oThis.createEditChannel(successCallback, successCallback);
+    },
+
+    getFormData(paramsList) {
+      let formData = new FormData();
+      console.log('------------------------formData--------------------', formData);
+      for (let key in paramsList) {
+        console.log('--------------------', key, paramsList[key]);
+        formData.append(key, paramsList[key]);
+      }
+      return formData;
     },
 
     createEditChannel: function(successCallback, failureCallback) {

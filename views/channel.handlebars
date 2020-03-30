@@ -121,7 +121,6 @@
                 };
 
                 oThis.uploadImages(successCallback, successCallback);
-
               });
             },
 
@@ -136,20 +135,21 @@
                   if (response.data) {
                     console.log(response.data);
 
-                    if(response.data.channel_upload_params && response.data.channel_upload_params.images){
+                    if (response.data.channel_upload_params && response.data.channel_upload_params.images) {
                       const imagesToUpload = response.data.channel_upload_params.images;
                       console.log('----------------imagesToUpload-------------------------------');
                       console.log(imagesToUpload);
 
-                      for(let imageName in imagesToUpload){
+                      for (let imageName in imagesToUpload) {
                         oThis.imageNames.push(imageName);
                         oThis.imageUploadParams[imageName] = oThis.imageUploadParams[imageName] || {};
-                        oThis.imageUploadParams[imageName]["post_url"] = imagesToUpload[imageName].post_url;
+                        oThis.imageUploadParams[imageName]['post_url'] = imagesToUpload[imageName].post_url;
                         const post_fields = imagesToUpload[imageName].post_fields;
 
-                        for(let imu=0; imu<post_fields.length; imu++){
-                          oThis.imageUploadParams[imageName]["post_fields"] = oThis.imageUploadParams[imageName]["post_fields"] || {};
-                          oThis.imageUploadParams[imageName]["post_fields"][post_fields[imu].key] = post_fields[imu].value
+                        for (let imu = 0; imu < post_fields.length; imu++) {
+                          oThis.imageUploadParams[imageName]['post_fields'] =
+                            oThis.imageUploadParams[imageName]['post_fields'] || {};
+                          oThis.imageUploadParams[imageName]['post_fields'][post_fields[imu].key] = post_fields[imu].value;
                         }
                       }
                     }
@@ -169,21 +169,50 @@
             uploadImages: function(successCallback, successCallback) {
               const oThis = this;
 
-              const originalFiles = document.getElementById("originalImage").files;
+              const originalFiles = document.getElementById('originalImage').files;
 
-              if(originalFiles.length > 0){
+              if (originalFiles.length > 0) {
                 const originalFile = originalFiles[0];
                 const originalFileSize = originalFile.size;
                 const uploadImageName = oThis.imageNames[0];
                 originalFile.name = uploadImageName;
 
-                const imagePostUrl = oThis.imageUploadParams[uploadImageName]["post_url"];
-                const imageUploadParams = oThis.imageUploadParams[uploadImageName]["post_fields"];
+                const imagePostUrl = oThis.imageUploadParams[uploadImageName]['post_url'];
+                const imageUploadParams = oThis.imageUploadParams[uploadImageName]['post_fields'];
 
+                imageUploadParams['file'] = originalFile;
+                imageUploadParams['enctype'] = 'multipart/form-data';
                 console.log('--------------------------------------------', imageUploadParams);
+
+                // send ajax to api to create edit channel.
+                $.ajax({
+                  url: imagePostUrl,
+                  type: 'POST',
+                  data: oThis.getFormData(imageUploadParams),
+                  encType:"multipart/form-data",
+                  processData: false,
+                  contentType: false,
+                  cache: false,
+                  success: function(response) {
+                    console.log(response)
+                  },
+                  error: function(error) {
+                    console.error('===error', error);
+                  }
+                });
               }
 
               oThis.createEditChannel(successCallback, successCallback);
+            },
+
+            getFormData(paramsList) {
+              let formData = new FormData();
+              console.log('------------------------formData--------------------', formData);
+              for(let key in paramsList) {
+                console.log('--------------------', key, paramsList[key]);
+                formData.append(key, paramsList[key]);
+              }
+              return formData;
             },
 
             createEditChannel: function(successCallback, failureCallback) {
@@ -194,7 +223,7 @@
               var postData = {};
 
               for (var i = 0; i < data.length; i++) {
-                if(data[i].value){
+                if (data[i].value) {
                   postData[data[i].name] = data[i].value;
                 }
               }
@@ -207,19 +236,19 @@
                 contentType: 'application/json',
                 success: function(response) {
                   if (response.data) {
-                    $("#requestSuccess").html("Request Successful.");
-                    $("#requestSuccess").show();
+                    $('#requestSuccess').html('Request Successful.');
+                    $('#requestSuccess').show();
                     successCallback();
                   } else {
-                    $("#requestError").html(JSON.stringify(response.err));
-                    $("#requestError").show();
+                    $('#requestError').html(JSON.stringify(response.err));
+                    $('#requestError').show();
                     console.error('=======Unknown response====', response);
                   }
                 },
                 error: function(error) {
                   console.error('===error', error);
-                  $("#requestError").html("Request Failed.");
-                  $("#requestError").show();
+                  $('#requestError').html('Request Failed.');
+                  $('#requestError').show();
 
                   failureCallback();
                   if (error.responseJSON.err.code == 'UNAUTHORIZED') {
@@ -232,7 +261,6 @@
 
           window.Channel = Channel;
         })(window, jQuery);
-
 
 
 
