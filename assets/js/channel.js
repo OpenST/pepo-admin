@@ -62,8 +62,6 @@
 
             if (response.data.channel_upload_params && response.data.channel_upload_params.images) {
               const imagesToUpload = response.data.channel_upload_params.images;
-              console.log('----------------imagesToUpload-------------------------------');
-              console.log(imagesToUpload);
 
               for (let imageName in imagesToUpload) {
                 oThis.imageNames.push(imageName);
@@ -79,9 +77,6 @@
                 }
               }
             }
-
-            console.log('----------------imageUploadParams-------------------------------');
-            console.log(oThis.imageUploadParams);
           } else {
             console.error('=======Unknown response====.serialize', response);
           }
@@ -112,6 +107,10 @@
         imageUploadParams['file'] = originalFile;
         imageUploadParams['enctype'] = 'multipart/form-data';
         imageUploadParams['success_action_status'] = '200';
+        imageUploadParams['success-action-status'] = '200';
+
+        console.log('-----1-----------imageUploadParams-------------------------------');
+        console.log(imageUploadParams);
 
         // send ajax to api to create edit channel.
         $.ajax({
@@ -152,6 +151,10 @@
         imageUploadParams['file'] = shareImageFile;
         imageUploadParams['enctype'] = 'multipart/form-data';
         imageUploadParams['success_action_status'] = '200';
+        imageUploadParams['success-action-status'] = '200';
+
+        console.log('-----2-----------imageUploadParams-------------------------------');
+        console.log(imageUploadParams);
 
         // send ajax to api to create edit channel.
         $.ajax({
