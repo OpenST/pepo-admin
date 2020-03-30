@@ -23,8 +23,6 @@
       $(oThis.createEditBtn).click(function(event) {
         event.preventDefault();
 
-        console.log('kya yeh kia....');
-
         $(oThis.createEditBtn).css('pointer-events', 'none');
         $(oThis.createEditBtn).html('Processing!...');
         $(oThis.createEditBtn).addClass('disabled');
