@@ -5,6 +5,7 @@
     oThis.config = {};
 
     oThis.apiUrl = $('meta[name="api-url"]').attr('content');
+    $('#channel-link').addClass('active');
 
     oThis.createEditBtn = $('#create-edit-channel');
     oThis.imageUploadParams = {};
