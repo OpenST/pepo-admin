@@ -106,8 +106,7 @@
 
         imageUploadParams['file'] = originalFile;
         imageUploadParams['enctype'] = 'multipart/form-data';
-        imageUploadParams['success_action_status'] = '200';
-        imageUploadParams['success-action-status'] = '200';
+        imageUploadParams['success-action-status'] = '201';
 
         console.log('-----1-----------imageUploadParams-------------------------------');
         console.log(imageUploadParams);
@@ -150,8 +149,7 @@
 
         imageUploadParams['file'] = shareImageFile;
         imageUploadParams['enctype'] = 'multipart/form-data';
-        imageUploadParams['success_action_status'] = '200';
-        imageUploadParams['success-action-status'] = '200';
+        imageUploadParams['success_action_status'] = '201';
 
         console.log('-----2-----------imageUploadParams-------------------------------');
         console.log(imageUploadParams);
