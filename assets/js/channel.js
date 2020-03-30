@@ -106,7 +106,7 @@
 
         imageUploadParams['file'] = originalFile;
         imageUploadParams['enctype'] = 'multipart/form-data';
-        imageUploadParams['success-action-status'] = '201';
+        imageUploadParams['success_action_status'] = '201';
 
         console.log('-----1-----------imageUploadParams-------------------------------');
         console.log(imageUploadParams);
