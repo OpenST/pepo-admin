@@ -197,9 +197,12 @@
         contentType: 'application/json',
         success: function(response) {
           if (response.data) {
-            $('#requestSuccess').html('Request Successful.');
+            $('#requestSuccess').html('Request Successful. Please refresh page for next request.');
             $('#requestSuccess').show();
             oThis.requestSuccessCallback();
+            setTimeout(function() {
+              window.location = window.location;
+            }, 5000);
           } else {
             $('#requestError').html(JSON.stringify(response.err));
             $('#requestError').show();
