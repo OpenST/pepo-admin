@@ -118,7 +118,7 @@
         $.ajax({
           url: imagePostUrl,
           type: 'POST',
-          data: oThis.getFormData(imageUploadParams),
+          data: window.getFormData(imageUploadParams),
           processData: false,
           contentType: false,
           cache: false,
