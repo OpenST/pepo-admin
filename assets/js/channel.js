@@ -36,7 +36,7 @@
       const oThis = this;
 
       $(oThis.createEditBtn).css('pointer-events', 'auto');
-      $(oThis.createEditBtn).html('Create / Edit');
+      $(oThis.createEditBtn).html('Submit');
       $(oThis.createEditBtn).removeClass('disabled');
     },
 
@@ -44,7 +44,7 @@
       const oThis = this;
 
       $(oThis.createEditBtn).css('pointer-events', 'auto');
-      $(oThis.createEditBtn).html('Create / Edit');
+      $(oThis.createEditBtn).html('Submit');
       $(oThis.createEditBtn).removeClass('disabled');
     },
 
