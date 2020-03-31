@@ -87,7 +87,7 @@ router.get('/discover', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmi
 });
 
 /* Discover */
-router.get('/channel', sanitizer.sanitizeDynamicUrlParams, function(req, res, next) {
+router.get('/channel', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
   Promise.resolve(routeHelper.perform(req, res, next, 'channel', 'r_a_ad_8'));
 });
 
