@@ -28,6 +28,9 @@
         $(oThis.createEditBtn).html('Processing!...');
         $(oThis.createEditBtn).addClass('disabled');
 
+        $('#requestError').hide();
+        $('#requestSuccess').hide();
+
         oThis.uploadImages();
       });
     },
