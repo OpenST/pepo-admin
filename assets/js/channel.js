@@ -131,6 +131,8 @@
             console.error('===error', error);
           }
         });
+      } else {
+        oThis.createEditChannel();
       }
     },
 
