@@ -9,7 +9,7 @@
 
     oThis.createEditBtn = $('#create-edit-channel');
     oThis.imageUploadParams = {};
-    oThis.imageNames = { original: '', share: '' };
+    oThis.imageNames = { original: '' };
 
     oThis.getPresignedPostUrl();
 
@@ -112,53 +112,6 @@
         imageUploadParams['enctype'] = 'multipart/form-data';
         imageUploadParams['success_action_status'] = '201';
 
-        console.log('-----1-----------imageUploadParams-------------------------------');
-        console.log(imageUploadParams);
-
-        // send ajax to api to create edit channel.
-        $.ajax({
-          url: imagePostUrl,
-          type: 'POST',
-          data: window.getFormData(imageUploadParams),
-          processData: false,
-          contentType: false,
-          cache: false,
-          success: function(response) {
-            console.log(response);
-            oThis.uploadShareImage();
-          },
-          error: function(error) {
-            console.error('===error', error);
-          }
-        });
-      } else {
-        oThis.createEditChannel();
-      }
-    },
-
-    uploadShareImage: function() {
-      const oThis = this;
-
-      const shareImageFiles = document.getElementById('originalImage').files;
-
-      if (shareImageFiles.length > 0) {
-        const shareImageFile = shareImageFiles[0];
-        const uploadImageName = oThis.imageNames['share'];
-        shareImageFile.name = uploadImageName;
-
-        $('#share_image_file_size').val(shareImageFile.size);
-        $('#share_image_url').val(oThis.imageUploadParams[uploadImageName]['s3_url']);
-
-        const imagePostUrl = oThis.imageUploadParams[uploadImageName]['post_url'];
-        const imageUploadParams = oThis.imageUploadParams[uploadImageName]['post_fields'];
-
-        imageUploadParams['file'] = shareImageFile;
-        imageUploadParams['enctype'] = 'multipart/form-data';
-        imageUploadParams['success_action_status'] = '201';
-
-        console.log('-----2-----------imageUploadParams-------------------------------');
-        console.log(imageUploadParams);
-
         // send ajax to api to create edit channel.
         $.ajax({
           url: imagePostUrl,
@@ -175,6 +128,8 @@
             console.error('===error', error);
           }
         });
+      } else {
+        oThis.createEditChannel();
       }
     },
 
