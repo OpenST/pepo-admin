@@ -23,47 +23,64 @@
             <form id="channel-form">
                 <div class="row inputRow">
             	    <div class="col-5" style="font-weight: bold;">
-                        Do you want to edit Channel?
+                        Do you want to create new community?
                     </div>
                     <div class="col-7">
-                        <input type="radio" name="is_edit" value="1"><label for="male">Yes</label>&nbsp;&nbsp;
-                        <input type="radio" name="is_edit" value="0" checked><label for="female">No</label>
+                        <input type="radio" name="is_edit" value="1"><label for="male">No</label>&nbsp;&nbsp;
+                        <input type="radio" name="is_edit" value="0" checked><label for="female">Yes</label>
                     </div>
             	</div>
-			    <div class="row inputRow">
-                    <div class="col-3">Permalink</div>
-                    <div class="col-1">:</div>
-                    <div class="col-8"><input type="text" name="permalink" /></div>
+                <div class="row inputRow">
+                    <div class="col-12"> We identify already existing communities using their permalinks. Please ensure that permalink is unique for every community.</div>
                 </div>
+                <div class="row inputRow">
+                    <div class="col-3">Cover Image</div>
+                    <div class="col-1">:</div>
+                    <input id="originalImage" type="file" accept="image/*">
+                </div>
+			    <div class="row inputRow">
+                    <div class="col-3">Permalink (Mandatory)</div>
+                    <div class="col-1">:</div>
+                    <div class="col-8"><input type="text" name="permalink" placeholder="Example: https://pepo.com/communities/[permalink]"/></div>
+                </div>
+                <div class="row inputRow">
+                    <div class="col-12"> We identify already existing communities using their permalinks. Please ensure that permalink is unique for every community.</div>
+                </div>
+
                 <div class="row inputRow">
 			        <div class="col-3">Name</div>
 			        <div class="col-1">:</div>
-			        <div class="col-8"><input type="text" name="name" /></div>
-                </div>
-                <div class="row inputRow">
-			        <div class="col-3">Description</div>
-                    <div class="col-1">:</div>
-                    <div class="col-8"><textarea name="description" rows="2" cols="50" ></textarea></div>
+			        <div class="col-8"><input type="text" name="name" placeholder="Max character limit: 25."/></div>
                 </div>
                 <div class="row inputRow">
                     <div class="col-3">Tagline</div>
                     <div class="col-1">:</div>
-                    <div class="col-8"><textarea name="tagline" rows="2" cols="50" ></textarea></div>
+                    <div class="col-8"><textarea name="tagline" rows="2" cols="50" placeholder="Max character limit: 45."></textarea></div>
                 </div>
                 <div class="row inputRow">
-                    <div class="col-3">New all tags</div>
+			        <div class="col-3">Description</div>
                     <div class="col-1">:</div>
                     <div class="col-8">
-                        <input type="text" name="tags" placeholder="Comma separated new tags." />
-                        <div>Note: Please add only new tags here. If you give already associated tags again, the code will break.</div>
+                        <textarea name="description" rows="2" cols="50" placeholder="Max character limit: 400." ></textarea
                     </div>
+                </div>
+                <div class="row inputRow">
+                    <div class="col-3">Tags</div>
+                    <div class="col-1">:</div>
+                    <div class="col-8">
+                        <input type="text" name="tags" placeholder="Comma separated new tags. Example: tag1, tag2, tag3" />
+                    </div>
+                    <div>Note: Current implementation only supports addition of tags. If you want to remove tags, contact backend team.</div>
+                    <div>In the field above, just input new tags.</div>
                 </div>
                 <div class="row inputRow">
                     <div class="col-3">Admins</div>
                     <div class="col-1">:</div>
                     <div class="col-8">
-                        <input type="text" name="admins" placeholder="Comma separated user names." />
+                        <input type="text" name="admins" placeholder="Comma separated Pepo user names. Example: betashop, Sim_Pop" />
                     </div>
+                    <div>Note: Current implementation only supports addition of admins. If you want to remove admins, contact backend team.</div>
+                    <div>In the field above, just input new admins.</div>
 			    </div>
 
 			    <input id="original_image_url" type="hidden" name="original_image_url">
@@ -72,12 +89,6 @@
 			    <input id="share_image_url" type="hidden" name="share_image_url">
 			    <input id="share_image_file_size" type="hidden" name="share_image_file_size">
 			</form>
-
-            <div class="row">
-                <div class="col-3">Cover/Share Image</div>
-                <div class="col-1">:</div>
-			    <input id="originalImage" type="file" accept="image/*">
-			</div>
 		</div>
 		<div class="col-12" id="requestError"></div>
 		<div class="col-12" id="requestSuccess" style="margin-top:20px;display:none;"></div>
