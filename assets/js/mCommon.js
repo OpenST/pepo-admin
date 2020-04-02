@@ -9,3 +9,4 @@
 //= require userApproval.js
 //= require mUserProfile.js
 //= require usageReports.js
+//= require channel.js

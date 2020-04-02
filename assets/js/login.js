@@ -30,7 +30,7 @@
             if (response.data) {
               window.location = '/admin/user-approval';
             } else {
-              console.error('=======Unknown response====');
+              console.error('=======Unknown response====', JSON.stringify(response));
             }
           },
           error: function(error) {
