@@ -51,11 +51,6 @@ router.get('/user-approval', sanitizer.sanitizeDynamicUrlParams, validateLoggedI
   Promise.resolve(routeHelper.perform(req, res, next, 'userApproval', 'r_a_ad_2'));
 });
 
-/* User whitelist */
-router.get('/whitelist', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(req, res, next) {
-  Promise.resolve(routeHelper.perform(req, res, next, 'whitelistUser', 'r_a_ad_3'));
-});
-
 /* User profile */
 router.get('/user-profile/:user_id', sanitizer.sanitizeDynamicUrlParams, validateLoggedInAdmin, function(
   req,
