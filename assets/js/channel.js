@@ -20,6 +20,16 @@
     bindEvents: function() {
       const oThis = this;
 
+      $('input:radio[name="is_edit"]').change(function() {
+        if ($(this).attr('id') == 'createBtn') {
+          $('#createMessage').show();
+          $('#editMessage').hide();
+        } else {
+          $('#createMessage').hide();
+          $('#editMessage').show();
+        }
+      });
+
       // Generate report
       $(oThis.createEditBtn).click(function(event) {
         event.preventDefault();
@@ -27,16 +37,6 @@
         $(oThis.createEditBtn).css('pointer-events', 'none');
         $(oThis.createEditBtn).html('Processing!...');
         $(oThis.createEditBtn).addClass('disabled');
-
-        $('input:radio[name="is_edit"]').change(function() {
-          if ($(this).attr('id') == 'createBtn') {
-            $('#createMessage').show();
-            $('#editMessage').hide();
-          } else {
-            $('#createMessage').hide();
-            $('#editMessage').show();
-          }
-        });
 
         $('#requestError').hide();
         $('#requestSuccess').hide();
