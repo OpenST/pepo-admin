@@ -28,6 +28,16 @@
         $(oThis.createEditBtn).html('Processing!...');
         $(oThis.createEditBtn).addClass('disabled');
 
+        $('input:radio[name="is_edit"]').change(function() {
+          if ($(this).attr('id') == 'createBtn') {
+            $('#createMessage').show();
+            $('#editMessage').hide();
+          } else {
+            $('#createMessage').hide();
+            $('#editMessage').show();
+          }
+        });
+
         $('#requestError').hide();
         $('#requestSuccess').hide();
 
@@ -105,8 +115,8 @@
         const uploadImageName = oThis.imageNames['original'];
         originalFile.name = uploadImageName;
 
-        $('#original_image_file_size').val(originalFileSize);
-        $('#original_image_url').val(oThis.imageUploadParams[uploadImageName]['s3_url']);
+        $('#cover_image_file_size').val(originalFileSize);
+        $('#cover_image_url').val(oThis.imageUploadParams[uploadImageName]['s3_url']);
 
         const imagePostUrl = oThis.imageUploadParams[uploadImageName]['post_url'];
         const imageUploadParams = oThis.imageUploadParams[uploadImageName]['post_fields'];
