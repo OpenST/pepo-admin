@@ -411,8 +411,8 @@
       }
 
       var headerContext = {
-        name: decodeURIComponent(userData.name),
-        userName: decodeURIComponent(userData.user_name),
+        name: userData.name,
+        userName: userData.user_name,
         userId: oThis.userId,
         imageLink: imageLink,
         balanceInUsd: balanceInUsd,
