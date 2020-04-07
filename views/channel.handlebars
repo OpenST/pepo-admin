@@ -25,6 +25,9 @@
     .newCommunityContainer {
         margin-top: 20px;
     }
+    .fieldError {
+        border: 1px solid red;
+    }
 </style>
 <div class="container">
 	<div class="row">
@@ -80,11 +83,12 @@
 
 			    <div class="row inputRow originalImageContainer">
                     <div class="col-3">Cover Image:</div>
-                    <div class="col-9"><input id="originalImage" type="file" accept="image/*"></div>
+                    <div class="col-9">
+                        <input id="originalImage" type="file" accept="image/*">
+                        <input id="cover_image_url" type="hidden" name="cover_image_url">
+                        <input id="cover_image_file_size" type="hidden" name="cover_image_file_size">
+                    </div>
                 </div>
-
-			    <input id="cover_image_url" type="hidden" name="cover_image_url">
-			    <input id="cover_image_file_size" type="hidden" name="cover_image_file_size">
 
 			</form>
 		</div>

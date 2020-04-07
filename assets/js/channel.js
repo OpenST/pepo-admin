@@ -21,6 +21,7 @@
       const oThis = this;
 
       $('input:radio[name="is_edit"]').change(function() {
+        $('.inputRow').removeClass('fieldError');
         if ($(this).attr('id') == 'createBtn') {
           $('#createMessage').show();
           $('#editMessage').hide();
@@ -30,6 +31,10 @@
         }
       });
 
+      $('input').focus(function() {
+        $('.inputRow').removeClass('fieldError');
+      });
+
       // Generate report
       $(oThis.createEditBtn).click(function(event) {
         event.preventDefault();
@@ -37,6 +42,7 @@
         $(oThis.createEditBtn).css('pointer-events', 'none');
         $(oThis.createEditBtn).html('Processing!...');
         $(oThis.createEditBtn).addClass('disabled');
+        $('.inputRow').removeClass('fieldError');
 
         $('#requestError').hide();
         $('#requestSuccess').hide();
@@ -147,16 +153,47 @@
     },
 
     createEditChannel: function(successCallback, failureCallback) {
-      var oThis = this;
-
-      var data = $('#channel-form').serializeArray({});
-
-      var postData = {};
+      var oThis = this,
+        data = $('#channel-form').serializeArray({}),
+        postData = {};
 
       for (var i = 0; i < data.length; i++) {
         if (data[i].value) {
           postData[data[i].name] = data[i].value;
         }
+      }
+
+      var mandatoryFieldsMap = {
+        create: [
+          'permalink',
+          'channel_name',
+          'channel_tagline',
+          'channel_description',
+          'channel_tags',
+          'channel_admins',
+          'cover_image_url'
+        ],
+        edit: ['permalink']
+      };
+      console.log(postData, postData['is_edit']);
+      var mandatoryFields = postData['is_edit'] == '1' ? mandatoryFieldsMap['edit'] : mandatoryFieldsMap['create'],
+        errorFound = false;
+
+      console.log(mandatoryFields);
+      for (var mf = 0; mf < mandatoryFields.length; mf++) {
+        var fieldName = mandatoryFields[mf];
+        if (!postData[fieldName]) {
+          $("[name='" + fieldName + "']")
+            .closest('.inputRow')
+            .addClass('fieldError');
+          errorFound = true;
+        }
+      }
+      if (errorFound) {
+        $('#requestError').html('Please Fill all mandatory fields.');
+        $('#requestError').show();
+        oThis.requestFailureCallback();
+        return;
       }
 
       // send ajax to api to create edit channel.
