@@ -145,6 +145,11 @@
           },
           error: function(error) {
             console.error('===error', error);
+            if ($(error.responseText).find('Code')[0].innerText == 'EntityTooLarge') {
+              $('#requestError').html('Uploaded Image is larger than required.');
+              $('#requestError').show();
+            }
+            oThis.requestFailureCallback();
           }
         });
       } else {
