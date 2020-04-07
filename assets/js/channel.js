@@ -175,11 +175,10 @@
         ],
         edit: ['permalink']
       };
-      console.log(postData, postData['is_edit']);
+
       var mandatoryFields = postData['is_edit'] == '1' ? mandatoryFieldsMap['edit'] : mandatoryFieldsMap['create'],
         errorFound = false;
 
-      console.log(mandatoryFields);
       for (var mf = 0; mf < mandatoryFields.length; mf++) {
         var fieldName = mandatoryFields[mf];
         if (!postData[fieldName]) {
