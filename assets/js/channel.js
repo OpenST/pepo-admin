@@ -163,8 +163,8 @@
         postData = {};
 
       for (var i = 0; i < data.length; i++) {
-        if (data[i].value) {
-          postData[data[i].name] = data[i].value;
+        if (data[i].value && data[i].value.trim()) {
+          postData[data[i].name] = data[i].value.trim();
         }
       }
 
@@ -194,7 +194,7 @@
         }
       }
       if (errorFound) {
-        $('#requestError').html('Please Fill all mandatory fields.');
+        $('#requestError').html('Please Fill valid values in all mandatory fields.');
         $('#requestError').show();
         oThis.requestFailureCallback();
         return;
