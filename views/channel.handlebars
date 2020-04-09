@@ -25,29 +25,26 @@
     .newCommunityContainer {
         margin-top: 20px;
     }
+    .fieldError {
+        border: 1px solid red;
+    }
 </style>
 <div class="container">
 	<div class="row">
 		<div class="col-12">
             <form id="channel-form">
                 <div class="row inputRow newCommunityContainer">
-            	    <div class="col-3" style="font-weight: bold;">
-                        NEW community?
+            	    <div class="col-3">
+                        Action
                     </div>
                     <div class="col-9">
-                        <input type="radio" name="is_edit" value="0" checked><label for="female">Yes</label>&nbsp;&nbsp;
-                        <input type="radio" name="is_edit" value="1"><label for="male">No</label>
+                        <input type="radio" id="createBtn" name="is_edit" value="0" checked><label for="female">&nbsp;Create New</label>&nbsp;&nbsp;
+                        <input type="radio" id="editBtn" name="is_edit" value="1"><label for="male">&nbsp;Edit Existing</label>
+                        <div id="createMessage">Please provide uniq permalink. That can not be changed later.</div>
+                        <div id="editMessage" style="display:none;">Channel will be identified by permalink. Please pass only those parameters that you want to edit along with permalink.</div>
                     </div>
             	</div>
                 <div class="row inputRow">
-                    <div class="col-3"></div>
-                    <div class="col-9 notes"> We identify already existing communities using their permalinks. Please ensure that permalink is unique for every community.</div>
-                </div>
-                <div class="row inputRow originalImageContainer">
-                    <div class="col-3">Cover Image:</div>
-                    <div class="col-9"><input id="originalImage" type="file" accept="image/*"></div>
-                </div>
-			    <div class="row inputRow">
                     <div class="col-3">Permalink:</div>
                     <div class="col-9">
                         <input type="text" name="permalink" placeholder="Example: https://pepo.com/communities/[permalink]"/>
@@ -56,36 +53,42 @@
                 </div>
                 <div class="row inputRow">
 			        <div class="col-3">Name:</div>
-			        <div class="col-9"><input type="text" name="name" placeholder="Max character limit: 25."/></div>
+			        <div class="col-9"><input type="text" name="channel_name" placeholder="Max character limit: 25."/></div>
                 </div>
                 <div class="row inputRow">
                     <div class="col-3">Tagline:</div>
-                    <div class="col-9"><textarea name="tagline" rows="2" cols="50" placeholder="Max character limit: 45."></textarea></div>
+                    <div class="col-9"><textarea name="channel_tagline" rows="2" cols="50" placeholder="Max character limit: 45."></textarea></div>
                 </div>
                 <div class="row inputRow">
 			        <div class="col-3">About:</div>
                     <div class="col-9">
-                        <textarea name="description" rows="2" cols="50" placeholder="Max character limit: 400." ></textarea>
+                        <textarea name="channel_description" rows="2" cols="50" placeholder="Max character limit: 400." ></textarea>
                     </div>
                 </div>
 
                 <div class="row inputRow">
                     <div class="col-3">Tags:</div>
                     <div class="col-9">
-                        <input type="text" name="tags" placeholder="Comma separated new tags. Example: tag1, tag2, tag3" />
-                        <div class="notes">Note: In the field above, just input new tags. Current implementation only supports addition of tags. If you want to remove tags, contact backend team.</div>
+                        <input type="text" name="channel_tags" placeholder="Comma separated new tags. Example: tag1, tag2, tag3" />
+                        <div class="notes">Note: In the field above, tags given are the final list. If not given in above field, tag will be removed from channel if already there.</div>
                     </div>
                 </div>
                 <div class="row inputRow">
                     <div class="col-3">Admins:</div>
                     <div class="col-9">
-                        <input type="text" name="admins" placeholder="Comma separated Pepo user names. Example: betashop, Sim_Pop" />
-                        <div class="notes">Note: In the field above, just input new admins. Current implementation only supports addition of admins. If you want to remove admins, contact backend team.</div>
+                        <input type="text" name="channel_admins" placeholder="Comma separated Pepo user names. Example: betashop, Sim_Pop" />
+                        <div class="notes">Note: In the field above, admins given are the final list. If not given in above field, admin will be removed from channel if already there.</div>
                     </div>
 			    </div>
 
-			    <input id="original_image_url" type="hidden" name="original_image_url">
-			    <input id="original_image_file_size" type="hidden" name="original_image_file_size">
+			    <div class="row inputRow originalImageContainer">
+                    <div class="col-3">Cover Image:</div>
+                    <div class="col-9">
+                        <input id="originalImage" type="file" accept="image/*">
+                        <input id="cover_image_url" type="hidden" name="cover_image_url">
+                        <input id="cover_image_file_size" type="hidden" name="cover_image_file_size">
+                    </div>
+                </div>
 
 			</form>
 		</div>

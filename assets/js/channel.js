@@ -20,6 +20,21 @@
     bindEvents: function() {
       const oThis = this;
 
+      $('input:radio[name="is_edit"]').change(function() {
+        $('.inputRow').removeClass('fieldError');
+        if ($(this).attr('id') == 'createBtn') {
+          $('#createMessage').show();
+          $('#editMessage').hide();
+        } else {
+          $('#createMessage').hide();
+          $('#editMessage').show();
+        }
+      });
+
+      $('input').focus(function() {
+        $('.inputRow').removeClass('fieldError');
+      });
+
       // Generate report
       $(oThis.createEditBtn).click(function(event) {
         event.preventDefault();
@@ -27,6 +42,7 @@
         $(oThis.createEditBtn).css('pointer-events', 'none');
         $(oThis.createEditBtn).html('Processing!...');
         $(oThis.createEditBtn).addClass('disabled');
+        $('.inputRow').removeClass('fieldError');
 
         $('#requestError').hide();
         $('#requestSuccess').hide();
@@ -105,8 +121,8 @@
         const uploadImageName = oThis.imageNames['original'];
         originalFile.name = uploadImageName;
 
-        $('#original_image_file_size').val(originalFileSize);
-        $('#original_image_url').val(oThis.imageUploadParams[uploadImageName]['s3_url']);
+        $('#cover_image_file_size').val(originalFileSize);
+        $('#cover_image_url').val(oThis.imageUploadParams[uploadImageName]['s3_url']);
 
         const imagePostUrl = oThis.imageUploadParams[uploadImageName]['post_url'];
         const imageUploadParams = oThis.imageUploadParams[uploadImageName]['post_fields'];
@@ -129,6 +145,11 @@
           },
           error: function(error) {
             console.error('===error', error);
+            if ($(error.responseText).find('Code')[0].innerText == 'EntityTooLarge') {
+              $('#requestError').html('Uploaded Image is larger than required.');
+              $('#requestError').show();
+            }
+            oThis.requestFailureCallback();
           }
         });
       } else {
@@ -137,16 +158,46 @@
     },
 
     createEditChannel: function(successCallback, failureCallback) {
-      var oThis = this;
-
-      var data = $('#channel-form').serializeArray({});
-
-      var postData = {};
+      var oThis = this,
+        data = $('#channel-form').serializeArray({}),
+        postData = {};
 
       for (var i = 0; i < data.length; i++) {
-        if (data[i].value) {
-          postData[data[i].name] = data[i].value;
+        if (data[i].value && data[i].value.trim()) {
+          postData[data[i].name] = data[i].value.trim();
         }
+      }
+
+      var mandatoryFieldsMap = {
+        create: [
+          'permalink',
+          'channel_name',
+          'channel_tagline',
+          'channel_description',
+          'channel_tags',
+          'channel_admins',
+          'cover_image_url'
+        ],
+        edit: ['permalink']
+      };
+
+      var mandatoryFields = postData['is_edit'] == '1' ? mandatoryFieldsMap['edit'] : mandatoryFieldsMap['create'],
+        errorFound = false;
+
+      for (var mf = 0; mf < mandatoryFields.length; mf++) {
+        var fieldName = mandatoryFields[mf];
+        if (!postData[fieldName]) {
+          $("[name='" + fieldName + "']")
+            .closest('.inputRow')
+            .addClass('fieldError');
+          errorFound = true;
+        }
+      }
+      if (errorFound) {
+        $('#requestError').html('Please Fill valid values in all mandatory fields.');
+        $('#requestError').show();
+        oThis.requestFailureCallback();
+        return;
       }
 
       // send ajax to api to create edit channel.
